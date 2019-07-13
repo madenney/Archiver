@@ -1,0 +1,27 @@
+{
+  "name": "autouploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matt Denney",
+  "license": "ISC",
+  "dependencies": {
+    "@shelacek/ubjson": "^1.0.1",
+    "handbrake-js": "^3.0.8",
+    "taskkill": "^3.0.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "commander": "^2.20.0",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-concat": "^1.0.13",
+    "ffprobe": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "gl-transitions": "^1.43.0",
+    "graphql-client": "^2.0.1",
+    "rimraf": "^2.6.3"
+  }
+}

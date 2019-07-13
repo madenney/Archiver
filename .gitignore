@@ -1,0 +1,15 @@
+node_modules
+vods*
+rawSlp51
+rawSlp50
+output
+temp*
+tempSlp
+tempFLVOutput
+vods51
+BlackFrameRemover.py
+trimBlackFrames.py
+notes.txt
+output.mp4
+testoutput.mp4
+parser/node_modules

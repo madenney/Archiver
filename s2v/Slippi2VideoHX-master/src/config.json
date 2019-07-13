@@ -1,0 +1,17 @@
+{
+    "melee": "C:\\Users\\Matt\\Documents\\Melee",
+    "replays": "C:\\Users\\Matt\\Documents\\test",
+    "dolphin": "C:\\Users\\Matt\\Documents\\Melee\\FM-v5.9-Slippi-r16-Win\\FM-v5.9-Slippi-r16-Win",
+    "recursive": true,
+    "obs": {
+        "exe": "C:\\Program Files\\obs-studio\\bin\\64bit",
+        "port": "4444",
+        "password": "password",
+        "profile": "",
+        "scene": "Slippi",
+        "videos": "C:\\Users\\Matt\\Documents\\output",
+        "rename": false,
+        "restructure": false,
+        "kill": true
+    }
+}

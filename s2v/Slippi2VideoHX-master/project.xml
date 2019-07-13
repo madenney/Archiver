@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+	<meta title="Slippi2Video" package="com.sample.slippi2video" version="1.0.0" company="Company Name" />
+	<app main="ui.UI" path="build/UI" file="Slippi2Video" />
+
+	<window
+		resizable="false"
+		background="#22be34"
+		width="640"
+		height="350"
+		color-depth="32"
+		/>
+
+	<source path="src" />
+
+	<haxelib name="lime" />
+	<haxelib name="openfl" />
+	<haxelib name="haxeui-core" />
+	<haxelib name="haxeui-openfl" />
+	<haxelib name="slippihx" />
+
+	<assets path="assets" />
+
+	<icon path="assets/slippi2video.svg" embed="true"/>
+
+</project>
