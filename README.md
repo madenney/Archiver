@@ -1,6 +1,7 @@
 
 
-
+# This project is a major work in progress
+The goal is to create a desktop application to help automate the storage of .slp files and content generation
 
 
 
