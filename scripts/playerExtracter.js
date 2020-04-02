@@ -1,5 +1,4 @@
 
-console.log("BUTT")
 
 const fs = require("fs")
 const json = {

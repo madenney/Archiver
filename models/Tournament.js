@@ -11,7 +11,7 @@ const ffmpeg = require("ffmpeg")
 const graphQl = require('graphQl-client')
 const uuidv4 = require("uuid/v4")
 
-const { tournamentQuery, eventsQuery } = require("../smashGGQueries")
+const { tournamentQuery, eventsQuery } = require("../constants/smashggQueries")
 
 const { 
 	getDirectories,
