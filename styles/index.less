@@ -1,0 +1,34 @@
+
+@import "main.less";
+@import "startup.less";
+
+@color1: #342E37;
+@color2: #FAFFFD;
+@color3: #3C91E6;
+@color4: #9FD356;
+@color5: #FA824C;
+
+body {
+    position: relative;
+    background-color: @color1;
+
+}
+
+.normal-button {
+    display: inline-block;
+    vertical-align: top;
+    border: solid 2px #686868;
+    border-radius: 5px;
+    background-color: #000099;
+    color: @color2;
+    font-size: 20px;
+    padding: 5px;
+    width: 200px;
+    height: 75px;
+    margin: 10px;
+    
+    &:hover {
+        cursor: pointer;
+        background-color: #000066;
+    }
+}

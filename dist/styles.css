@@ -1,0 +1,77 @@
+#main-content {
+  position: relative;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  border: solid lightgray 1px;
+  background-color: #342E37;
+}
+#main-content .title {
+  color: #FAFFFD;
+  text-align: center;
+}
+#startup {
+  position: fixed;
+  border: solid black 2px;
+  text-align: center;
+  border-radius: 5px;
+  display: block;
+  margin: 150px auto;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  padding: 20px;
+  width: 600px;
+}
+#startup #new-archive-form .form-row {
+  margin: 15px;
+  text-align: left;
+}
+#startup #new-archive-form label {
+  width: 150px;
+  display: inline-block;
+  font-size: 20px;
+  color: #FAFFFD;
+}
+#startup #new-archive-form input {
+  display: inline-block;
+  font-size: 20px;
+  padding: 5px;
+  margin-left: 10px;
+}
+#startup #new-archive-form #archive-directory-button {
+  width: 82px;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 15px;
+  margin-left: 10px;
+}
+#startup #new-archive-form #archive-directory-button:hover {
+  cursor: pointer;
+}
+#startup #new-archive-form #new-directory-path {
+  height: 25px;
+  font-size: 18px;
+  color: #9FD356;
+}
+body {
+  position: relative;
+  background-color: #342E37;
+}
+.normal-button {
+  display: inline-block;
+  vertical-align: top;
+  border: solid 2px #686868;
+  border-radius: 5px;
+  background-color: #000099;
+  color: #FAFFFD;
+  font-size: 20px;
+  padding: 5px;
+  width: 200px;
+  height: 75px;
+  margin: 10px;
+}
+.normal-button:hover {
+  cursor: pointer;
+  background-color: #000066;
+}
