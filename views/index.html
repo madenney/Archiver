@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Archiver</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" type="text/css" href="../dist/styles.css">
+    <script src="../controllers/index.js"></script>
+  </head>
+  <body>
+    <div id="main-content">
+      <h1 class="title">Archiver</h1>
+      <div id="navbar"></div>
+    </div>
+    <div id="startup" hidden>
+      <button class="normal-button" id="new-archive-button">New Archive</button>
+      <button class="normal-button" id="existing-archive-button">Open Existing Archive</button>
+      <div id="recent-archives"></div>
+      <div id="new-archive-form" hidden>
+        <div class="form-row">
+            <label for="name">Name:</label>
+            <input type="text" id="archive-name" name="name" placeholder="my_new_archive">
+        </div>
+        <div class="form-row">
+            <label for="file">Save Location:</label>
+            <button id="archive-directory-button">Choose</button>
+        </div>
+        <div id="new-directory-path"></div>
+        <button id="create-archive-button" class="normal-button" type="submit">Create</button>
+      </div>
+    </div>
+  </body>
+</html>

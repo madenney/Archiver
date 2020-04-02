@@ -2,9 +2,10 @@
   "name": "autouploader",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lessc styles/index.less dist/styles.css && electron main.js"
   },
   "author": "Matt Denney",
   "license": "ISC",
@@ -16,12 +17,16 @@
   },
   "devDependencies": {
     "commander": "^2.20.0",
+    "electron": "^8.2.0",
+    "electron-reload": "^1.5.0",
     "ffmpeg": "0.0.4",
     "ffmpeg-concat": "^1.0.13",
     "ffprobe": "^1.1.0",
     "fluent-ffmpeg": "^2.1.2",
     "gl-transitions": "^1.43.0",
     "graphql-client": "^2.0.1",
+    "jquery": "^3.4.1",
+    "less": "^3.11.1",
     "rimraf": "^2.6.3"
   }
 }

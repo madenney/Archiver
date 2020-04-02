@@ -1,12 +1,12 @@
 
 const path = require("path")
 
-const { Tournament } = require("./Tournament")
-const { 
-    getDirectories,
-    getFiles,
-    asyncForEach
-} = require("../lib")
+//const { Tournament } = require("./Tournament")
+// const { 
+//     getDirectories,
+//     getFiles,
+//     asyncForEach
+// } = require("../lib")
 
 class Archive {
 

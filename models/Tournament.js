@@ -1,17 +1,17 @@
 
 const path = require("path")
 const fs = require("fs")
-const rimraf = require("rimraf")
+//const rimraf = require("rimraf")
 const { spawn, exec } = require('child_process');
 const taskkill = require('taskkill');
-const handbrake = require('handbrake-js')
-const fluent_ffmpeg = require("fluent-ffmpeg");
-const concat = require('ffmpeg-concat')
-const ffmpeg = require("ffmpeg")
+// const handbrake = require('handbrake-js')
+// const fluent_ffmpeg = require("fluent-ffmpeg");
+// const concat = require('ffmpeg-concat')
+// const ffmpeg = require("ffmpeg")
 const graphQl = require('graphQl-client')
 const uuidv4 = require("uuid/v4")
 
-const { tournamentQuery, eventsQuery } = require("../smashGGQueries")
+const { tournamentQuery, eventsQuery } = require("../constants/smashggQueries")
 
 const { 
 	getDirectories,

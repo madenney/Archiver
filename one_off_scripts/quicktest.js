@@ -1,12 +1,12 @@
 
 console.log("HEY")
 const path = require("path")
-const slpParser = require("./parser")
+const slpParser = require("../parser")
 
 const { 
 	getDirectories,
 	getFiles
-} = require("./lib")
+} = require("../lib")
 
 const vodsDir = "./rawSlp50"
 

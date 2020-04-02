@@ -29,6 +29,7 @@ const archivePath = path.resolve("../mad_archive")
 const main = async function () {
     console.log("MAIN");
 
+
     let seconds = 10800
     let loadingDots = ""
     setInterval(() => {
@@ -46,7 +47,7 @@ const main = async function () {
     setTimeout(() => {
         taskkill(["Dolphin.exe", 'obs64.exe' /*, "S2V.exe" */], { force: true })
     }, seconds * 1000 )
-    return
+
 
     const json = JSON.parse( fs.readFileSync( "./combos.json" ))
     console.log("Queue length: ", json.queue.length )
@@ -63,7 +64,7 @@ const main = async function () {
     console.log("Seconds: ", totalFrames / 60 )
     console.log("Minutes: ", Math.round( totalFrames / 60 / 60) )
     console.log("Total Skips: ", skipClipCount )
-    return
+    
     const archive = new Archive( archivePath )
     console.log("Loading Archive")
     archive.load()

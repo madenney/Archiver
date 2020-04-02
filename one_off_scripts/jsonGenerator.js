@@ -1,7 +1,7 @@
 
-const { getFiles } = require("./lib/fileHandler")
+const { getFiles } = require("../lib/fileHandler")
 
-const { default: SlippiGame } = require("./parser")
+const { default: SlippiGame } = require("../parser")
 
 const vodsDir = "./vods"
 const superVodsDir = ""
