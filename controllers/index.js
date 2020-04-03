@@ -19,13 +19,13 @@ const main = () => {
         console.log("Last Archive: ", lastArchivePath );
         const archive = new Archive(lastArchivePath);
         controller = new MainController( archive, mainContentId );
-        controller.init();
+        controller.populateArchiveMetaData();
     } else {
         console.log("No Last Archive");
         new Startup(startupId, (archivePath) => {
             const archive = new Archive(archivePath);
             controller = new MainController( archive, mainContentId );
-            controller.init();
+            controller.populateArchiveMetaData();
         })
     }
 

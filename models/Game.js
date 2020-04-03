@@ -7,7 +7,23 @@ const {
 
 class Game {
 
-    constructor( props ) {
+    constructor(gameJSON){
+        this.id = gameJSON.id;
+        this.char1 = gameJSON.char1;
+        this.char2 = gameJSON.char2;
+        this.winner = gameJSON.winner;
+        this.stage = gameJSON.stage;
+        this.timestamp = gameJSON.timestamp;
+        this.slpPath = gameJSON.slpPath;
+        this.isInvalid = gameJSON.isInvalid;
+        this.isFriendly = gameJSON.isFriendly;
+
+        // Break this into it's own Combo class? 
+        this.combos = gameJSON.combos;
+    }
+
+    // 4/3
+    oldConstructor( props ) {
     	
     	if( props.slpFileName ){
     		if( !props.slpFileName.indexOf( "_vs_" ) ){

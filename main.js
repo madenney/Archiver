@@ -13,7 +13,10 @@ function createWindow () {
 
   win.loadFile('views/index.html')
   
-  win.webContents.openDevTools()
+
+  if( process.env.DEVELOPMENT ){
+    win.webContents.openDevTools()
+  }
 
 }
 
