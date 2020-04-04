@@ -50,11 +50,17 @@ class Tournament {
         this.unknownPlayers = []
 
         // loop through sets
-        if( tournamentJSON.sets ){
-            this.sets = [];
-            tournamentJSON.sets.forEach(setJSON => {
-                this.sets.push( new Set(setJSON) );
-            })
+        try {
+            if( tournamentJSON.sets ){
+                this.sets = [];
+                tournamentJSON.sets.forEach(setJSON => {
+                    this.sets.push( new Set(setJSON) );
+                })
+            }
+        } catch(err){
+            console.log("An error occured in Tournament constructor");
+            console.log(err);
+            throw err;
         }
     }
 

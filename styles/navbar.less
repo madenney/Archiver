@@ -1,0 +1,30 @@
+
+#navbar {
+
+    color: @color2;
+    .title {
+        
+        text-align: center;
+    }
+
+    #tabs {
+        
+        .tab {
+            display: inline-block;
+            border: solid blue 1px;
+            width: 200px;
+            font-size: 20px;
+            padding: 5px;
+            &:hover {
+                cursor: pointer;
+                background-color: lightblue;
+            }
+        }
+
+        .active-tab {
+            border: solid blue 3px;
+            border-bottom: none;
+        }
+    }
+
+}

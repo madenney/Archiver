@@ -1,10 +1,10 @@
 {
-    "id": "",
-	"name": "",
-    "timestamp": "",
-    "smashggUrl": "",
-    "sets": null,
-    "events": [],
-    "players": [],
-    "slpDir": ""
+    "id": null,
+	"name": null,
+    "timestamp": null,
+    "smashggUrl": null,
+    "sets": [],
+    "events": null,
+    "players": null,
+    "slpDir": null
 }

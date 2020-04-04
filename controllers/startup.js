@@ -41,7 +41,7 @@ class Startup {
             
             if(path && path[0]){
                 this.content.hide();
-                this.callback(path);
+                this.callback(path[0]);
             }
         })
 

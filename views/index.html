@@ -6,11 +6,16 @@
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" type="text/css" href="../dist/styles.css">
-    <script src="../controllers/index.js"></script>
   </head>
   <body>
     <div id="navbar">
         <h1 class="title">Archiver</h1>
+        <ul id="tabs">
+          <li value="meta" class="tab">Meta Data</li>
+          <li value="labeller"class="tab">Labeller</li>
+          <li value="combo"class="tab">Combo Video Creator</li>
+          <li value="uploader"class="tab">Uploader</li>
+        </ul>
     </div>
     <div id="main-content">
     </div>
@@ -32,4 +37,5 @@
       </div>
     </div>
   </body>
+  <script src="../controllers/index.js"></script>
 </html>

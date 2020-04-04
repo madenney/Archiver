@@ -6,16 +6,12 @@
   border: solid lightgray 1px;
   background-color: #342E37;
 }
-#main-content .title {
-  color: #FAFFFD;
-  text-align: center;
-}
 #startup {
   position: fixed;
   border: solid black 2px;
   text-align: center;
   border-radius: 5px;
-  display: block;
+  display: none;
   margin: 150px auto;
   top: 0px;
   left: 0px;
@@ -53,6 +49,55 @@
   height: 25px;
   font-size: 18px;
   color: #9FD356;
+}
+#meta-body {
+  color: #FAFFFD;
+}
+#meta-body .title {
+  font-size: 45px;
+  margin: 10px;
+}
+#meta-body .section {
+  margin: 10px;
+}
+#meta-body .section .section-title {
+  text-decoration: underline;
+  font-size: 26px;
+  margin: 10px 0px;
+}
+#meta-body .section .row {
+  font-size: 22px;
+  margin: 5px 20px;
+}
+#meta-body .section .row .label {
+  display: inline-block;
+  width: 300px;
+}
+#meta-body .section .row .value {
+  display: inline-block;
+  margin-left: 20px;
+  font-size: 21px;
+}
+#navbar {
+  color: #FAFFFD;
+}
+#navbar .title {
+  text-align: center;
+}
+#navbar #tabs .tab {
+  display: inline-block;
+  border: solid blue 1px;
+  width: 200px;
+  font-size: 20px;
+  padding: 5px;
+}
+#navbar #tabs .tab:hover {
+  cursor: pointer;
+  background-color: lightblue;
+}
+#navbar #tabs .active-tab {
+  border: solid blue 3px;
+  border-bottom: none;
 }
 body {
   position: relative;

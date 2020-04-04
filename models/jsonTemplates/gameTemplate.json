@@ -1,12 +1,12 @@
 {
-    "id": "",
-	"char1": "",
-    "char2": "",
-    "winner": "",
-    "stage": "",
-    "timestamp": "",
-    "slpPath": "",
-    "isInvalid": null,
+    "id": null,
+	"char1": null,
+    "char2": null,
+    "winner": null,
+    "stage": null,
+    "timestamp": null,
+    "slpPath": null,
+    "isValid": null,
     "isFriendly": null,
     "combos": null
 }

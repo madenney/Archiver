@@ -9,7 +9,7 @@ const {
 } = require("../lib")
 
 class Archive {
-
+    
     constructor( archivePath ) {
         this.path = archivePath
         // validate given json
@@ -31,7 +31,6 @@ class Archive {
             throw err
         }
     }
-
 
     load(){
         getDirectories( this.archivePath ).forEach( directory => {
