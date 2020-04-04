@@ -1,20 +1,36 @@
 
 const path = require("path")
-
-//const { Tournament } = require("./Tournament")
-// const { 
-//     getDirectories,
-//     getFiles,
-//     asyncForEach
-// } = require("../lib")
+const fs = require("fs");
+const { Tournament } = require("./Tournament")
+const { 
+    getDirectories,
+    getFiles,
+    asyncForEach
+} = require("../lib")
 
 class Archive {
-
+    
     constructor( archivePath ) {
-        this.archivePath = archivePath
-        this.tournaments = []
-    }
+        this.path = archivePath
+        // validate given json
+        try {
+            const archiveJSON = JSON.parse(fs.readFileSync(archivePath));
+            if(!archiveJSON.name) throw "Archive has no name";
+            this.name = archiveJSON.name;
+            this.date = archiveJSON.date ? archiveJSON.date : new Date().getTime().toString();
 
+            if( archiveJSON.tournaments ){
+                this.tournaments = [];
+                archiveJSON.tournaments.forEach(tournamentJSON => {
+                    this.tournaments.push( new Tournament(tournamentJSON));
+                })
+            }
+        } catch(err){
+            console.log("An error occured in Archive constructor");
+            console.log(err);
+            throw err
+        }
+    }
 
     load(){
         getDirectories( this.archivePath ).forEach( directory => {

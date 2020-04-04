@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env DEVELOPMENT=true npm start",
     "start": "lessc styles/index.less dist/styles.css && electron main.js"
   },
   "author": "Matt Denney",
@@ -16,6 +17,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "chokidar": "^3.3.1",
     "commander": "^2.20.0",
     "electron": "^8.2.0",
     "electron-reload": "^1.5.0",

@@ -1,0 +1,12 @@
+{
+    "id": null,
+	"char1": null,
+    "char2": null,
+    "winner": null,
+    "stage": null,
+    "timestamp": null,
+    "slpPath": null,
+    "isValid": null,
+    "isFriendly": null,
+    "combos": null
+}

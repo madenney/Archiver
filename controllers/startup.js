@@ -29,7 +29,8 @@ class Startup {
             newArchiveForm.show();
         })
 
-        existingButton.click(() => {
+        existingButton.click((e) => {
+            e.preventDefault();
             const path = dialog.showOpenDialogSync({
                 properties: ['openFile'],
                 filters: [{
@@ -37,8 +38,11 @@ class Startup {
                     extensions: ['json']
                 }]
             });
-            this.content.hide();
-            this.callback(path);
+            
+            if(path && path[0]){
+                this.content.hide();
+                this.callback(path[0]);
+            }
         })
 
         archiveNameField.keyup( (e) => {
@@ -59,7 +63,7 @@ class Startup {
 
         createArchiveButton.click(() => {
 
-            const archiveJSON = JSON.parse(fs.readFileSync(path.resolve('./constants/archiveTemplate.json')));
+            const archiveJSON = JSON.parse(fs.readFileSync(path.resolve('./models/jsonTemplates/archiveTemplate.json')));
             archiveJSON.name = this.archiveName;
             fs.writeFileSync(this.path, JSON.stringify(archiveJSON));
             this.content.hide();

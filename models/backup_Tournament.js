@@ -38,30 +38,15 @@ const jsonDir = path.resolve("./jsonTemplates")
 
 class Tournament {
 
-    constructor(tournamentJSON) {
-        this.id = tournamentJSON.id;
-        this.name = tournamentJSON.name;
-        this.timestamp = tournamentJSON.timestamp;
-        this.smashGGUrl = tournamentJSON.smashggUrl;
-        this.events = tournamentJSON.events;
-        this.players = tournamentJSON.players;
-        this.slpDir = tournamentJSON.slpDir;
-        // need to keep these?
+    constructor() {
+        this.sets = []
+        this.name = ""
+        this.id = null
+        this.events = []
+        this.players = []
+        this.slpDir = null
+        this.json = null
         this.unknownPlayers = []
-
-        // loop through sets
-        try {
-            if( tournamentJSON.sets ){
-                this.sets = [];
-                tournamentJSON.sets.forEach(setJSON => {
-                    this.sets.push( new Set(setJSON) );
-                })
-            }
-        } catch(err){
-            console.log("An error occured in Tournament constructor");
-            console.log(err);
-            throw err;
-        }
     }
 
     async init( slpDir, smashGGUrl, tourneyStartTime ){
@@ -100,10 +85,11 @@ class Tournament {
                 // Check if file was recorded before tournament started
                 if( !info.invalid ){
                     info.uuid = uuidv4();
-                    if( this.tourneyStartTime > info.startAtTimestamp ){
-                        info.isFriendly = true
-                        info.reason = "Happened before tournament"
-                    }
+                    // UNCOMMMENT THIS OUT YA IDIOT
+                    // if( this.tourneyStartTime > info.startAtTimestamp ){
+                    //     info.isFriendly = true
+                    //     info.reason = "Happened before tournament"
+                    // }
                 }
                 
                 this.json.slpFiles.push({
@@ -253,9 +239,9 @@ class Tournament {
                 })
                 if( conflictingSmashGGSets.length > 0 ){
                     conflictCount++
-                    console.log("CONFLICTS FOUND")
+                    //console.log("CONFLICTS FOUND")
                 } else {
-                    console.log("No Conflict. Set Confirmed.")
+                    //console.log("No Conflict. Set Confirmed.")
                     set.isLinked = true
                     set.linkedSlpFiles = set.potentialSlpSets[0].map( p => p.uuid )
                     set.potentialSlpSets[0].forEach( slpSet => {
