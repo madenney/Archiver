@@ -19,7 +19,6 @@ class Data {
         this.assignClickListeners();
 
         const a = this.archive;
-        console.log(a);
         let totalSlpFiles = 0;
         let totalProcessedFiles = 0;
         let totalValidGames = 0;
@@ -75,9 +74,12 @@ class Data {
         $("#select-tournament-container .ok").off();
         $("#select-tournament-container .cancel").off();
 
-
         $("#import-tournament-button").click(() => {
+            if($("#import-tournament-container").is(":visible")) return;
             $("#data-message").html('').removeClass("red");
+            $("#import-tournament-input").attr('placeholder',"https://smash.gg/tournament/half-moon-55")
+            this.warningCount = 0;
+            $("#import-tournament-input").val('')
             $("#import-tournament-container").show();
             $("#select-tournament-container").hide()
         })
@@ -87,7 +89,6 @@ class Data {
             $("#import-tournament-container p").show();
             $("#import-tournament-container").hide()
         });
-        this.warningCount = 0;
         this.warnings = [
             {
                 message: "Are you sure you want to create a tournament without a smash.gg url?",
@@ -100,19 +101,45 @@ class Data {
             {
                 message: "You miss out on some of the core functionality of the app when you do this. Please add a smash.gg url",
                 buttonHtml: "Never"
+            },
+            {
+                message: "Fine.\nWhat do you want to call it?",
+                buttonHtml: "Create"
+            },
+            {
+                message: "You have to name it",
+                buttonHtml: "Create"
             }
         ]
         $("#import-tournament-container .ok").click(() => {
-            
+            console.log(this.warningCount);
+            console.log(this.warnings.length)
             const tournamentJSON = JSON.parse(fs.readFileSync(path.resolve("models/jsonTemplates/tournamentTemplate.json")));
 
-
             const url = $("#import-tournament-input").val();
-
-            if(url === ""){
+            if(url === "" || this.warningCount === this.warnings.length || this.warningCount === this.warnings.length - 1 ){
+                if(this.warningCount === this.warnings.length-2){
+                    $("#import-tournament-container .ok").html(this.warnings[this.warningCount].buttonHtml);
+                    $("#data-message").html(this.warnings[this.warningCount++].message).addClass("bottom-margin");
+                    $("#import-tournament-input").attr('placeholder','My New Tournament')
+                    return;
+                }
+                if(this.warningCount === this.warnings.length-1){
+                    if(url){
+                        this.warningCount++
+                    } else {
+                        $("#import-tournament-container .ok").html(this.warnings[this.warningCount].buttonHtml);
+                        $("#data-message").html(this.warnings[this.warningCount].message).addClass("bottom-margin");
+                        $("#import-tournament-input").attr('placeholder','My New Tournament')
+                        return;
+                    }
+                }
                 if(this.warningCount === this.warnings.length){
                     this.warningCount = 0;
-                    this.archive.tournaments.push(new Tournament(tournamentJSON));
+                    const newTournament = new Tournament(tournamentJSON);
+                    newTournament.name = $("#import-tournament-input").val();
+                    this.archive.tournaments.push(newTournament);
+                    $("#import-tournament-container .cancel").click();
                     this.render();
                     return;
                 }
@@ -141,6 +168,12 @@ class Data {
             $("#data-message").html('').removeClass("red");
             $("#import-tournament-container").hide()
             $("#select-tournament-container").show();
+            $("#select-tournament-dropdown").empty();
+            $("#select-tournament-dropdown").append($('<option value="none">No Tournament</option>'));
+            this.archive.tournaments.forEach((tournament,index) => {
+                const newOption = $(`<option value=${index+1}>${tournament.name}</option>`)
+                $("#select-tournament-dropdown").append(newOption);
+            });
         })
         $("#select-tournament-container .cancel").click(() => {
             $("#data-message").html('').removeClass("red");
