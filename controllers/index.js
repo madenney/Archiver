@@ -6,7 +6,7 @@ const { remote } = require('electron')
 
 const { Archive } = require("../models/index");
 const { MainController } = require("../controllers/Main");
-const { Startup } = require("../controllers/startup");
+const { Startup } = require("../controllers//Startup");
 
 const mainContentId = "main-content";
 const startupId = "startup";
@@ -19,14 +19,14 @@ const main = () => {
         lastArchivePath = localStorage.last_archive;
         const archive = new Archive(lastArchivePath);
         controller = new MainController( archive, mainContentId );
-        controller.showTab('meta');
+        controller.showTab('data');
     } else {
         console.log("No Last Archive");
         new Startup(startupId, (archivePath) => {
             const archive = new Archive(archivePath);
             localStorage.last_archive = archivePath;
             controller = new MainController( archive, mainContentId );
-            controller.showTab('meta');
+            controller.showTab('data');
         })
     }
 

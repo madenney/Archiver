@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <div id="data-body">
+    <div id="data-actions-container">
+        <button id="import-tournament-button">Add Tournament</button>
+        <button id="add-files-button">Add .slp files</button>
+        <p id="data-message"></p>
+        <div id="import-tournament-container">
+                <p>SmashGG URL</p>
+                <input id="import-tournament-input" placeholder="https://smash.gg/tournament/half-moon-55">
+                <div class="confirm-buttons">
+                    <button class="cancel">Cancel</button>
+                    <button class="ok">Ok</button>
+                </div>
+            </div>
+        <div id="select-tournament-container">
+            <p>Which tournament are these games from?</p>
+            <select id="select-tournament-dropdown">
+                <option value="none">No Tournament</option>
+            </select>
+            <div class="confirm-buttons">
+                <button class="cancel">Cancel</button>
+                <button class="ok">Ok</button>
+            </div>
+        </div>
+    </div>
+    <h1 class="title">Data</h1>
+    <div class="section">
+        <div class="section-title">Slippi</div>
+        <div class="row">
+            <div class="label">Total .slp files: </div>
+            <div id="data-total-slp-files" class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">Processed files: </div>
+            <div id="data-total-processed-files" class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">Valid games: </div>
+            <div id="data-total-valid-games" class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">Labelled games: </div>
+            <div id="data-total-labelled-games" class="value"></div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title">Tournament</div>
+        <div class="row">
+            <div class="label">Tournaments: </div>
+            <div id="data-total-tournaments" class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">Total Games: </div>
+            <div id="data-total-tournament-games"class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">SmashGG Sets: </div>
+            <div id="data-total-smashgg-sets" class="value"></div>
+        </div>
+        <div class="row">
+                <div class="label">Linked Sets: </div>
+                <div id="data-total-linked-sets" class="value"></div>
+            </div>
+        <div class="row">
+            <div class="label">Linked Games: </div>
+            <div id="data-total-linked-games"class="value"></div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title">File:</div>
+        <div class="row">
+            <div class="label">Created: </div>
+            <div id="data-created-at" class="value"></div>
+        </div>
+        <div class="row">
+            <div class="label">Last Updated:</div>
+            <div id="data-updated-at" class="value"></div>
+        </div>
+    </div>
+    <br>
+    <div class="section">
+        <div>More to come...</div>
+    </div>
+    </div>
+  </div>
+</html>

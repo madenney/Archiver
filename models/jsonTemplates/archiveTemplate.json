@@ -1,7 +1,7 @@
 {
 	"name": null,
 	"date": null,
-	"tournaments": null,
-	"nonTournamentGames": null,
+	"tournaments": [],
+	"nonTournamentGames": [],
 	"outputDir": null
 }
