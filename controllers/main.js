@@ -21,6 +21,16 @@ class MainController {
             this.showTab(e.target.getAttribute('value'));
         });
 
+        this.saveButton = $("#save-button");
+        this.saveButton.click(async () => {
+            this.saveButton.prop('disabled',true).html("Saving...");
+            this.archive.save();
+            this.saveButton.html("Saved").addClass('green');
+            setTimeout(()=>{ 
+                this.saveButton.prop('disabled',false).html('Save').removeClass('green')
+            },1000)
+        })
+
     }
 
     showTab(tab){
@@ -44,6 +54,7 @@ class MainController {
         }
     }
 
+    
 }
 
 module.exports = { MainController }

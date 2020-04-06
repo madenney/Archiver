@@ -3,8 +3,9 @@
 	"name": null,
     "timestamp": null,
     "smashggUrl": null,
+    "smashggId": null,
     "sets": [],
+    "unlinkedGames": [],
     "events": null,
-    "players": null,
-    "slpDir": null
+    "players": null
 }

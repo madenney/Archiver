@@ -13,7 +13,8 @@ const uuidv4 = require("uuid/v4")
 
 const { tournamentQuery, eventsQuery } = require("../constants/smashggQueries")
 
-const { 
+const {
+    getSlpFilePaths,
 	getDirectories,
 	getFiles,
     asyncForEach,
@@ -24,6 +25,8 @@ const {
 
 const { Game } = require("./Game")
 const { Set } = require("./Set")
+const  setTemplate = JSON.parse( fs.readFileSync(path.resolve("models/jsonTemplates/setTemplate.json")));
+const  gameTemplate = JSON.parse( fs.readFileSync(path.resolve("models/jsonTemplates/gameTemplate.json")));
 const { players } = JSON.parse( fs.readFileSync("./constants/players.json"))
 
 const smashGGReportTimeTolerance = 180 * 1000
@@ -45,7 +48,6 @@ class Tournament {
         this.smashGGUrl = tournamentJSON.smashggUrl;
         this.events = tournamentJSON.events;
         this.players = tournamentJSON.players;
-        this.slpDir = tournamentJSON.slpDir;
         // need to keep these?
         this.unknownPlayers = []
 
@@ -57,10 +59,48 @@ class Tournament {
                     this.sets.push( new Set(setJSON) );
                 })
             }
+            if( tournamentJSON.unlinkedGames ){
+                this.unlinkedGames = [];
+                tournamentJSON.unlinkedGames.forEach(gameJSON => {
+                    this.unlinkedGames.push( new Game(gameJSON) );
+                })
+            }
         } catch(err){
             console.log("An error occured in Tournament constructor");
             console.log(err);
             throw err;
+        }
+    }
+
+
+    addSlpFiles(paths){
+        const slpFilesPaths = getSlpFilePaths(paths);
+        slpFilesPaths.forEach( slpPath => {
+            this.unlinkedGames.push( new Game({
+                ...gameTemplate,
+                slpPath
+            }))
+        })
+    }
+
+    getAllSlpFiles(){
+        const files = [];
+        this.sets.forEach(s=>s.games.forEach(g=>files.push(g)));
+        this.unlinkedGames.forEach(g=>files.push(g));
+        return files;
+    }
+
+    generateJSON(){
+        return {
+            id: this.id,
+            name: this.name,
+            timestamp: this.timestamp,
+            smashggUrl: this.smashGGUrl,
+            smashggId: this.smashggId,
+            sets: this.sets.map(s=>s.generateJSON()),
+            unlinkedGames: this.unlinkedGames.map(g=>g.generateJSON()),
+            events: this.events,
+            players: this.players
         }
     }
 
@@ -136,9 +176,9 @@ class Tournament {
                 }
             )
 
+            this.smashggUrl = tourneyUrl;
             this.smashGGID = data.tournament.id
             this.name = data.tournament.name
-            this.json.name = data.tournament.name
             this.events = data.tournament.events
         } catch( err ){
             console.log("Something went wrong with smashGG - ", err)
@@ -193,13 +233,17 @@ class Tournament {
             })
 
             const rawSmashGGSets = this.events.reduce( (sets, event) => [...sets, ...event.sets.nodes], [] )
-            this.json.smashGGSets = rawSmashGGSets.map( set => {
+            this.sets = rawSmashGGSets.map( set => {
                 const info = this.digestSmashGGSetInfo( set )
-                info.uuid = uuidv4()
-                return info
+                info.id = uuidv4()
+                return new Set({
+                    ...setTemplate,
+                    ...info,
+                    isLinked: false
+                });
             })
 
-            this.saveJSON()
+            return "Success";
 
         } catch ( err ){
             console.log("ERROR", err )
@@ -728,13 +772,13 @@ class Tournament {
         return connectedSets
     }
 
-    getAllSlpFiles(){
-        return this.json.slpFiles
-    }
+    // getAllSlpFiles(){
+    //     return this.json.slpFiles
+    // }
 
-    getAllSets(){
-        return this.json.smashGGSets
-    }
+    // getAllSets(){
+    //     return this.json.smashGGSets
+    // }
 
     retroactivelyConnectLabelledSlpToSmashGG( labelledVods ){
         const { slpFiles, smashGGSets } = this.json

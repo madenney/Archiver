@@ -13,13 +13,15 @@
 
         p {
             font-size: 18px;
+            height: 22px;
+            margin: 10px;
         }
 
         #data-message {
             margin: 0px 10px;
             font-size: 18px;
-            min-height: 20px;
-
+            height: auto;
+            min-height: 30px;
             &.bottom-margin {
                 margin-bottom: 10px;
             }
@@ -27,6 +29,9 @@
 
         .red {
             color: red;
+        }
+        .green {
+            color: green;
         }
         button {
             vertical-align: top;
@@ -42,6 +47,10 @@
             &:hover {
                 cursor: pointer;
                 background-color: lightblue;
+            }
+
+            &:disabled {
+                background-color: gray;
             }
         }
 

@@ -6,3 +6,27 @@
     width: 100%;
     border: solid lightgray 1px;
 }
+
+#save-button {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background-color: @color3;
+    color: @color1;
+    font-size: 20px;
+    padding: 5px 15px;
+    border-radius: 4px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: lightblue;
+    }
+
+    &:disabled {
+        background-color: gray;
+    }
+
+    &.green {
+        color: darkgreen;
+    }
+}
