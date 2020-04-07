@@ -9,6 +9,7 @@ const { Uploader } = require('./Uploader');
 class MainController {
 
     constructor(archive){
+        console.log(archive.generateJSON());
         this.archive = archive;
         this.mainView = $(`#main-content`);
         this.dataTabController = new Data(archive);
@@ -41,7 +42,7 @@ class MainController {
                 this.mainView.load("../views/data.html", this.dataTabController.render.bind(this.dataTabController));
                 break;
             case 'labeller':
-                this.mainView.load("../views/labeller.html");
+                this.mainView.load("../views/data.html", this.labellerTabController.render.bind(this.labellerTabController));
                 break;
             case 'combo':
                 this.mainView.load("../views/combo.html");

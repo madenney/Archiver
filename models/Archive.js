@@ -21,6 +21,7 @@ class Archive {
             if(!archiveJSON.name) throw "Archive has no name";
             this.name = archiveJSON.name;
             this.createdAt = archiveJSON.createdAt ? archiveJSON.createdAt : new Date().getTime().toString();
+            this.updatedAt = archiveJSON.updatedAt;
 
             if( archiveJSON.nonTournamentGames ){
                 this.nonTournamentGames = [];
@@ -71,6 +72,17 @@ class Archive {
             outputDir: this.outputDir
         }
         fs.writeFileSync(this.path, JSON.stringify(jsonToSave));
+    }
+
+    generateJSON(){
+        return {
+            name: this.name,
+            createdAt: this.createdAt,
+            updatedAt: new Date().getTime().toString(),
+            tournaments: this.tournaments.map(t=>t.generateJSON()),
+            nonTournamentGames: this.nonTournamentGames.map(g=>g.generateJSON()),
+            outputDir: this.outputDir
+        } 
     }
 
     load(){

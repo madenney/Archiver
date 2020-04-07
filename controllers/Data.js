@@ -3,19 +3,18 @@ const fs = require('fs');
 const path = require('path')
 const { remote: { dialog } } = require('electron');
 
-const { isURL,getSlpFiles } = require("../lib/index");
+const { isURL, asyncForEach, readableDate } = require("../lib");
 const { Tournament } = require("../models/Tournament");
-const { asyncForEach } = require("../lib");
 
 class Data {
     constructor(archive){
         this.archive = archive;
-        this.isRendered =  false;
     }
 
     render(){
         console.log("Rendering Data Tab");
 
+        
         this.assignClickListeners();
 
         const a = this.archive;
@@ -68,10 +67,8 @@ class Data {
         $("#data-total-processed-files").html(totalProcessedFiles);
         $("#data-total-valid-games").html(totalValidGames);
         $("#data-total-labelled-games").html(totalLabelledGames);
-        $("#data-created-at").html(a.createdAt ? new Date(a.createdAt).toTimeString() : "N/A");
-        $("#data-updated-at").html(a.updatedAt ? new Date(a.updatedAt).toTimeString() : "N/A");
-
-        this.isRendered = true;
+        $("#data-created-at").html(a.createdAt ? readableDate(a.createdAt) : "N/A");
+        $("#data-updated-at").html(a.updatedAt ? readableDate(a.updatedAt) : "N/A");
 
     }
 
@@ -125,8 +122,6 @@ class Data {
             }
         ]
         $("#import-tournament-container .ok").click(() => {
-            console.log(this.warningCount);
-            console.log(this.warnings.length)
             const tournamentJSON = JSON.parse(fs.readFileSync(path.resolve("models/jsonTemplates/tournamentTemplate.json")));
 
             const url = $("#import-tournament-input").val();
