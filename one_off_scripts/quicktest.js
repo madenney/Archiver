@@ -1,7 +1,7 @@
 
 console.log("HEY")
 const path = require("path")
-const slpParser = require("../parser")
+const slpParser = require("slp-parser-js")
 
 const { 
 	getDirectories,

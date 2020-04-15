@@ -22,6 +22,12 @@ class MainController {
             this.showTab(e.target.getAttribute('value'));
         });
 
+        this.title = $("#navbar-title"); 
+        if(archive.name){
+            console.log("HEY");
+            this.title.html(archive.name);
+        }
+
         this.saveButton = $("#save-button");
         this.saveButton.click(async () => {
             this.saveButton.prop('disabled',true).html("Saving...");
@@ -42,11 +48,11 @@ class MainController {
                 this.mainView.load("../views/data.html", this.dataTabController.render.bind(this.dataTabController));
                 break;
             case 'labeller':
-                this.mainView.load("../views/data.html", this.labellerTabController.render.bind(this.labellerTabController));
+                this.mainView.load("../views/labeller.html", this.labellerTabController.render.bind(this.labellerTabController));
                 break;
             case 'combo':
-                this.mainView.load("../views/combo.html");
-                break;
+                this.mainView.load("../views/combo.html", this.comboCreatorTabController.render.bind(this.comboCreatorTabController));
+            break;
             case 'uploader':
                 this.mainView.load("../views/uploader.html");                
                 break;

@@ -4,4 +4,4 @@ class Labeller {
     }
 }
 
-module.exports = {Labeller}
+module.exports = {Labeller} 

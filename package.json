@@ -11,10 +11,9 @@
   "author": "Matt Denney",
   "license": "ISC",
   "dependencies": {
-    "@shelacek/ubjson": "^1.0.1",
-    "handbrake-js": "^3.0.8",
     "taskkill": "^3.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "slp-parser-js": "^4.1.0"
   },
   "devDependencies": {
     "chokidar": "^3.3.1",

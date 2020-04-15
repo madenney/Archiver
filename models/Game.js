@@ -6,7 +6,7 @@ const {
 } = require("../lib")
 
 
-const slpParser = require("../parser")
+const slpParser = require("slp-parser-js")
 
 const validStageIds = [2,3,8,28,31,32]
 
@@ -30,7 +30,7 @@ class Game {
         this.combos = gameJSON.combos;
     }
 
-    getInfoFromSlpFile(){
+    process(){
         return new Promise((resolve,reject)=> setTimeout(()=>{
             console.log(this.slpPath);
             this.isProcessed = true;
@@ -38,6 +38,11 @@ class Game {
 
             // check settings for indicators of invalid game
             const settings = game.getSettings()
+            if(!settings){
+                this.isValid = false;
+                this.info = "Bad settings";
+                return resolve();
+            }
             if( settings.isTeams ){ 
                 this.isValid = false;
                 this.info = "teams";
@@ -68,10 +73,15 @@ class Game {
 
             // check metadata for indicators of invalid game
             const metadata = game.getMetadata()
+            if(!metadata){
+                this.isValid = false;
+                this.info = "Bad metadata";
+                return resolve();
+            }
             const length = metadata.lastFrame / 60 
             if( isNaN( length ) ){ 
                 this.isValid = false;
-                this.info = "No metadata";
+                this.info = "No length";
                 return resolve();
             }
             if( length < 45 ){ 
@@ -81,7 +91,9 @@ class Game {
             }
 
             // check stats for indicators of invalid game
-            const { overall, stocks, gameComplete, conversions } = game.getStats();
+            const x = game.getStats();
+            console.log(x);
+            const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
             // TODO: Come back to this
             if( !gameComplete ){ throw "INCOMPLETE GAME???? " + this.slpPath }
             if( overall.every( p => p.totalDamage < 100 )){ 
@@ -141,9 +153,29 @@ class Game {
                 characterColor: p2.characterColor,
                 nametag: p2.nametag
             }];
+            this.combos = combos;
 
             resolve()
         },1));
+    }
+
+    getCombos({comboer,comboee,didKill,minMoves,minDamage,containsMove,endMove}){
+        return this.combos.filter(c => {
+            const comboerCharId = this.players.find(p => {
+                return p.playerIndex === c.playerIndex;
+            });
+            const comboeeCharId = this.players.find(p => {
+                return p.playerIndex === c.opponentIndex;
+            });
+            if(comboer && !comboerCharId === comboer ) return false;
+            if(comboee && !comboeeCharId === comboee ) return false;
+            if( didKill && !c.didKill ) return false;
+            if( minMoves && !c.moves.length >= minHits ) return false;
+            if( minDamage && !c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage) return false;
+            if( containsMove && !c.moves.find(m => m.moveId === containsMove )) return false;
+            if( endMove && !c.moves[c.moves.length-1].moveId === endMove ) return true;
+            return true;
+        });
     }
 
 

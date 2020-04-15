@@ -210,6 +210,97 @@
   margin-left: 20px;
   font-size: 21px;
 }
+#combo-body {
+  color: #FAFFFD;
+}
+#combo-body #filters-container {
+  padding: 20px 40px;
+}
+#combo-body #filters-container > select {
+  margin: 10px;
+  font-size: 20px;
+}
+#combo-body #filters-container > span {
+  font-size: 25px;
+}
+#combo-body #filters-container button {
+  font-size: 25px;
+  padding: 4px;
+  margin: 0px 20px;
+  border-radius: 3px;
+  width: 80px;
+}
+#combo-body #filters-container button:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+#combo-body .list-container {
+  display: inline-block;
+  width: 400px;
+  border: solid white 1px;
+  padding: 5px;
+  vertical-align: top;
+  margin: 5px 20px;
+}
+#combo-body .list-container .info .row {
+  margin: 5px;
+  font-size: 20px;
+}
+#combo-body .list-container .info .row .label {
+  display: inline-block;
+  width: 65px;
+}
+#combo-body .list-container .info .row .data {
+  display: inline-block;
+  width: 20px;
+}
+#combo-body .list-container .list {
+  padding-left: 0px;
+}
+#combo-body .combo {
+  margin: 5px;
+  padding: 5px;
+  border-bottom: 1px solid white;
+}
+#combo-body .combo .game-info {
+  display: inline-block;
+  position: relative;
+  width: 30%;
+  height: auto;
+}
+#combo-body .combo .game-info .characters {
+  position: absolute;
+  margin: 5px;
+  padding-left: 5px;
+  top: 10px;
+}
+#combo-body .combo .game-info .characters img {
+  display: inline-block;
+  width: 25px;
+}
+#combo-body .combo .game-info .characters .arrow {
+  width: 20px;
+  margin: 2px;
+}
+#combo-body .combo .game-info .stage {
+  width: 100%;
+}
+#combo-body .combo .combo-info {
+  display: inline-block;
+  width: 30%;
+  vertical-align: top;
+}
+#combo-body .combo .combo-info .row {
+  margin: 5px;
+}
+#combo-body .combo .combo-info .row .label {
+  display: inline-block;
+  width: 65px;
+}
+#combo-body .combo .combo-info .row .data {
+  display: inline-block;
+  width: 20px;
+}
 #navbar {
   margin-bottom: 3px;
   color: #FAFFFD;

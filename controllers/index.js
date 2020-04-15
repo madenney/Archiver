@@ -19,14 +19,14 @@ const main = () => {
         lastArchivePath = localStorage.last_archive;
         const archive = new Archive(lastArchivePath);
         controller = new MainController( archive, mainContentId );
-        controller.showTab('data');
+        controller.showTab('combo');
     } else {
         console.log("No Last Archive");
         new Startup(startupId, (archivePath) => {
             const archive = new Archive(archivePath);
             localStorage.last_archive = archivePath;
             controller = new MainController( archive, mainContentId );
-            controller.showTab('data');
+            controller.showTab('combo');
         })
     }
 

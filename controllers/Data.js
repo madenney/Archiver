@@ -14,7 +14,6 @@ class Data {
     render(){
         console.log("Rendering Data Tab");
 
-        
         this.assignClickListeners();
 
         const a = this.archive;
@@ -250,7 +249,7 @@ class Data {
                     this.render();
                 }
                 $("#current-number-processed").html(count++);
-                await game.getInfoFromSlpFile();;
+                await game.process();;
             })
 
             setTimeout(() => {

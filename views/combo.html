@@ -1,11 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Combo</title>
-    <!-- <link rel="stylesheet" type="text/css" href="../dist/styles.css"> -->
-  </head>
-  <body>
-    <h1>Combo</h1>
-  </body>
+  <div id="combo-body">
+    <div id="filters-container">
+      <select id="char-1-select">
+        <option value="">Any Character</option>
+      </select>
+      <span>combos</span>
+      <select id="char-2-select">
+        <option value="">Any Character</option>
+      </select>
+      <span>on</span>
+      <select id="stage-select">
+        <option value="">Any Stage</option>
+      </select>
+      <button id="filter-button">Filter</button>
+    </div>
+    <div id="primary-list-container" class="list-container">
+      <div class="info">
+        <div class="row">
+          <div class="label">Total:</div>
+          <div class="data" id="primary-total"></div>
+        </div>
+        <div class="row">
+            <div class="label">Time:</div>
+            <div class="data" id="primary-total-time"></div>
+          </div>
+      </div>
+      <ul class="list"></ul>
+    </div>
+    <div id="secondary-list-container" class="list-container">
+        <div class="info">
+            <div class="row">
+              <div class="label">Total:</div>
+              <div class="data" id="secondary-total"></div>
+            </div>
+          </div>
+      <ul class="list"></ul>
+    </div>
+  </div>
 </html>
