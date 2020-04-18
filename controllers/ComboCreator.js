@@ -1,6 +1,7 @@
 
 const {characters} = require("../constants/characters");
 const {legalStages} = require("../constants/stages");
+const {moves} = require("../constants/moves");
 
 const { ComboController } = require("../controllers/Combo");
 
@@ -10,6 +11,46 @@ class ComboCreator {
         this.primaryComboList = null;
         this.primaryListCurrentPage = 0;
         this.numberPerPage = 50;
+        this.games = [];
+        this.combos = [];
+        this.loadCombos();
+        
+    }
+
+    loadCombos(){
+        const char1 = $("#char-1-select").val();
+        const char2 = $("#char-2-select").val();
+        const stage = $("#stage-select").val();
+        console.log("Getting games...");
+        this.games = this.archive.getGames({
+            char1,
+            char2,
+            stage,
+        });
+
+        console.log("Getting combos...")
+        console.log("DID KILL", $("#did-kill").is(":checked"))
+        this.combos = this.games.reduce((n,g) => {
+            const combos = g.getCombos({
+                comboer: char1,
+                comboee: char2,
+                didKill: $("#did-kill").is(":checked"),
+                minMoves: $("#min-moves").val() ? $("#min-moves").val() : 7,
+                minDamage: $("#min-damage").val() ? $("#min-damage").val() : 50,
+                includesMove: $("#includes").val(),
+                endMove: $("#ends-with").val()
+            });
+
+            // Need to combine combo object and game object
+            const returnArr = [];
+            combos.forEach(c => {
+                returnArr.push({
+                    combo: c,
+                    game: g
+                })
+            });
+            return n.concat( returnArr )
+        },[])
     }
 
     render(){
@@ -27,13 +68,26 @@ class ComboCreator {
 
     assignClickListeners(){
         const filterButton = $("#filter-button");
+        this.primaryListPrevButton = $("#primary-list-prev");
+        this.primaryListNextButton = $("#primary-list-next");
+        this.primaryListPrevButton.click(()=> {
+            this.renderPrimaryList(this.primaryListCurrentPage-1);
+        })
+        this.primaryListNextButton.click(()=> {
+            this.renderPrimaryList(this.primaryListCurrentPage+1);
+        })
         filterButton.off();
-        filterButton.click(this.renderPrimaryList.bind(this));
+        filterButton.click(() => {
+            this.loadCombos();
+            this.renderPrimaryList(0)
+        });
     }
 
     renderOptions(){
         const char1Select = $("#char-1-select");
         const char2Select = $("#char-2-select");
+        const stageSelect = $("#stage-select");
+        const endMoveSelect = $("#ends-with");
         characters.forEach(c => {
             const option = $(`<option value="${c.id}">${c.shortName}</option>`);
             char1Select.append(option);
@@ -42,65 +96,43 @@ class ComboCreator {
             const option = $(`<option value="${c.id}">${c.shortName}</option>`);
             char2Select.append(option);
         });
-        const stageSelect = $("#stage-select");
         legalStages.forEach(s => {
             const option = $(`<option value="${s.id}">${s.shortName}</option>`)
             stageSelect.append(option);
+        });
+        moves.forEach(m => {
+            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
+            endMoveSelect.append(option);
         })
     }
 
-    renderPrimaryList(page, numberPerPage){
-        this.page = page;
-        this.numberPerPage = numberPerPage;
-        console.log("RENDER PRIMARY LIST");
-
-        const char1 = $("#char-1-select").val();
-        const char2 = $("#char-2-select").val();
-        const stage = $("#stage-select").val();
-
-        console.log("CHAR1", char1);
-        console.log("CHAR2", char2);
-        console.log("stage", stage);
-        const games = this.archive.getGames({
-            char1,
-            char2,
-            stage,
-        });
-        console.log("number of games: ", games.length);
-            // didKill,
-            // minMoves,
-            // minDamage,
-            // containsMove,
-            // endMove
-        console.log("getting combos...")
-        let count = 1;
-        const combos = games.reduce((n,g) => {
-            console.log(count++);
-            if(count < 5000 ) return [];
-            const combos = g.getCombos({
-                comboer: char1,
-                comboee: char2,
-            });
-
-            // Need to combine combo object and game object
-            const returnArr = [];
-            combos.forEach(c => {
-                returnArr.push({
-                    combo: c,
-                    game: g
-                })
-            });
-            return n.concat( returnArr )
-        },[])
-
-
-        $("#primary-total").html(combos.length);
-        let totalSeconds = 0;
-        combos.forEach(c => {
-            console.log(totalSeconds++);
+    renderPrimaryList(page){
+        console.log("Rendering Primary List Page: ", page);
+        this.primaryListCurrentPage = page;
+        this.primaryList.empty();
+        $("#primary-total").html(this.combos.length);
+        const combosToDisplay = this.combos.slice(page*this.numberPerPage,(page*this.numberPerPage)+this.numberPerPage)
+        combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
 
+        //pagination
+        if(combosToDisplay.length < this.combos.length){
+            $("#primary-list-pagination-container").show();
+            $("#primary-list-current-page").html(page + 1);
+            if(page === 0){
+                this.primaryListPrevButton.addClass("disable-button");
+            } else {
+                this.primaryListPrevButton.removeClass("disable-button");
+            }
+            if(page * this.numberPerPage > this.combos.length ){
+                this.primaryListNextButton.addClass("disable-button");
+            } else {
+                this.primaryListNextButton.removeClass("disable-button");
+            }
+        } else {
+            $("#primary-list-pagination-container").hide();
+        }
     }
 
 

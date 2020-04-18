@@ -5,27 +5,45 @@
 
 
     #filters-container {
-
         padding: 20px 40px;
 
-        & > select {
-            margin: 10px;
-            font-size: 20px;
-        }
-        & > span {
-            font-size: 25px;
-        }
+        .filters-row {
+            margin-top: 10px;
+            & select {
+                margin: 10px;
+                font-size: 20px;
+            }
+            & > span {
+                font-size: 25px;
+            }
+    
+            button {
+                font-size: 25px;
+                padding: 4px;
+                margin: 0px 20px;
+                border-radius: 3px;
+                width: 80px;
+    
+                &:hover {
+                    cursor: pointer;
+                    background-color: lightgray;
+                }
+            }
 
-        button {
-            font-size: 25px;
-            padding: 4px;
-            margin: 0px 20px;
-            border-radius: 3px;
-            width: 80px;
-
-            &:hover {
-                cursor: pointer;
-                background-color: lightgray;
+            .filter {
+                display: inline-block;
+                margin-right: 20px;
+                .label {
+                    display: inline-block;
+                    font-size: 20px;
+                    margin-right: 5px;
+                }
+                input {
+                    font-size: 20px;
+                    padding: 5px;
+                    width: 35px;
+                    text-align: center;
+                }
             }
         }
     }
@@ -112,5 +130,25 @@
             }
         }
 
+    }
+
+    .pagination-container {
+        border: solid blue 1px;
+
+        .pagination-button,.pagination-element {
+            border: solid green 1px;
+            display: inline-block;
+            font-size: 20px;
+        }
+        .pagination-button {
+            padding: 5px;
+            margin: 5px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        .disable-button {
+            color: red;
+        }
     }
 }
