@@ -8,6 +8,7 @@ class ComboController {
     constructor({game,combo}){
         this.combo = combo;
         this.game = game;
+        this.slpPath = game.slpPath;
         this.comboer = game.players.find(p => {
             return p.playerIndex === combo.playerIndex
         });
@@ -17,7 +18,7 @@ class ComboController {
     }
 
     html(){
-        const { combo, game, comboer, comboee } = this;
+        const { combo, game, comboer, comboee, slpPath } = this;
         const damage = Math.floor(combo.endPercent - combo.startPercent);
         const seconds = (( combo.endFrame - combo.startFrame ) / 60).toFixed(1);
         return $(`
@@ -42,6 +43,10 @@ class ComboController {
                 <div class='row'>
                     <div class='label'>Length:</div>
                     <div class='data'>${seconds}</div>
+                </div>
+                <div class='row' hidden>
+                    <div class='label'>Path:</div>
+                    <div class='data'>${slpPath}</div>
                 </div>
             </div>
         </div>

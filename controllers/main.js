@@ -24,7 +24,6 @@ class MainController {
 
         this.title = $("#navbar-title"); 
         if(archive.name){
-            console.log("HEY");
             this.title.html(archive.name);
         }
 

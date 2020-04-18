@@ -159,21 +159,23 @@ class Game {
         },1));
     }
 
-    getCombos({comboer,comboee,didKill,minMoves,minDamage,containsMove,endMove}){
+    getCombos({comboer,comboee,didKill,minMoves,minDamage,includesMove,endMove}){
         return this.combos.filter(c => {
+            if( minMoves && !(c.moves.length >= minMoves) ) return false;
             const comboerCharId = this.players.find(p => {
                 return p.playerIndex === c.playerIndex;
-            });
+            }).characterId;
+            //fuck ice climbers
+            if( comboerCharId === 14 ) return false;
             const comboeeCharId = this.players.find(p => {
                 return p.playerIndex === c.opponentIndex;
-            });
-            if(comboer && !comboerCharId === comboer ) return false;
-            if(comboee && !comboeeCharId === comboee ) return false;
+            }).characterId;
+            if(comboer && !(comboerCharId == comboer) ) return false;
+            if(comboee && !(comboeeCharId == comboee) ) return false;
             if( didKill && !c.didKill ) return false;
-            if( minMoves && !c.moves.length >= minHits ) return false;
-            if( minDamage && !c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage) return false;
-            if( containsMove && !c.moves.find(m => m.moveId === containsMove )) return false;
-            if( endMove && !c.moves[c.moves.length-1].moveId === endMove ) return true;
+            if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
+            if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
+            if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return true;
             return true;
         });
     }

@@ -216,23 +216,41 @@
 #combo-body #filters-container {
   padding: 20px 40px;
 }
-#combo-body #filters-container > select {
+#combo-body #filters-container .filters-row {
+  margin-top: 10px;
+}
+#combo-body #filters-container .filters-row select {
   margin: 10px;
   font-size: 20px;
 }
-#combo-body #filters-container > span {
+#combo-body #filters-container .filters-row > span {
   font-size: 25px;
 }
-#combo-body #filters-container button {
+#combo-body #filters-container .filters-row button {
   font-size: 25px;
   padding: 4px;
   margin: 0px 20px;
   border-radius: 3px;
   width: 80px;
 }
-#combo-body #filters-container button:hover {
+#combo-body #filters-container .filters-row button:hover {
   cursor: pointer;
   background-color: lightgray;
+}
+#combo-body #filters-container .filters-row .filter {
+  display: inline-block;
+  margin-right: 20px;
+}
+#combo-body #filters-container .filters-row .filter .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+}
+#combo-body #filters-container .filters-row .filter input {
+  font-size: 20px;
+  padding: 5px;
+  width: 35px;
+  text-align: center;
 }
 #combo-body .list-container {
   display: inline-block;
@@ -300,6 +318,25 @@
 #combo-body .combo .combo-info .row .data {
   display: inline-block;
   width: 20px;
+}
+#combo-body .pagination-container {
+  border: solid blue 1px;
+}
+#combo-body .pagination-container .pagination-button,
+#combo-body .pagination-container .pagination-element {
+  border: solid green 1px;
+  display: inline-block;
+  font-size: 20px;
+}
+#combo-body .pagination-container .pagination-button {
+  padding: 5px;
+  margin: 5px;
+}
+#combo-body .pagination-container .pagination-button:hover {
+  cursor: pointer;
+}
+#combo-body .pagination-container .disable-button {
+  color: red;
 }
 #navbar {
   margin-bottom: 3px;
