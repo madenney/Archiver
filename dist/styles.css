@@ -254,7 +254,7 @@
 }
 #combo-body .list-container {
   display: inline-block;
-  width: 400px;
+  max-width: 400px;
   border: solid white 1px;
   padding: 5px;
   vertical-align: top;
@@ -274,6 +274,17 @@
 }
 #combo-body .list-container .list {
   padding-left: 0px;
+}
+#combo-body #secondary-list-container #generate-video-button {
+  font-size: 18px;
+  padding: 20px;
+  width: 200px;
+  height: auto;
+  right: 10px;
+}
+#combo-body #secondary-list-container #generate-video-button.disabled {
+  background-color: gray;
+  color: black;
 }
 #combo-body .combo {
   margin: 5px;

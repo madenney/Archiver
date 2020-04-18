@@ -3,7 +3,6 @@
 
     color: @color2;
 
-
     #filters-container {
         padding: 20px 40px;
 
@@ -50,7 +49,7 @@
     
     .list-container {
         display: inline-block;
-        width: 400px;
+        max-width: 400px;
         border: solid white 1px;
         padding: 5px;
         vertical-align: top;
@@ -80,6 +79,18 @@
     }
     #secondary-list-container {
 
+        #generate-video-button {
+            font-size: 18px;
+            padding: 20px;
+            width: 200px;
+            height: auto;
+            right: 10px;
+
+            &.disabled {
+                background-color: gray;
+                color: black;
+            }
+        }
     }
 
     .combo {

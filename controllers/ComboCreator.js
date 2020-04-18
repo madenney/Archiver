@@ -4,6 +4,7 @@ const {legalStages} = require("../constants/stages");
 const {moves} = require("../constants/moves");
 
 const { ComboController } = require("../controllers/Combo");
+const { ComboList } = require("../models/ComboList");
 
 class ComboCreator {
     constructor(archive){
@@ -29,7 +30,6 @@ class ComboCreator {
         });
 
         console.log("Getting combos...")
-        console.log("DID KILL", $("#did-kill").is(":checked"))
         this.combos = this.games.reduce((n,g) => {
             const combos = g.getCombos({
                 comboer: char1,
@@ -68,6 +68,7 @@ class ComboCreator {
 
     assignClickListeners(){
         const filterButton = $("#filter-button");
+        this.generateVideoButton = $("#generate-video-button");
         this.primaryListPrevButton = $("#primary-list-prev");
         this.primaryListNextButton = $("#primary-list-next");
         this.primaryListPrevButton.click(()=> {
@@ -81,7 +82,29 @@ class ComboCreator {
             this.loadCombos();
             this.renderPrimaryList(0)
         });
+
+        this.generateVideoButton.click(()=> {
+            this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
+            const comboList = new ComboList(this.combos);
+            comboList.generateVideo().then(() => {
+                console.log("Huzzah :)");
+                this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Generate");
+            }).catch((err) => {
+                console.log("Oh no :(")
+                console.log(err);
+            });
+        })
     }
+
+    generateVideo(){
+        const comboList = new ComboList(this.combos);
+        comboList.generateVideo().then(() => {
+            console.log("Huzzah :)");
+        }).catch((err) => {
+            console.log("Oh no :(")
+            console.log(err);
+        });
+    };
 
     renderOptions(){
         const char1Select = $("#char-1-select");
