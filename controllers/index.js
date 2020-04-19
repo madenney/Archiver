@@ -5,7 +5,7 @@ const { remote } = require('electron')
 
 
 const { Archive } = require("../models/index");
-const { MainController } = require("./Main");
+const { MainController } = require("../controllers/Main");
 const { Startup } = require("../controllers/Startup");
 
 const mainContentId = "main-content";
