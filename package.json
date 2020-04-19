@@ -29,6 +29,8 @@
     "graphql-client": "^2.0.1",
     "jquery": "^3.4.1",
     "less": "^3.11.1",
-    "rimraf": "^2.6.3"
+    "node-dir": "^0.1.17",
+    "rimraf": "^2.7.1",
+    "yargs": "^15.3.1"
   }
 }
