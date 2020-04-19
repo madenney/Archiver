@@ -138,7 +138,7 @@ class ComboCreator {
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
-
+        console.log(combosToDisplay)
         //pagination
         if(combosToDisplay.length < this.combos.length){
             $("#primary-list-pagination-container").show();

@@ -1,4 +1,5 @@
 
+const { slpToVideo } = require("../controllers/SlpToVideo");
 
 
 class ComboList {
@@ -13,18 +14,8 @@ class ComboList {
     }
 
     generateVideo(){
-        return new Promise((resolve,reject) => {
-            console.log(this.combos);
-            const combosArray = [];
-            this.combos.forEach(combo => {
-                combosArray.push({
-                    slpPath: combo.game.slpPath,
-                    startFrame: combo.startFrame,
-                    endFrame: combo.endFrame
-                })
-            })
-            const fs = require("fs");
-            fs.writeFileSync("/Users/mattdenney/Projects/Archiver/output.json", JSON.stringify(combosArray))
+        return new Promise( async (resolve,reject) => {
+            await slpToVideo(this.combos);
             setTimeout(() =>{ resolve()},1000)
             
         });
