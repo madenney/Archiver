@@ -37,7 +37,7 @@ async function slpToVideo(combos){
             mode: 'normal',
             replay: combo.game.slpPath,
             startFrame: combo.combo.startFrame,
-            endFrame: combo.combo.lastFrame,
+            endFrame: combo.combo.endFrame,
             isRealTimeMode: false,
             commandId: `${crypto.randomBytes(12).toString('hex')}`
         }
