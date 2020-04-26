@@ -53,7 +53,7 @@ class MainController {
                 this.mainView.load("../views/combo.html", this.comboCreatorTabController.render.bind(this.comboCreatorTabController));
             break;
             case 'uploader':
-                this.mainView.load("../views/uploader.html");                
+                this.mainView.load("../views/uploader.html", this.uploaderTabController.render.bind(this.uploaderTabController));                
                 break;
             default:
                 throw `Error: ${tab} doesn't exist`;
