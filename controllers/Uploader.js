@@ -1,5 +1,6 @@
 const { ThumbnailController } = require ('../controllers/Thumbnail');
-const { Test_Set } = require ('../test_files/testSet.json')
+const Test_Set = require ('../test_files/testSet.json')
+const {Set} = require ('../models/Set')
 
 class Uploader {
     constructor(archive){
