@@ -4,8 +4,16 @@
 #TODO add functionality for multiple chars
 #TODO add functionality for font selection
 #TODO add pirate marth easter egg
+#TODO stoner green DK easter egg?
 #TODO throw error if empty char list?
-#TODO add borders
+#TODO add custom border functionality
+#TODO get better character models. Here are some ideas:
+'''
+falcon - taunt (maybe both taunts, idk)
+DK - taunt (make green DK the frame of the taunt where he's squinting lmao)
+Puff - resting (obv) and maybe also winking
+'''
+
 
 import sys
 import argparse
@@ -96,10 +104,29 @@ def writeRound(fontPath, image, name):
     draw.text(((W - w) / 2, 3 * H / 5), name, font=font, fill=(255,255,255,255))
 
 #TODO throw error if empty char list?
-def generate(tournamentName, roundName, player1, player2, chars1, chars2, output, fontPath="fonts/impact.ttf", spritesPath="sprites"):
+def main():
+    #parse args from Thumbnail.js
+    parser = argparse.ArgumentParser(description="Generate Youtube thumbnail for Melee matches")
+
+    #positional args
+    parser.add_argument("tournamentName", type=str)
+    parser.add_argument("roundName", type=str)
+    parser.add_argument("player1", type=str, help="first player's name")
+    parser.add_argument("player2", type=str, help="second player's name")
+    parser.add_argument("mains1", type=str, help="list of the first player's characters")
+    parser.add_argument("mains2", type=str, help="list of the second player's characters")
+    parser.add_argument("output", type=str, help="name of the image file to be output")
+
+
+    #optional args
+    parser.add_argument("--fontPath", default="./fonts/impact.ttf")
+    parser.add_argument("--spritesPath", default="./images/character-models")
+
+    args = parser.parse_args()
+
 
     #TODO testing
-    print(fontPath)
+    print(args.fontPath)
 
     # Init image with background
     image = Image.new('RGBA', (W, H), 'black')
@@ -111,7 +138,7 @@ def generate(tournamentName, roundName, player1, player2, chars1, chars2, output
 
     # Open character images
     #TODO add functionality for multiple chars
-    character1Image, character2Image = createCharacters(spritesPath, chars1[0], chars2[0])
+    character1Image, character2Image = createCharacters(args.spritesPath, args.mains1, args.mains2)
 
     # Paste character images
     pasteCharacterImages(image, character1Image, character2Image)
@@ -121,37 +148,19 @@ def generate(tournamentName, roundName, player1, player2, chars1, chars2, output
     addBorder(image, bounds)
 
     # Write players tags
-    writePlayers(fontPath, image, player1, player2)
+    writePlayers(args.fontPath, image, args.player1, args.player2)
 
     # Write tournament name
     #TODO change this later to allow for font selection
-    writeTournament(fontPath, image, tournamentName)
+    writeTournament(args.fontPath, image, args.tournamentName)
 
     # Write round name
-    writeRound(fontPath, image, roundName)
+    writeRound(args.fontPath, image, args.roundName)
 
     # Save image
-    image.save("output/" + output)
+    image.save(args.output)
 
-    print("thumbnail successfully generated in: output/" + output)
+    print("thumbnail successfully generated in: " + args.output)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Generate Youtube thumbnail for Melee matches")
-
-    #positional args
-    parser.add_argument("tournamentName", type=str)
-    parser.add_argument("roundName", type=str)
-    parser.add_argument("player1", type=str, help="first player's name")
-    parser.add_argument("player2", type=str, help="second player's name")
-    parser.add_argument("chars1", type=list, help="list of the first player's characters")
-    parser.add_argument("chars2", type=list, help="list of the second player's characters")
-    parser.add_argument("output", type=str, help="name of the image file to be output")
-
-
-    #optional args
-    parser.add_argument("--fontPath")
-    parser.add_argument("--spritesPath")
-
-    args = parser.parse_args()
-
-    generate(args.tournamentName, args.roundName, args.player1, args.chars1, args.chars2, args.output, args.fontPath, args.spritesPath)
+    main()
