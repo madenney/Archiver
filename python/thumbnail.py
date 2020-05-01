@@ -8,11 +8,6 @@
 #TODO throw error if empty char list?
 #TODO add custom border functionality
 #TODO get better character models. Here are some ideas:
-'''
-falcon - taunt (maybe both taunts, idk)
-DK - taunt (make green DK the frame of the taunt where he's squinting lmao)
-Puff - resting (obv) and maybe also winking
-'''
 
 
 import sys
@@ -25,12 +20,13 @@ def openImage(path):
     im = Image.open(path)
     im.show()
 
+#TODO this will need a LOT of work when I implement multiple chars
 def createCharacters(path, character1, character2):
     # First character image
-    character1Image = Image.open(path + '/' + character1 + '.png')
+    character1Image = Image.open(path + '/' + character1[0] + '.png')
     
     # Second character image
-    character2Image = Image.open(path + '/' + character2 + '.png')
+    character2Image = Image.open(path + '/' + character2[0] + '.png')
 
     # Compute new size
     baseWidth = 196
@@ -43,7 +39,7 @@ def createCharacters(path, character1, character2):
     # Return images
     return character1Image, character2Image
 
-
+#TODO multiple char implementation
 def pasteCharacterImages(image, character1, character2):
     # Mirror character 2
     character2 = ImageOps.mirror(character2)
@@ -103,7 +99,10 @@ def writeRound(fontPath, image, name):
     # Draw players tags
     draw.text(((W - w) / 2, 3 * H / 5), name, font=font, fill=(255,255,255,255))
 
-#TODO throw error if empty char list?
+def parseMains(mains):
+    mainsList = mains.split(",")
+    return mainsList
+
 def main():
     #parse args from Thumbnail.js
     parser = argparse.ArgumentParser(description="Generate Youtube thumbnail for Melee matches")
@@ -124,6 +123,8 @@ def main():
 
     args = parser.parse_args()
 
+    mains1 = parseMains(args.mains1)
+    mains2 = parseMains(args.mains2)
 
     #TODO testing
     print(args.fontPath)
@@ -138,7 +139,7 @@ def main():
 
     # Open character images
     #TODO add functionality for multiple chars
-    character1Image, character2Image = createCharacters(args.spritesPath, args.mains1, args.mains2)
+    character1Image, character2Image = createCharacters(args.spritesPath, mains1, mains2)
 
     # Paste character images
     pasteCharacterImages(image, character1Image, character2Image)
