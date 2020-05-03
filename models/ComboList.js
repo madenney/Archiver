@@ -35,7 +35,7 @@ class ComboList {
             const config = {
                 inputFile: "/Users/mattdenney/Projects/Archiver/airlock/replays.json",
                 dolphinPath: "/Users/mattdenney/Projects/Archiver/node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu",
-                ssmbIsoPath: "/Users/mattdenney/Projects/melee.iso",
+                ssbmIsoPath: "/Users/mattdenney/Projects/melee.iso",
                 numCPUs: 2
             }
             try {
