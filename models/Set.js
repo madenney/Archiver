@@ -12,6 +12,8 @@ class Set {
         this.loserScore = setJSON.loserScore;
         this.winnerMains = setJSON.winnerMains;
         this.loserMains = setJSON.loserMains;
+        this.winnerColors = setJSON.winnerColors;
+        this.loserColors = setJSON.loserColors;
         this.isLinked = setJSON.isLinked;
         
         if( setJSON.games ){
@@ -34,6 +36,8 @@ class Set {
             loserScore: this.loserScore,
             winnerMains: this.winnerMains,
             loserMains: this.loserMains,
+            winnerColors: this.winnerColors,
+            loserColors: this.loserColors,
             games: this.games.map(g=>g.generateJSON()),
             isLinked: this.isLinked
         }

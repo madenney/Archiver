@@ -7,8 +7,10 @@
     "loserTag": "Mad Matt",
     "winnerScore": 3,
     "loserScore": 0,
-    "winnerMains": ["Falcon", "Link", "Marth"],
-    "loserMains": ["Falco"],
+    "winnerMains": ["Link"],
+    "loserMains": ["DK"],
+    "winnerColors": ["white"],
+    "loserColors": ["blue"],
     "games": [],
     "isLinked": null
 }
