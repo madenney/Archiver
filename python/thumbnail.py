@@ -3,8 +3,6 @@
 
 #TODO add functionality for multiple chars
 #TODO add functionality for font selection
-#TODO add pirate marth easter egg
-#TODO stoner green DK easter egg?
 #TODO throw error if empty char list?
 #TODO add custom border functionality
 #TODO get better character models

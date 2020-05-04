@@ -44,7 +44,8 @@ class ThumbnailController{
                     this.mains2,
                     this.colors1,
                     this.colors2,
-                    this.output]
+                    this.output
+                ]
         };
 
         PythonShell.run("thumbnail.py", options, function(err, results){

@@ -1,7 +1,9 @@
 
 const slpToVideo = require("slp-to-video");
 const fs = require("fs");
-const OUTPUT_PATH = "/Users/mattdenney/Projects/Archiver/airlock/output.avi"
+const OUTPUT_PATH = "/Users/mattdenney/Projects/Archiver/airlock/output.avi";
+const {PythonShell} = require ("python-shell");
+
 class ComboList {
 
     constructor(combos){
@@ -23,11 +25,21 @@ class ComboList {
                 }
             ]
             
+            //TODO overlay section
+            let options = {
+                mode: "text",
+                pythonOptions: ["-u"],
+                scriptPath: "./python",
+                args: [
+                    ]
+            };
+
             this.combos.forEach(combo => {
                 json[0].replays.push({
                     replay: combo.game.slpPath,
                     startFrame: combo.combo.startFrame,
-                    endFrame: combo.combo.endFrame
+                    endFrame: combo.combo.endFrame,
+                    overlayPath: null
                 })
             });
 
