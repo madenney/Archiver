@@ -38,7 +38,7 @@ class ComboList {
         return new Promise( async (resolve,reject) => {
 
             console.log(`Generating videos using ${NUM_PROCESSES} cpus`);
-            const json = [{"output_path": VIDEO_OUTPUT_PATH,"replays": []}]
+            const json = [{"outputPath": VIDEO_OUTPUT_PATH,"replays": []}]
             this.combos.forEach(combo => {
                 //imagePath = createImage(combo);
                 json[0].replays.push({
