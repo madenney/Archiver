@@ -5,7 +5,7 @@ const {moves} = require("../constants/moves");
 
 const { ComboController } = require("../controllers/Combo");
 const { ComboList } = require("../models/ComboList");
-
+const { defaults } = require("../constants/comboFilterDefaults");
 class ComboCreator {
     constructor(archive){
         this.archive = archive;
@@ -14,8 +14,6 @@ class ComboCreator {
         this.numberPerPage = 50;
         this.games = [];
         this.combos = [];
-        this.loadCombos();
-        
     }
 
     loadCombos(){
@@ -30,15 +28,19 @@ class ComboCreator {
         });
 
         console.log("Getting combos...")
+        const minMoves = $("#min-moves").val();
+        const minDamage = $("#min-damage").val();
+        const endMove = $("#ends-with").val();
+        const didKill = $("#did-kill").is(":checked");
         this.combos = this.games.reduce((n,g) => {
             const combos = g.getCombos({
                 comboer: char1,
                 comboee: char2,
-                didKill: $("#did-kill").is(":checked"),
-                minMoves: $("#min-moves").val() ? $("#min-moves").val() : 7,
-                minDamage: $("#min-damage").val() ? $("#min-damage").val() : 50,
-                includesMove: $("#includes").val(),
-                endMove: $("#ends-with").val()
+                didKill,
+                minMoves,
+                minDamage,
+                //includesMove,
+                endMove
             });
 
             // Need to combine combo object and game object
@@ -59,10 +61,17 @@ class ComboCreator {
         this.primaryList = $("#primary-list-container .list");
         this.secondaryList = $("#secondary-list-container .list");
         
-        this.assignClickListeners();
-
         this.renderOptions();
+        $("#char-1-select").val(defaults.comboer);
+        $("#char-2-select").val(defaults.comboee);
+        $("#stage-select").val(defaults.stage);
+        $("#min-moves").val(defaults.minMoves);
+        $("#min-damage").val(defaults.minDamage);
+        $("#ends-move").val(defaults.endsMove);
+        $("#did-kill").prop('checked', defaults.didKill);
 
+        this.loadCombos();
+        this.assignClickListeners();
         this.renderPrimaryList(0,50);
     }
 

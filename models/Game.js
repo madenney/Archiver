@@ -175,7 +175,7 @@ class Game {
             if( didKill && !c.didKill ) return false;
             if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
-            if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return true;
+            if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
         });
     }

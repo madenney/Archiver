@@ -25,6 +25,19 @@
 #save-button.green {
   color: darkgreen;
 }
+#close-archive-button {
+  position: fixed;
+  right: 50px;
+  top: 10px;
+  background-color: #FA824C;
+  color: #342E37;
+  font-size: 20px;
+  padding: 5px 15px;
+  border-radius: 4px;
+}
+#close-archive-button:hover {
+  cursor: pointer;
+}
 #startup {
   position: fixed;
   border: solid black 2px;
