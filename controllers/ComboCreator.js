@@ -30,7 +30,7 @@ class ComboCreator {
         console.log("Getting combos...")
         const minMoves = $("#min-moves").val();
         const minDamage = $("#min-damage").val();
-        const endMove = $("#ends-with").val();
+        const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
         this.combos = this.games.reduce((n,g) => {
             const combos = g.getCombos({
@@ -67,7 +67,7 @@ class ComboCreator {
         $("#stage-select").val(defaults.stage);
         $("#min-moves").val(defaults.minMoves);
         $("#min-damage").val(defaults.minDamage);
-        $("#ends-move").val(defaults.endsMove);
+        $("#end-move").val(defaults.endMove);
         $("#did-kill").prop('checked', defaults.didKill);
 
         this.loadCombos();
@@ -119,7 +119,7 @@ class ComboCreator {
         const char1Select = $("#char-1-select");
         const char2Select = $("#char-2-select");
         const stageSelect = $("#stage-select");
-        const endMoveSelect = $("#ends-with");
+        const endMoveSelect = $("#end-move");
         characters.forEach(c => {
             const option = $(`<option value="${c.id}">${c.shortName}</option>`);
             char1Select.append(option);
