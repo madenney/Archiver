@@ -7,7 +7,7 @@
 #TODO stoner green DK easter egg?
 #TODO throw error if empty char list?
 #TODO add custom border functionality
-#TODO get better character models. Here are some ideas:
+#TODO get better character models
 
 
 import sys
@@ -23,10 +23,10 @@ def openImage(path):
 #TODO this will need a LOT of work when I implement multiple chars
 def createCharacters(path, character1, character2):
     # First character image
-    character1Image = Image.open(path + '/' + character1[0] + '.png')
+    character1Image = Image.open(path + '/' + character1[0][0] + '/' + character1[0][0] + ' - ' + character1[0][1] + '.png')
     
     # Second character image
-    character2Image = Image.open(path + '/' + character2[0] + '.png')
+    character2Image = Image.open(path + '/' + character2[0][0] + '/' + character2[0][0] + ' - ' + character2[0][1] + '.png')
 
     # Compute new size
     baseWidth = 196
@@ -99,9 +99,15 @@ def writeRound(fontPath, image, name):
     # Draw players tags
     draw.text(((W - w) / 2, 3 * H / 5), name, font=font, fill=(255,255,255,255))
 
-def parseMains(mains):
+def parse(mains, colors):
     mainsList = mains.split(",")
-    return mainsList
+    colorsList = colors.split(",")
+    
+    #TODO throw error if the lists aren't the same length
+    completeList = list()
+    for i in range (0, len(mainsList)):
+        completeList.append([mainsList[i], colorsList[i]])
+    return completeList
 
 def main():
     #parse args from Thumbnail.js
@@ -114,6 +120,8 @@ def main():
     parser.add_argument("player2", type=str, help="second player's name")
     parser.add_argument("mains1", type=str, help="list of the first player's characters")
     parser.add_argument("mains2", type=str, help="list of the second player's characters")
+    parser.add_argument("colors1", type=str, help="list of skins of the first player's characters")
+    parser.add_argument("colors2", type=str, help="list of skins of the second player's characters")
     parser.add_argument("output", type=str, help="name of the image file to be output")
 
 
@@ -123,8 +131,8 @@ def main():
 
     args = parser.parse_args()
 
-    mains1 = parseMains(args.mains1)
-    mains2 = parseMains(args.mains2)
+    mains1 = parse(args.mains1, args.colors1)
+    mains2 = parse(args.mains2, args.colors2)
 
     #TODO testing
     print(args.fontPath)

@@ -9,6 +9,8 @@
     "loserScore": null,
     "winnerMains": [],
     "loserMains": [],
+    "winnerColors": [],
+    "loserColors": [],
     "games": [],
     "isLinked": null
 }

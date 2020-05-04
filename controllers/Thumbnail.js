@@ -6,7 +6,8 @@ class ThumbnailController{
         this.generateThumbnail(set);
     }
 
-    generateMainsString(mains){
+    //TODO change names I'm too lazy now
+    concatenated(mains){
         var mainsString = "";
         for(var i = 0; i < mains.length; i++){
             mainsString += mains[i];
@@ -25,8 +26,10 @@ class ThumbnailController{
         this.player1 = set.winnerTag;
         this.player2 = set.loserTag;
         //TODO pass up to 5 mains
-        this.mains1 = this.generateMainsString(set.winnerMains);
-        this.mains2 = this.generateMainsString(set.loserMains);
+        this.mains1 = this.concatenated(set.winnerMains);
+        this.mains2 = this.concatenated(set.loserMains);
+        this.colors1 = this.concatenated(set.winnerColors);
+        this.colors2 = this.concatenated(set.loserColors);
         this.output = "./test_files/test.png";
 
         let options = {
@@ -38,7 +41,9 @@ class ThumbnailController{
                     this.player1, 
                     this.player2, 
                     this.mains1, 
-                    this.mains2, 
+                    this.mains2,
+                    this.colors1,
+                    this.colors2,
                     this.output]
         };
 
