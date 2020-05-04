@@ -28,6 +28,7 @@ class MainController {
         }
 
         this.saveButton = $("#save-button");
+        this.saveButton.show();
         this.saveButton.click(async () => {
             this.saveButton.prop('disabled',true).html("Saving...");
             this.archive.save();
@@ -35,6 +36,13 @@ class MainController {
             setTimeout(()=>{ 
                 this.saveButton.prop('disabled',false).html('Save').removeClass('green')
             },1000)
+        })
+
+        this.closeButton = $("#close-archive-button");
+        this.closeButton.show();
+        this.closeButton.click(async () => {
+            delete localStorage.last_archive;
+            alert("Archive path removed from local storage. Restart the app to start a new one.")
         })
 
     }
