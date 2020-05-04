@@ -7,8 +7,6 @@
 #TODO add custom border functionality
 #TODO get better character models
 
-
-import sys
 import argparse
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 

@@ -30,7 +30,8 @@ class ComboList {
                 mode: "text",
                 pythonOptions: ["-u"],
                 scriptPath: "./python",
-                args: [
+                args: ["./images/template.png", 
+                        "Nash"
                     ]
             };
 
