@@ -5,13 +5,18 @@ const events = require("events");
 const path = require("path");
 const { PythonShell} = require("python-shell");
 const config = require("../config.json");
+const crypto = require("crypto");
+const os = require("os");
+const { characters } = require("../constants/characters");
 
 
 const VIDEO_OUTPUT_PATH = path.resolve(path.join(config.AIRLOCK_PATH,"output.avi"));
 const REPLAYS_JSON_PATH = path.resolve(path.join(config.AIRLOCK_PATH,"replays.json"));
 const SSBM_ISO_PATH = path.resolve(config.SSBM_ISO_PATH);
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const NUM_PROCESSES = 8;
+const NUM_PROCESSES = 7;
+const VIDEO_WIDTH = 1920;
+const VIDEO_HEIGHT = 1080;
 
 class ComboList {
 
@@ -34,36 +39,54 @@ class ComboList {
 
     }
 
+    generateOverlay(outputPath, char1Id, char2Id, name1="???", name2="???"){
+        let icon1 = characters[char1Id].img
+        let icon2 = characters[char2Id].img
+
+        let options = {
+            mode: "text",
+            pythonOptions: ["-u"],
+            scriptPath: "./python",
+            args: [outputPath, 
+                   name1,
+                   name2, 
+                   icon1, 
+                   icon2, 
+                   VIDEO_WIDTH,
+                   VIDEO_HEIGHT
+                ]
+        };
+
+        PythonShell.run("overlay.py", options, function(err, results){
+            if (err) throw err;
+            console.log("results: %j", results);
+        });
+    }
+
     generateVideo(){
         return new Promise( async (resolve,reject) => {
             
-            const json = [
-                {
-                    "output_path": OUTPUT_PATH,
-                    "replays": []
-                }
-            ]
-            
-            //TODO overlay section
-            let options = {
-                mode: "text",
-                pythonOptions: ["-u"],
-                scriptPath: "./python",
-                args: ["./images/template.png", 
-                        "Nash"
-                    ]
-            };
-
-
+            this.generateOverlay("./test_files/overlay.png", 0, 20, "Nash", "Mad Matt");
+            const tmpdir = path.join(os.tmpdir(),
+                          `tmpo-${crypto.randomBytes(12).toString('hex')}`);
+            var overlayPath;
+            fs.mkdirSync(tmpdir);
             console.log(`Generating videos using ${NUM_PROCESSES} cpus`);
             const json = [{"output_path": VIDEO_OUTPUT_PATH,"replays": []}]
             this.combos.forEach(combo => {
-                //imagePath = createImage(combo);
+                console.log(combo);
+                console.log(combo.game.players);
+                overlayPath = path.join(tmpdir, crypto.randomBytes(12).toString('hex') + ".png");
+                this.generateOverlay(overlayPath, 
+                                     combo.game.players[0].characterId, 
+                                     combo.game.players[1].characterId,
+                                     combo.game.players[0].nametag,
+                                     combo.game.players[1].nametag);
                 json[0].replays.push({
                     replay: combo.game.slpPath,
                     startFrame: combo.combo.startFrame,
                     endFrame: combo.combo.endFrame,
-                    //overlay: imagePath
+                    overlay: overlayPath
                 })
             });
             fs.writeFileSync(REPLAYS_JSON_PATH,JSON.stringify(json));
@@ -87,6 +110,7 @@ class ComboList {
                 console.log(msg);
                 skippedFiles.push(file);
             })
+            /*
             try {
                 await slpToVideo(config);
                 console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
@@ -95,8 +119,9 @@ class ComboList {
             } catch(err){
                 console.log("Error occurred in slp-to-video");
                 reject(err);
-            }
-            
+            }*/
+            fs.rmdirSync(tmpdir, { recursive: True });
+            //TODO fs.unlink! otherwise files won't actually be removed
         });
     }
 

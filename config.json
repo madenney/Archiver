@@ -1,4 +1,5 @@
 {
-	"SSBM_ISO_PATH": "/Users/mattdenney/Projects/melee.iso",
-	"AIRLOCK_PATH": "/Users/mattdenney/Projects/airlock"
+	"SSBM_ISO_PATH": "./iso/Super Smash Bros. Melee (USA).iso",
+	"AIRLOCK_PATH": "./test_files/"
+	
 }
