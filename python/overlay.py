@@ -2,54 +2,20 @@ import argparse
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 # the actual margins will be the height of the image / MARGIN_SCALE_FACTOR
-MARGIN_SCALE_FACTOR = 40
+MARGIN_SCALE = 40
 
 # TODO
 def roundedBox(width, height, border, fill):
     return
 
-def pasteTextbox(image, textbox, bl=False, br=False, tl=False, tr=False):
-    # Probably won't need the widths
-    W = image.width
-    H = image.height
-    w = textbox.width
-    h = textbox.height
+def pasteTextbox(image, textbox, coords):
+    image.paste(textbox, coords, textbox)
 
-    # Pixels between edges of the textbox and the edges of the overlay
-    margins = (int)(H / MARGIN_SCALE_FACTOR)
 
-    # Determine where the box(es) go
-    coordsList = []
-    
-    # TODO there's a better way to do this but I'm lazy
-    if bl == True:
-        coordsList.append((margins, (int)(H - margins - h)))
-    if br == True:
-        coordsList.append(((int)(W - margins - w), (int)(H - margins - h)))
-    if tl == True:
-        coordsList.append((margins, margins))
-    if tr == True:
-        coordsList.append(((int)(W - margins - w), margins))
-    
-    for coords in coordsList:
-        tbcp = textbox.copy()
-        image.paste(textbox, coords, tbcp)
-    return coordsList
-
-# TODO fix this
-def pasteLogo(image, logo):
-    # Probably won't need image.width
-    W = image.width
-    H = image.height
-
-    # You know the drill
-    margins = H / MARGIN_SCALE_FACTOR
-
-    logo.resize((300, 300))
-    w = logo.width
-    h = logo.height
-
-    image.paste(logo, ((int)(W - margins - w), (int)(H - margins - h)), logo)
+def pasteLogo(image, logo, coords):
+    # TODO might need to work with resizing
+    logo = logo.resize((250,250))
+    image.paste(logo, coords, logo)
 
 def pasteNames(image, name1, name2, fontPath, tbCoords, tbSize):
     # Get font
@@ -63,11 +29,11 @@ def pasteNames(image, name1, name2, fontPath, tbCoords, tbSize):
 
     # Middle of name1 is 1/3 down textbox
     position = (tbCoords[0] + 10, tbCoords[1] + tbSize[1]/3 - tHeight/2)
-    draw.text(position, name1, font=font, fill =(220,220,220,255))
+    draw.text(position, name1, font=font, fill=(220,220,220,255))
 
     # Middle of name2 is 2/3 down
     position = (position[0], position[1] + tbSize[1]/3)
-    draw.text(position, name2, font=font, fill =(220,220,220,255))
+    draw.text(position, name2, font=font, fill=(220,220,220,255))
     
 def pasteIcons(image, icon1, icon2, tbCoords, tbSize):
 
@@ -86,51 +52,110 @@ def pasteIcons(image, icon1, icon2, tbCoords, tbSize):
     position = (position[0], int(position[1] + tbSize[1]/3))
     image.paste(icon2, position, icon2)
 
+def pasteInfo(image, tournament, date, fontPath, tbCoords, tbSize):
+    font = ImageFont.truetype(fontPath, 32)
+
+    draw = ImageDraw.Draw(image)
+
+    # Tournament
+    if tournament is not None:
+        tournSize = draw.textsize(tournament, font=font)
+        x = tbCoords[0] + tbSize[0]/2 - tournSize[0]/2
+        y = tbCoords[1] + tbSize[1]/3 - tournSize[1]/2
+        draw.text((x,y), tournament, font=font, fill=(220, 220, 220, 255))
+
+    # Date
+    if date is not None:
+        dateSize = draw.textsize(date, font=font)
+        x = tbCoords[0] + tbSize[0]/2 - dateSize[0]/2
+        y = tbCoords[1] + tbSize[1]*2/3 - dateSize[1]/2
+        draw.text((x,y), date, font=font, fill=(220, 220, 220, 255))
+
+def pasteDevText(image, text, fontPath, margins):
+    lines = text.split(";")
+    font = ImageFont.truetype(fontPath, 40)
+    y = margins
+    draw = ImageDraw.Draw(image)
+    for line in lines:
+        lineWidth = draw.textsize(line, font=font)[0]
+        x = image.width - margins - lineWidth
+        draw.text((x,y), line, font=font, fill=(255,255,255,255))
+        y += (draw.textsize(line, font=font)[1] + margins/2)
+
+
+    
+
 def main():
     parser = argparse.ArgumentParser(description="Generate overlay for a Melee combo video")
 
     # Positional args
     parser.add_argument("outputPath")
-    parser.add_argument("name1")
-    parser.add_argument("name2")
     parser.add_argument("icon1")
     parser.add_argument("icon2")
     parser.add_argument("overlayWidth")
-    parser.add_argument("overlayLength")
-    #parser.add_argument("tournament")
-    #parser.add_argument("date")
+    parser.add_argument("overlayHeight")
     
     
     # Optional args
-    parser.add_argument("--margin", default=MARGIN_SCALE_FACTOR, help="Margin scale factor." + 
-                                                                      "Actual margin (in px) = overlay height / this.")
+    parser.add_argument("--name1", default=None)
+    parser.add_argument("--name2", default=None)
+    parser.add_argument("--tournament", default=None)
+    parser.add_argument("--date", default=None)
+    parser.add_argument("--logoFolder", default="./images/overlay/logos/")
+    parser.add_argument("--margin", default=MARGIN_SCALE)
     parser.add_argument("--fontPath", default="./fonts/LiberationSans-Regular.ttf")
+    parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
 
     args = parser.parse_args()
 
+    # Determine whether we use the tournament name or logo
+    tournament = args.tournament
+    logo = None
+    # TODO fix this and use a logo constants file
+    if tournament is not None:
+        try:
+            logo = Image.open(args.logoFolder + tournament + ".png")
+        except IOError:
+            logo = None
+
     # New transparent image
-    image = Image.new("RGBA", (int(args.overlayWidth), int(args.overlayLength)), color=(0,0,0,0))
+    image = Image.new("RGBA", (int(args.overlayWidth), int(args.overlayHeight)), color=(0,0,0,0))
+
+    # Margins
+    margins = int(args.overlayHeight) / int(args.margin)
 
     # textbox (bottom left)
     # TODO make in pillow
-    textbox = Image.open("./images/overlay/textbox.png")
-    tbSize = (textbox.width, textbox.height)
-    tbCoordsList = pasteTextbox(image, textbox, bl = True, br = True)
+    if (args.name1 is not None) and (args.name2 is not None):
+        textbox = Image.open("./images/overlay/textbox.png")
+        coords = (int(margins), int(int(args.overlayHeight) - margins - textbox.height))
+        pasteTextbox(image, textbox.copy(), coords)
 
-    # logo (bottom right)
-    #logo = Image.open("./images/overlay/logo.png")
-    #pasteLogo(image, logo)
+        # names (in text box)
+        pasteNames(image, args.name1, args.name2, args.fontPath, coords, (textbox.width, textbox.height))
 
-    # names (in text box)
-    pasteNames(image, args.name1, args.name2, args.fontPath, tbCoordsList[0], tbSize)
+        # I change the file name strings so they start with . instead of ..
+        icon1 = Image.open(args.icon1[1:])
+        icon2 = Image.open(args.icon2[1:])
+        # icons
+        pasteIcons(image, icon1, icon2, coords, (textbox.width, textbox.height))
 
-    # icons (also in text box)
-    # I change the file name strings so they start with . instead of ..
-    icon1 = Image.open(args.icon1[1:])
-    icon2 = Image.open(args.icon2[1:])
-    pasteIcons(image, icon1, icon2, tbCoordsList[0], tbSize)
+    # another textbox (bottom right) + tournament data
+    if (tournament is not None) and (args.date is not None):
+        coords = (int(int(args.overlayWidth) - margins - textbox.width), int(int(args.overlayHeight) - margins - textbox.height))
+        pasteTextbox(image, textbox.copy(), coords)
+        pasteInfo(image, tournament, args.date, args.fontPath, coords, (textbox.width, textbox.height))
+
+    # logo
+    if logo is not None:
+        logoCoords = (int(margins), int(margins))
+        pasteLogo(image, logo, logoCoords)
+
+    if args.devText is not None:
+        pasteDevText(image, args.devText, args.fontPath, margins)
 
     image.save(args.outputPath)
+    image.close()
 
 if __name__ == '__main__':
     main()

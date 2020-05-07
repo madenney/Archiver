@@ -15,8 +15,8 @@ const REPLAYS_JSON_PATH = path.resolve(path.join(config.AIRLOCK_PATH,"replays.js
 const SSBM_ISO_PATH = path.resolve(config.SSBM_ISO_PATH);
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
 const NUM_PROCESSES = 7;
-const VIDEO_WIDTH = 1920;
-const VIDEO_HEIGHT = 1080;
+const VIDEO_WIDTH = 1878;
+const VIDEO_HEIGHT = 1056;
 
 class ComboList {
 
@@ -39,22 +39,35 @@ class ComboList {
 
     }
 
-    generateOverlay(outputPath, char1Id, char2Id, name1="???", name2="???"){
+    generateOverlay(outputPath, char1Id, char2Id, name1=null, name2=null, 
+        tournament=null, date=null, logoFolder=null, margin=null, fontPath=null, devText=null){
         let icon1 = characters[char1Id].img
         let icon2 = characters[char2Id].img
-
+        let args = [outputPath,
+            icon1, 
+            icon2, 
+            VIDEO_WIDTH,
+            VIDEO_HEIGHT,
+         ]
+        if(name1) args.push("name1=" + name1);
+        if(name2) args.push("name2=" + name2);
+        if(tournament) args.push("tournament=" + tournament);
+        if(date) args.push("date=" + date);
+        if(logoFolder) args.push("logoFolder=" + logoFolder);
+        if(margin) args.push("margin=" + margin);
+        if(fontPath) args.push("fontPath=" + fontPath);
+        if(devText){
+            for(line in devText){
+                devTextArg += (line + ";");
+            }
+            devTextArg = devTextArg.slice(0,-1);
+            args.push("devText=" + devTextArg)
+        }
         let options = {
             mode: "text",
             pythonOptions: ["-u"],
             scriptPath: "./python",
-            args: [outputPath, 
-                   name1,
-                   name2, 
-                   icon1, 
-                   icon2, 
-                   VIDEO_WIDTH,
-                   VIDEO_HEIGHT
-                ]
+            args: args
         };
 
         PythonShell.run("overlay.py", options, function(err, results){
@@ -65,8 +78,9 @@ class ComboList {
 
     generateVideo(){
         return new Promise( async (resolve,reject) => {
-            
-            this.generateOverlay("./test_files/overlay.png", 0, 20, "Nash", "Mad Matt");
+            //Testing
+            this.generateOverlay("./test_files/overlay.png", 0, 20);
+
             const tmpdir = path.join(os.tmpdir(),
                           `tmpo-${crypto.randomBytes(12).toString('hex')}`);
             var overlayPath;
@@ -81,7 +95,8 @@ class ComboList {
                                      combo.game.players[0].characterId, 
                                      combo.game.players[1].characterId,
                                      combo.game.players[0].nametag,
-                                     combo.game.players[1].nametag);
+                                     combo.game.players[1].nametag
+                                     );
                 json[0].replays.push({
                     replay: combo.game.slpPath,
                     startFrame: combo.combo.startFrame,
