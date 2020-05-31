@@ -39,8 +39,20 @@ class ComboList {
 
     }
 
-    generateOverlay(outputPath, char1Id, char2Id, name1=null, name2=null, 
-        tournament=null, date=null, logoFolder=null, margin=null, fontPath=null, devText=null){
+    generateOverlay({
+        outputPath = null,
+        char1Id = null,
+        char2Id = null,
+        name1 = null,
+        name2 = null,
+        tournament = null,
+        date = null,
+        logoPath = null,
+        margin = null,
+        fontPath = null,
+        devText = null
+    } = {}) {
+        //TODO throw errors for outputPath, charIds, etc.
         let icon1 = characters[char1Id].img
         let icon2 = characters[char2Id].img
         let args = [outputPath,
@@ -49,19 +61,21 @@ class ComboList {
             VIDEO_WIDTH,
             VIDEO_HEIGHT,
          ]
-        if(name1) args.push("name1=" + name1);
-        if(name2) args.push("name2=" + name2);
-        if(tournament) args.push("tournament=" + tournament);
-        if(date) args.push("date=" + date);
-        if(logoFolder) args.push("logoFolder=" + logoFolder);
-        if(margin) args.push("margin=" + margin);
-        if(fontPath) args.push("fontPath=" + fontPath);
+        if(name1) args.push("--name1=" + name1);
+        if(name2) args.push("--name2=" + name2);
+        if(tournament) args.push("--tournament=" + tournament);
+        if(date) args.push("--date=" + date);
+        if(logoPath) args.push("--logoPath=" + logoPath);
+        if(margin) args.push("--margin=" + margin);
+        if(fontPath) args.push("--fontPath=" + fontPath);
+        //TODO check type (should be array of strings)
         if(devText){
-            for(line in devText){
+            let line, devTextArg = "";
+            for(line of devText){
                 devTextArg += (line + ";");
             }
             devTextArg = devTextArg.slice(0,-1);
-            args.push("devText=" + devTextArg)
+            args.push("--devText=" + devTextArg)
         }
         let options = {
             mode: "text",
@@ -79,7 +93,17 @@ class ComboList {
     generateVideo(){
         return new Promise( async (resolve,reject) => {
             //Testing
-            this.generateOverlay("./test_files/overlay.png", 0, 20);
+            this.generateOverlay({
+                outputPath : "./test_files/overlay.png", 
+                char1Id : 0, 
+                char2Id : 20, 
+                name1 : "Nash", 
+                name2 : "Matt", 
+                tournament : "Half Moon 69", 
+                logoPath : "./images/overlay/logos/Half Moon.png",
+                devText : ["dev text", "dev text line 2"]
+            });
+            console.log(poo)
 
             const tmpdir = path.join(os.tmpdir(),
                           `tmpo-${crypto.randomBytes(12).toString('hex')}`);
@@ -101,7 +125,7 @@ class ComboList {
                     replay: combo.game.slpPath,
                     startFrame: combo.combo.startFrame,
                     endFrame: combo.combo.endFrame,
-                    overlay: overlayPath
+                    overlayPath: overlayPath
                 })
             });
             fs.writeFileSync(REPLAYS_JSON_PATH,JSON.stringify(json));

@@ -101,22 +101,35 @@ def main():
     parser.add_argument("--name2", default=None)
     parser.add_argument("--tournament", default=None)
     parser.add_argument("--date", default=None)
-    parser.add_argument("--logoFolder", default="./images/overlay/logos/")
+    parser.add_argument("--logoPath", default=None)
     parser.add_argument("--margin", default=MARGIN_SCALE)
     parser.add_argument("--fontPath", default="./fonts/LiberationSans-Regular.ttf")
     parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
 
     args = parser.parse_args()
 
-    # Determine whether we use the tournament name or logo
     tournament = args.tournament
     logo = None
-    # TODO fix this and use a logo constants file
-    if tournament is not None:
+
+    if args.logoPath is not None:
         try:
-            logo = Image.open(args.logoFolder + tournament + ".png")
+            logo = Image.open(args.logoPath)
         except IOError:
             logo = None
+
+    '''
+    # Probably not going to use this in the future; instead will just take logoPath as an arg
+    # TODO fix this and use a logo constants file
+    if tournament is not None:
+        # remove nums from a tournament to try to find the series
+        tournamentSeries = tournament(''.join([c for c in tournament if not c.isdigit()]))
+        # remove trailing whitespace
+        tournamentSeries = tournamentSeries.trim()
+        try:
+            logo = Image.open(args.logoFolder + tournamentSeries + ".png")
+        except IOError:
+            logo = None
+    '''
 
     # New transparent image
     image = Image.new("RGBA", (int(args.overlayWidth), int(args.overlayHeight)), color=(0,0,0,0))
