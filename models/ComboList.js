@@ -110,7 +110,7 @@ class ComboList {
             var overlayPath;
             fs.mkdirSync(tmpdir);
             console.log(`Generating videos using ${NUM_PROCESSES} cpus`);
-            const json = [{"output_path": VIDEO_OUTPUT_PATH,"replays": []}]
+            const json = [{"outputPath": VIDEO_OUTPUT_PATH,"replays": []}]
             this.combos.forEach(combo => {
                 console.log(combo);
                 console.log(combo.game.players);
