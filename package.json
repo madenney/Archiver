@@ -15,7 +15,7 @@
     "uuid": "^3.3.2",
     "slp-parser-js": "^4.1.0",
     "node-dir": "^0.1.17",
-    "slp-to-video": "https://github.com/madenney/slp-to-video"
+    "slp-to-video": "https://github.com/NashWellington/slp-to-video.git"
   },
   "devDependencies": {
     "chokidar": "^3.3.1",
