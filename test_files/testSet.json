@@ -1,0 +1,16 @@
+{
+    "id": null,
+    "completedAt": null,
+    "fullRoundText": null,
+    "event": "Half Moon 69",
+    "winnerTag": "Nash",
+    "loserTag": "Mad Matt",
+    "winnerScore": 3,
+    "loserScore": 0,
+    "winnerMains": ["Link"],
+    "loserMains": ["DK"],
+    "winnerColors": ["white"],
+    "loserColors": ["blue"],
+    "games": [],
+    "isLinked": null
+}
