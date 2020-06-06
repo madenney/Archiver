@@ -33,10 +33,10 @@ class Data {
             a.tournaments.forEach(t=>{
                 t.sets.forEach(s=>s.games.forEach(g=>games.push(g)));
                 t.unlinkedGames.forEach(g => games.push(g));
-            });
+            }); 
             const totalSmashGGSets = a.tournaments.reduce((n,t)=>t.sets.length+n,0)
             const linkedSets = a.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
-            const totalLinkedGames = linkedSets.reduce((n,s)=>s.games.length,0);
+            const totalLinkedGames = linkedSets.reduce((n,s)=>s.games.length+n,0);
             totalSlpFiles += games.length;
             totalProcessedFiles += games.filter(g=>g.isProcessed).length;
             totalValidGames += games.filter(g=>g.isValid).length;
@@ -260,6 +260,7 @@ class Data {
             this.render();
 
         });
+
     }
 }
 

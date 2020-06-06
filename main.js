@@ -15,7 +15,7 @@ function createWindow () {
   
 
   if( process.env.DEVELOPMENT ){
-    win.webContents.openDevTools()
+    win.webContents.openDevTools({mode:'detaach'})
   }
 
 }

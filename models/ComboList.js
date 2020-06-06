@@ -27,6 +27,7 @@ class ComboList {
             this.combos = [];
         }
 
+        if(process.env.DEVELOPMENT) return
         if(!fs.existsSync(config.SSBM_ISO_PATH)){
             throw "HEY, YOUR SSBM_ISO_PATH is invalid. Check config.json";
         }

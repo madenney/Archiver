@@ -10,6 +10,8 @@ const getInfo = () => {
   const game = new SlippiGame(INPUT_FILE)
   const metadata = game.getMetadata()
   console.log(metadata);
+  const stats = game.getStats();
+  console.log(stats);
 }
 
 getInfo();

@@ -3,7 +3,7 @@ const {characters} = require("../constants/characters");
 const {legalStages} = require("../constants/stages");
 const {moves} = require("../constants/moves");
 
-const { ComboController } = require("../controllers/Combo");
+const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
 const { defaults } = require("../constants/comboFilterDefaults");
 class ComboCreator {
@@ -14,6 +14,7 @@ class ComboCreator {
         this.numberPerPage = 50;
         this.games = [];
         this.combos = [];
+        this.archiveSize = this.archive.getAllSlpFiles().filter(f => f.isValid ).length;
     }
 
     loadCombos(){
@@ -100,20 +101,13 @@ class ComboCreator {
                 this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Generate");
             }).catch((err) => {
                 console.log("Oh no :(")
+                this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Sadness");
                 console.log(err);
             });
         })
     }
 
-    generateVideo(){
-        const comboList = new ComboList(this.combos);
-        comboList.generateVideo().then(() => {
-            console.log("Huzzah :)");
-        }).catch((err) => {
-            console.log("Oh no :(")
-            console.log(err);
-        });
-    };
+    
 
     renderOptions(){
         const char1Select = $("#char-1-select");
@@ -142,7 +136,7 @@ class ComboCreator {
         console.log("Rendering Primary List Page: ", page);
         this.primaryListCurrentPage = page;
         this.primaryList.empty();
-        $("#primary-total").html(this.combos.length);
+        $("#primary-total").html(`${this.combos.length}`);
         const combosToDisplay = this.combos.slice(page*this.numberPerPage,(page*this.numberPerPage)+this.numberPerPage)
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
