@@ -1,6 +1,6 @@
 
-const { characters } = require("../constants/characters");
-const { stages } = require("../constants/stages");
+const { characters } = require("../../constants/characters");
+const { stages } = require("../../constants/stages");
 
 const darkStages = [2,3,31,32];
 

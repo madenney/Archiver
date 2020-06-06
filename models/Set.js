@@ -1,3 +1,4 @@
+const { Game } = require("./Game")
 
 class Set {
 

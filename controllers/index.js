@@ -25,7 +25,7 @@ const main = () => {
             console.log(err);
         }
         controller = new MainController( archive, mainContentId );
-        controller.showTab('combo');
+        controller.showTab('data');
     } else {
         console.log("No Last Archive");
         new Startup(startupId, (archivePath) => {
