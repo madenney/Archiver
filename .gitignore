@@ -4,3 +4,4 @@ airlock
 .DS_Store
 dist/*
 config.json
+iso/*
