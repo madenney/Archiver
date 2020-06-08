@@ -89,24 +89,48 @@ def pasteIcons(image, icon1, icon2, tbCoords, tbSize):
 
     return iWidth
 
-def pasteInfo(image, tournament, date, fontPath, tbCoords, tbSize):
+# format: YYYY-MM-DDTHH:MM:SSZ
+# T and Z are literally just the letters, everything else is year, minute, etc.
+def parseTimestamp(timestamp):
+    date, time = timestamp.split('T')
+    time = time[:-1]
+
+    # TODO make options for NA and EU date formats
+    # NA date conversion
+    year, month, day = date.split('-')
+    date = day + '/' + month + '/' + year
+    return date, time
+
+def pasteInfo(image, tournament, timestamp, fontPath, tbCoords, tbSize):
     font = ImageFont.truetype(fontPath, 32)
 
     draw = ImageDraw.Draw(image)
 
+    scale = 1 # determines how the lines are spaced out
+    if timestamp is not None: scale += 2
+
     # Tournament
     if tournament is not None:
-        tournSize = draw.textsize(tournament, font=font)
-        x = tbCoords[0] + tbSize[0]/2 - tournSize[0]/2
-        y = tbCoords[1] + tbSize[1]/3 - tournSize[1]/2
+        scale += 1
+        size = draw.textsize(tournament, font=font)
+        x = tbCoords[0] + tbSize[0]/2 - size[0]/2
+        y = tbCoords[1] + tbSize[1]/scale - size[1]/2
         draw.text((x,y), tournament, font=font, fill=(220, 220, 220, 255))
 
-    # Date
-    if date is not None:
-        dateSize = draw.textsize(date, font=font)
-        x = tbCoords[0] + tbSize[0]/2 - dateSize[0]/2
-        y = tbCoords[1] + tbSize[1]*2/3 - dateSize[1]/2
+    # timestamp
+    if timestamp is not None:
+        date, time = parseTimestamp(timestamp)
+
+        # date
+        size = draw.textsize(date, font=font)
+        x = tbCoords[0] + tbSize[0]/2 - size[0]/2
+        y = tbCoords[1] + tbSize[1]*(scale-2)/scale - size[1]/2
         draw.text((x,y), date, font=font, fill=(220, 220, 220, 255))
+
+        size = draw.textsize(time, font=font)
+        x = tbCoords[0] + tbSize[0]/2 - size[0]/2
+        y = tbCoords[1] + tbSize[1]*(scale-1)/scale - size[1]/2
+        draw.text((x,y), time, font=font, fill=(220, 220, 220, 255))
 
 def pasteDevText(image, text, fontPath, margins):
     lines = text.split(";")
@@ -137,7 +161,7 @@ def main():
     parser.add_argument("--name1", default=None)
     parser.add_argument("--name2", default=None)
     parser.add_argument("--tournament", default=None)
-    parser.add_argument("--date", default=None)
+    parser.add_argument("--timestamp", default=None)
     parser.add_argument("--margin", default=MARGIN_SCALE)
     parser.add_argument("--opacity", default=DEFAULT_LOGO_OPACITY)
     parser.add_argument("--logoPath", default=None)
@@ -194,15 +218,15 @@ def main():
         
 
     # another textbox (bottom right) + tournament data
-    if (tournament is not None) and (args.date is not None):
+    if (tournament is not None) or (args.timestamp is not None):
         coords = (int(int(args.overlayWidth) - margins - textbox.width), int(int(args.overlayHeight) - margins - textbox.height))
         pasteTextbox(image, textbox.copy(), coords)
-        pasteInfo(image, tournament, args.date, args.fontPath, coords, (textbox.width, textbox.height))
+        pasteInfo(image, tournament, args.timestamp, args.fontPath, coords, (textbox.width, textbox.height))
 
     # logo
     if logo is not None:
         logoCoords = (int(margins), int(margins))
-        pasteLogo(image, logo, logoCoords, args.opacity)
+        pasteLogo(image, logo, logoCoords, int(args.opacity))
 
     if args.devText is not None:
         pasteDevText(image, args.devText, args.fontPath, margins)

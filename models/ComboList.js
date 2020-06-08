@@ -14,7 +14,7 @@ const VIDEO_OUTPUT_PATH = path.resolve(path.join(config.AIRLOCK_PATH,"output.avi
 const REPLAYS_JSON_PATH = path.resolve(path.join(config.AIRLOCK_PATH,"replays.json"));
 const SSBM_ISO_PATH = path.resolve(config.SSBM_ISO_PATH);
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const NUM_PROCESSES = 7;
+const NUM_PROCESSES = 4;
 const VIDEO_WIDTH = 1878;
 const VIDEO_HEIGHT = 1056;
 const OVERLAY_OPACITY = 75;
@@ -39,6 +39,9 @@ class ComboList {
             throw "HEY, I couldn't find dolphin-emu in your slp-to-video module. Did you run './setup.sh'?";
         }
 
+        //TODO testing
+        console.log(combos[0].game)
+
     }
 
     generateOverlay({
@@ -48,7 +51,7 @@ class ComboList {
         name1 = null,
         name2 = null,
         tournament = null,
-        date = null,
+        timestamp = null,
         margin = null,
         opacity = null,
         logoPath = null,
@@ -67,7 +70,7 @@ class ComboList {
         if(name1) args.push("--name1=" + name1);
         if(name2) args.push("--name2=" + name2);
         if(tournament) args.push("--tournament=" + tournament);
-        if(date) args.push("--date=" + date);
+        if(timestamp) args.push("--timestamp=" + timestamp);
         if(margin) args.push("--margin=" + margin);
         if(opacity) args.push("--opacity=" + opacity);
         if(logoPath) args.push("--logoPath=" + logoPath);
@@ -96,6 +99,7 @@ class ComboList {
 
     generateVideo(){
         return new Promise( async (resolve,reject) => {
+            /*
             //Testing
             this.generateOverlay({
                 outputPath : "./test_files/overlay.png", 
@@ -103,13 +107,16 @@ class ComboList {
                 char2Id : 20, 
                 name1 : "Alex19 isn't so great?", 
                 name2 : "Captain Faceroll", 
-                tournament : "Half Moon 69", 
+                //tournament : "Half Moon 69", 
+                timestamp : "1969-4-20T04:20:69Z",
                 opacity: OVERLAY_OPACITY,
                 logoPath : "./images/overlay/logos/Half Moon.png",
                 devText : ["dev text", "dev text line 2"]
             });
-            console.log(poo);
-            //End Testing
+            console.log(this.combos[0].game)
+            console.log(poo);  
+            //End Testing 
+            */
 
             const tmpdir = path.join(os.tmpdir(),
                           `tmpo-${crypto.randomBytes(12).toString('hex')}`);
@@ -126,8 +133,7 @@ class ComboList {
                     outputPath : overlayPath, 
                     char1Id : combo.game.players[0].characterId, 
                     char2Id : combo.game.players[1].characterId,
-                    name1 : combo.game.players[0].nametag,
-                    name2 : combo.game.players[1].nametag, 
+                    timestamp : combo.game.startedAt,
                     opacity: OVERLAY_OPACITY
                 });
                 json[0].replays.push({
@@ -167,6 +173,8 @@ class ComboList {
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
+            //TODO testing
+            console.log(poo)
             fs.rmdirSync(tmpdir, { recursive: True });
         });
     }
