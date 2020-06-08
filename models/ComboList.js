@@ -99,25 +99,6 @@ class ComboList {
 
     generateVideo(){
         return new Promise( async (resolve,reject) => {
-            /*
-            //Testing
-            this.generateOverlay({
-                outputPath : "./test_files/overlay.png", 
-                char1Id : 0, 
-                char2Id : 20, 
-                name1 : "Alex19 isn't so great?", 
-                name2 : "Captain Faceroll", 
-                //tournament : "Half Moon 69", 
-                timestamp : "1969-4-20T04:20:69Z",
-                opacity: OVERLAY_OPACITY,
-                logoPath : "./images/overlay/logos/Half Moon.png",
-                devText : ["dev text", "dev text line 2"]
-            });
-            console.log(this.combos[0].game)
-            console.log(poo);  
-            //End Testing 
-            */
-
             const tmpdir = path.join(os.tmpdir(),
                           `tmpo-${crypto.randomBytes(12).toString('hex')}`);
             var overlayPath;
