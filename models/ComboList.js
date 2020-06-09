@@ -95,7 +95,7 @@ class ComboList {
                 skippedFiles.push(file);
             })
             try {
-                //await slpToVideo(slpToVideoConfig);
+                await slpToVideo(slpToVideoConfig);
                 console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
                 resolve();
 
