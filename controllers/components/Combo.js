@@ -5,20 +5,19 @@ const { stages } = require("../../constants/stages");
 const darkStages = [2,3,31,32];
 
 class ComboController {
-    constructor({game,combo}){
+    constructor(combo){
         this.combo = combo;
-        this.game = game;
-        this.slpPath = game.slpPath;
-        this.comboer = game.players.find(p => {
+        this.slpPath = combo.slpPath;
+        this.comboer = combo.players.find(p => {
             return p.playerIndex === combo.playerIndex
         });
-        this.comboee = game.players.find(p => {
+        this.comboee = combo.players.find(p => {
             return p.playerIndex === combo.opponentIndex
         });
     }
 
     html(){
-        const { combo, game, comboer, comboee, slpPath } = this;
+        const { combo, comboer, comboee, slpPath } = this;
         const damage = Math.floor(combo.endPercent - combo.startPercent);
         const seconds = (( combo.endFrame - combo.startFrame ) / 60).toFixed(1);
         return $(`
@@ -26,10 +25,10 @@ class ComboController {
             <div class='game-info'>
                 <div class='characters'>
                     <img class='char1' src=${characters[comboer.characterId].img}>
-                    <img class='arrow' src='../images/${darkStages.indexOf(game.stage) != -1 ? "white":""}next.png'>
+                    <img class='arrow' src='../images/${darkStages.indexOf(combo.stage) != -1 ? "white":""}next.png'>
                     <img class='char2' src=${characters[comboee.characterId].img}>
                 </div>
-                <img class='stage' src=${stages[game.stage].img}>
+                <img class='stage' src=${stages[combo.stage].img}>
             </div>
             <div class='combo-info'>
                 <div class='row'>

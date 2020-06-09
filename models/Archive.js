@@ -95,8 +95,8 @@ class Archive {
     getAllSlpFiles(){
         const files = [];
         this.nonTournamentGames.forEach(g=>files.push(g));
-        this.tournaments.forEach(t=>{
-            t.getAllSlpFiles().forEach(g=>files.push(g));
+        this.tournaments.forEach(tournament=>{
+            tournament.getAllSlpFiles().forEach(game=>files.push(game));
         })
         return files;
     }

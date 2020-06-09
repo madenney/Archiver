@@ -4,7 +4,10 @@
     color: @color2;
 
     #filters-container {
-        padding: 20px 40px;
+        min-width: 670px;
+        display: inline-block;
+        padding: 20px 0px 20px 40px;
+        float: left;
 
         .filters-row {
             margin-top: 10px;
@@ -17,15 +20,16 @@
             }
     
             button {
-                font-size: 25px;
-                padding: 4px;
+                font-size: 18px;
+                padding: 8px;
                 margin: 0px 20px;
                 border-radius: 3px;
                 width: 80px;
-    
+                background-color: @color3;
+                color: @color2;
                 &:hover {
                     cursor: pointer;
-                    background-color: lightgray;
+                    background-color: @color4;
                 }
             }
 
@@ -43,6 +47,100 @@
                     width: 35px;
                     text-align: center;
                 }
+            }
+        }
+    }
+
+    #video-buttons-container {
+        display: inline-block;
+        min-width: 300px;
+        height: 115px;
+        border-left: solid white 2px;
+        padding: 20px;
+        margin: 20px 0px;
+        .video-option {
+            margin-bottom: 4px;
+            display: inline-block; 
+            width: 140px;
+            .label {
+                display: inline-block;
+                font-size: 20px;
+                margin-right: 5px;
+            }
+            input {
+                font-size: 20px;
+                padding: 5px;
+                width: 20px;
+                text-align: center;
+            }
+        }
+        button {
+            font-size: 18px;
+            padding: 8px;
+            width: 150px;
+            height: auto;
+            right: 10px;
+            background-color: @color3;
+
+            &.disabled {
+                background-color: gray;
+                color: black;
+            }
+            &:hover {
+                cursor: pointer;
+                background-color: @color4;
+            }
+        }
+    }
+
+    #video-options-modal-container, #overlay-options-modal-container {
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(160, 160, 160, 0.5);
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 10;
+        .options-modal {
+            border: solid 2px @color1;
+            background-color: @color1;
+            border-radius: 3px;
+            width: 650px;
+            height: 400px;
+            margin: auto;
+            margin-top: 140px;
+            padding: 10px 30px;
+            .extra-video-option {
+                margin-top: 10px;
+                button {
+                    font-size: 20px;
+                    margin-right: 40px;
+                    border-radius: 3px;
+                }
+                .label {
+                    display: inline-block;
+                    font-size: 20px;
+                    margin-right: 5px;
+                    width: 150px;
+                }
+                input {
+                    font-size: 20px;
+                    padding: 5px;
+                    width: 300px;
+                    text-align: center;
+                }
+
+                #num-cpus, #overlay-margin {
+                    width: 40px;
+                }
+
+                #output-path {
+                    margin-top: 10px;
+                }
+            }
+            #logo-path-option {
+                display: none;
             }
         }
     }
@@ -79,18 +177,6 @@
     }
     #secondary-list-container {
 
-        #generate-video-button {
-            font-size: 18px;
-            padding: 20px;
-            width: 200px;
-            height: auto;
-            right: 10px;
-
-            &.disabled {
-                background-color: gray;
-                color: black;
-            }
-        }
     }
 
     .combo {
@@ -144,10 +230,9 @@
     }
 
     .pagination-container {
-        border: solid blue 1px;
+        text-align: center;
 
         .pagination-button,.pagination-element {
-            border: solid green 1px;
             display: inline-block;
             font-size: 20px;
         }

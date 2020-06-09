@@ -56,13 +56,13 @@ class Tournament {
             if( tournamentJSON.sets ){
                 this.sets = [];
                 tournamentJSON.sets.forEach(setJSON => {
-                    this.sets.push( new Set(setJSON) );
+                    this.sets.push( new Set(setJSON,this) );
                 })
             }
             if( tournamentJSON.unlinkedGames ){
                 this.unlinkedGames = [];
                 tournamentJSON.unlinkedGames.forEach(gameJSON => {
-                    this.unlinkedGames.push( new Game(gameJSON) );
+                    this.unlinkedGames.push( new Game(gameJSON,this));
                 })
             }
         } catch(err){

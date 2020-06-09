@@ -261,6 +261,51 @@ class Data {
 
         });
 
+        $("#special-half-moon-button").click(() => {
+            // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            // const x = asdf.find(set => set.id === "8f0852e0-334a-4e49-9c5b-70f5f06b1038" )
+            // x.isLinked = false;
+            // x.games = [];
+            // console.log(x)
+            // return;
+            const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            sets.forEach((set,index) => {
+                try {
+                const playerIndex = set.games[0].players[0].playerIndex
+                let p1Score = 0;
+                set.games.forEach(game => {
+                    if(game.winner === playerIndex ){
+                        p1Score++;
+                    } 
+                })
+
+                
+                if(p1Score == set.winnerScore){
+                    set.games.forEach(game => {
+                        game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
+                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
+                    })
+                } else {
+                    set.games.forEach(game => {
+                        game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
+                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
+                    })
+                }
+                } catch(err){
+                    console.log(index);
+                    //set.games.splice(0,1);
+                    console.log("WHAT: ", set)
+                    // set.games[1].process().then(() => {
+                    //     console.log("BAHA")
+                    //     console.log(set.games[1])
+                    // })
+                    throw err
+                }
+                console.log(set);
+
+            })
+        })
+
     }
 }
 

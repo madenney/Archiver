@@ -227,7 +227,10 @@
   color: #FAFFFD;
 }
 #combo-body #filters-container {
-  padding: 20px 40px;
+  min-width: 670px;
+  display: inline-block;
+  padding: 20px 0px 20px 40px;
+  float: left;
 }
 #combo-body #filters-container .filters-row {
   margin-top: 10px;
@@ -240,15 +243,17 @@
   font-size: 25px;
 }
 #combo-body #filters-container .filters-row button {
-  font-size: 25px;
-  padding: 4px;
+  font-size: 18px;
+  padding: 8px;
   margin: 0px 20px;
   border-radius: 3px;
   width: 80px;
+  background-color: #3C91E6;
+  color: #FAFFFD;
 }
 #combo-body #filters-container .filters-row button:hover {
   cursor: pointer;
-  background-color: lightgray;
+  background-color: #9FD356;
 }
 #combo-body #filters-container .filters-row .filter {
   display: inline-block;
@@ -264,6 +269,106 @@
   padding: 5px;
   width: 35px;
   text-align: center;
+}
+#combo-body #video-buttons-container {
+  display: inline-block;
+  min-width: 300px;
+  height: 115px;
+  border-left: solid white 2px;
+  padding: 20px;
+  margin: 20px 0px;
+}
+#combo-body #video-buttons-container .video-option {
+  margin-bottom: 4px;
+  display: inline-block;
+  width: 140px;
+}
+#combo-body #video-buttons-container .video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+}
+#combo-body #video-buttons-container .video-option input {
+  font-size: 20px;
+  padding: 5px;
+  width: 20px;
+  text-align: center;
+}
+#combo-body #video-buttons-container button {
+  font-size: 18px;
+  padding: 8px;
+  width: 150px;
+  height: auto;
+  right: 10px;
+  background-color: #3C91E6;
+}
+#combo-body #video-buttons-container button.disabled {
+  background-color: gray;
+  color: black;
+}
+#combo-body #video-buttons-container button:hover {
+  cursor: pointer;
+  background-color: #9FD356;
+}
+#combo-body #video-options-modal-container,
+#combo-body #overlay-options-modal-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(160, 160, 160, 0.5);
+  display: none;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+}
+#combo-body #video-options-modal-container .options-modal,
+#combo-body #overlay-options-modal-container .options-modal {
+  border: solid 2px #342E37;
+  background-color: #342E37;
+  border-radius: 3px;
+  width: 650px;
+  height: 400px;
+  margin: auto;
+  margin-top: 140px;
+  padding: 10px 30px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option {
+  margin-top: 10px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option button,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option button {
+  font-size: 20px;
+  margin-right: 40px;
+  border-radius: 3px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option .label,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+  width: 150px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option input,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option input {
+  font-size: 20px;
+  padding: 5px;
+  width: 300px;
+  text-align: center;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option #num-cpus,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #num-cpus,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #overlay-margin,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin {
+  width: 40px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option #output-path,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #output-path {
+  margin-top: 10px;
+}
+#combo-body #video-options-modal-container .options-modal #logo-path-option,
+#combo-body #overlay-options-modal-container .options-modal #logo-path-option {
+  display: none;
 }
 #combo-body .list-container {
   display: inline-block;
@@ -287,17 +392,6 @@
 }
 #combo-body .list-container .list {
   padding-left: 0px;
-}
-#combo-body #secondary-list-container #generate-video-button {
-  font-size: 18px;
-  padding: 20px;
-  width: 200px;
-  height: auto;
-  right: 10px;
-}
-#combo-body #secondary-list-container #generate-video-button.disabled {
-  background-color: gray;
-  color: black;
 }
 #combo-body .combo {
   margin: 5px;
@@ -344,11 +438,10 @@
   width: 20px;
 }
 #combo-body .pagination-container {
-  border: solid blue 1px;
+  text-align: center;
 }
 #combo-body .pagination-container .pagination-button,
 #combo-body .pagination-container .pagination-element {
-  border: solid green 1px;
   display: inline-block;
   font-size: 20px;
 }
