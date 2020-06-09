@@ -33,16 +33,8 @@ class ComboList {
     generateVideo(options){
         return new Promise( async (resolve,reject) => {
   
-            // await this.generateOverlay({
-            //     outputPath : path.resolve(path.join(config.AIRLOCK_PATH,"overlay.png")), 
-            //     char1Id : 0, 
-            //     char2Id : 20, 
-            //     name1 : "Captain Faceroll", 
-            //     name2 : "Action Bastard", 
-            //     tournament : "Half Moon 55", 
-            //     logoPath : "./images/overlay/logos/Half Moon.png",
-            //     devText : ["hello", "world"]
-            // });
+            console.log(options);
+            console.log(this.combos);
             
             const tmpDir = path.join(os.tmpdir(),
                           `tmp-${crypto.randomBytes(12).toString('hex')}`);
@@ -71,6 +63,7 @@ class ComboList {
             await Promise.all(overlayPromises);
 
             fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
+
             const em = new events.EventEmitter();
             const slpToVideoConfig = {
                 INPUT_FILE: path.join(tmpDir,`replays.json`),
@@ -80,7 +73,7 @@ class ComboList {
                 EVENT_TRACKER: em,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: options.widescreen
+                WIDESCREEN_OFF: !options.widescreen
             }
             em.on('primaryEventMsg',msg => {
                 console.log(msg);

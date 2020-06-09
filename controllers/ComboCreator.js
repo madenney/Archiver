@@ -237,7 +237,7 @@ class ComboCreator {
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
-        
+        console.log(combosToDisplay)
         //pagination
         if(combosToDisplay.length < this.combos.length){
             $("#primary-list-pagination-container").show();
@@ -327,7 +327,7 @@ class ComboCreator {
             gameMusic: $("#game-music").is(":checked"),
             widescreen: $("#widescreen").is(":checked"),
             numCPUs: $("#num-cpus").val(),
-            ssbmIsoPath: $("#iso-path").val(),
+            isoPath: $("#iso-path").val(),
             outputPath: $("#output-path").val(),
             showPlayerTags: $("#show-player-tags").is(":checked"),
             showTournament: $("#show-tournament").is(":checked"),
