@@ -1,64 +1,66 @@
 <!DOCTYPE html>
 <html>
   <div id="combo-body">
-    <div id="filters-container">
-      <div class="filters-row">
-        <select id="char-1-select">
-          <option value="">Any Character</option>
-        </select>
-        <span>combos</span>
-        <select id="char-2-select">
-          <option value="">Any Character</option>
-        </select>
-        <span>on</span>
-        <select id="stage-select">
-          <option value="">Any Stage</option>
-        </select>
-      </div>
-      <div class="filters-row">
-        <div class="filter">
-          <div class="label">Min Moves</div>
-          <input id="min-moves">
-        </div>
-        <div class="filter">
-          <div class="label">Min Damage</div>
-          <input id="min-damage">
-        </div>
-        <!-- <div class="filter">
-          <div class="label">Includes</div>
-          <input id="includes" value="">
-        </div> -->
-        <div class="filter">
-          <div class="label">Ends Move</div>
-          <select id="end-move" value="">
-            <option value="">Any Move</option>
+    <div id="filters-and-options">
+      <div id="filters-container">
+        <div class="filters-row">
+          <select id="char-1-select">
+            <option value="">Any Character</option>
+          </select>
+          <span>combos</span>
+          <select id="char-2-select">
+            <option value="">Any Character</option>
+          </select>
+          <span>on</span>
+          <select id="stage-select">
+            <option value="">Any Stage</option>
           </select>
         </div>
-      </div>
-      <div class="filters-row">
-        <div class="filter">
-          <div class="label">Kills</div>
-          <input id="did-kill" type="checkbox">
+        <div class="filters-row">
+          <div class="filter">
+            <div class="label">Min Moves</div>
+            <input id="min-moves">
+          </div>
+          <div class="filter">
+            <div class="label">Min Damage</div>
+            <input id="min-damage">
+          </div>
+          <!-- <div class="filter">
+            <div class="label">Includes</div>
+            <input id="includes" value="">
+          </div> -->
+          <div class="filter">
+            <div class="label">Ends Move</div>
+            <select id="end-move" value="">
+              <option value="">Any Move</option>
+            </select>
+          </div>
         </div>
-        <button id="filter-button">Filter</button>
-      </div>
-    </div>
-    <div id="video-buttons-container">
-      <div>
-        <div class="video-option">
-          <div class="label">Overlay</div>
-          <input id="overlay" type="checkbox">
-        </div>
-        <div class="video-option">
-          <div class="label">Dev Mode</div>
-          <input id="dev-mode" type="checkbox">
+        <div class="filters-row">
+          <div class="filter">
+            <div class="label">Kills</div>
+            <input id="did-kill" type="checkbox">
+          </div>
+          <button id="filter-button">Filter</button>
         </div>
       </div>
-      <div>
-        <button id="video-options-button" class="normal-button">Video Options</button>
-        <button id="overlay-options-button" class="normal-button">Overlay Options</button>
+      <div id="video-buttons-container">
+        <div>
+          <div class="video-option">
+            <div class="label">Overlay</div>
+            <input id="show-overlay" type="checkbox">
+          </div>
+          <div class="video-option">
+            <div class="label">Dev Mode</div>
+            <input id="dev-mode" type="checkbox">
+          </div>
+        </div>
+        <div>
+          <button id="video-options-button" class="normal-button">Video Options</button>
+          <button id="overlay-options-button" class="normal-button">Overlay Options</button>
+        </div>
+        <button id="generate-video-button" class="normal-button">Generate</button>
       </div>
-      <button id="generate-video-button" class="normal-button">Generate</button>
     </div>
     <div id="video-options-modal-container">
       <div class="options-modal">
@@ -102,7 +104,7 @@
           </div>
           <div class="extra-video-option">
             <div class="label">Tournament</div>
-            <input id="show-tournament-name" type="checkbox">
+            <input id="show-tournament" type="checkbox">
           </div>
           <div class="extra-video-option">
             <div class="label">Logo</div>

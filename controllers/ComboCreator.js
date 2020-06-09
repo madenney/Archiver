@@ -237,7 +237,7 @@ class ComboCreator {
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
-        console.log(combosToDisplay)
+        
         //pagination
         if(combosToDisplay.length < this.combos.length){
             $("#primary-list-pagination-container").show();
@@ -293,9 +293,9 @@ class ComboCreator {
         $("#show-player-tags").prop('checked', 
             typeof localStorage.showPlayerTags == "string" ? localStorage.showPlayerTags == "true" : overlayOptions.showPlayerTags);
         $("#show-player-tags").change(function(){localStorage.showPlayerTags = this.checked})
-        $("#show-tournament-name").prop('checked',
+        $("#show-tournament").prop('checked',
             typeof localStorage.showTournament == "string" ? localStorage.showTournament == "true" : overlayOptions.showTournament);
-        $("#show-tournament-name").change(function(){localStorage.showTournament = this.checked})
+        $("#show-tournament").change(function(){localStorage.showTournament = this.checked})
         $("#show-logo").prop('checked',
             typeof localStorage.showLogo == "string" ? localStorage.showLogo == "true" : overlayOptions.showLogo);
         if($("#show-logo").is(":checked")) $("#logo-path-option").show();
@@ -327,15 +327,15 @@ class ComboCreator {
             gameMusic: $("#game-music").is(":checked"),
             widescreen: $("#widescreen").is(":checked"),
             numCPUs: $("#num-cpus").val(),
-            ssbmIsoPath: $("#num-cpus").val(),
-            outputPath: $("#num-cpus").val(),
+            ssbmIsoPath: $("#iso-path").val(),
+            outputPath: $("#output-path").val(),
             showPlayerTags: $("#show-player-tags").is(":checked"),
             showTournament: $("#show-tournament").is(":checked"),
             showLogo: $("#show-logo").is(":checked"),
-            logoPath: $("#num-cpus").val(),
+            logoPath: $("#logo-path").val(),
             showDate: $("#show-date").is(":checked"),
             overlayMargin: $("#overlay-margin").val(),
-            fontPath: $("#num-cpus").val(),
+            fontPath: $("#font-path").val(),
         }
     }
 

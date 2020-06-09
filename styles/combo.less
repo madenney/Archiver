@@ -2,40 +2,64 @@
 #combo-body {
 
     color: @color2;
-
-    #filters-container {
-        min-width: 670px;
-        display: inline-block;
-        padding: 20px 0px 20px 40px;
-        float: left;
-
-        .filters-row {
-            margin-top: 10px;
-            & select {
-                margin: 10px;
-                font-size: 20px;
-            }
-            & > span {
-                font-size: 25px;
-            }
+    #filters-and-options{
+        display: flex;
+        #filters-container {
+            min-width: 670px;
+            padding: 20px 0px 20px 40px;
     
-            button {
-                font-size: 18px;
-                padding: 8px;
-                margin: 0px 20px;
-                border-radius: 3px;
-                width: 80px;
-                background-color: @color3;
-                color: @color2;
-                &:hover {
-                    cursor: pointer;
-                    background-color: @color4;
+            .filters-row {
+                margin-top: 10px;
+                & select {
+                    margin: 10px;
+                    font-size: 20px;
+                }
+                & > span {
+                    font-size: 25px;
+                }
+        
+                button {
+                    font-size: 18px;
+                    padding: 8px;
+                    margin: 0px 20px;
+                    border-radius: 3px;
+                    width: 80px;
+                    background-color: @color3;
+                    color: @color2;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: @color4;
+                    }
+                }
+    
+                .filter {
+                    display: inline-block;
+                    margin-right: 20px;
+                    .label {
+                        display: inline-block;
+                        font-size: 20px;
+                        margin-right: 5px;
+                    }
+                    input {
+                        font-size: 20px;
+                        padding: 5px;
+                        width: 35px;
+                        text-align: center;
+                    }
                 }
             }
-
-            .filter {
-                display: inline-block;
-                margin-right: 20px;
+        }
+    
+        #video-buttons-container {
+            min-width: 300px;
+            height: 115px;
+            border-left: solid white 2px;
+            padding: 20px;
+            margin: 20px 0px;
+            .video-option {
+                margin-bottom: 4px;
+                display: inline-block; 
+                width: 140px;
                 .label {
                     display: inline-block;
                     font-size: 20px;
@@ -44,51 +68,26 @@
                 input {
                     font-size: 20px;
                     padding: 5px;
-                    width: 35px;
+                    width: 20px;
                     text-align: center;
                 }
             }
-        }
-    }
-
-    #video-buttons-container {
-        display: inline-block;
-        min-width: 300px;
-        height: 115px;
-        border-left: solid white 2px;
-        padding: 20px;
-        margin: 20px 0px;
-        .video-option {
-            margin-bottom: 4px;
-            display: inline-block; 
-            width: 140px;
-            .label {
-                display: inline-block;
-                font-size: 20px;
-                margin-right: 5px;
-            }
-            input {
-                font-size: 20px;
-                padding: 5px;
-                width: 20px;
-                text-align: center;
-            }
-        }
-        button {
-            font-size: 18px;
-            padding: 8px;
-            width: 150px;
-            height: auto;
-            right: 10px;
-            background-color: @color3;
-
-            &.disabled {
-                background-color: gray;
-                color: black;
-            }
-            &:hover {
-                cursor: pointer;
-                background-color: @color4;
+            button {
+                font-size: 18px;
+                padding: 8px;
+                width: 150px;
+                height: auto;
+                right: 10px;
+                background-color: @color3;
+                margin: 10px 5px;
+                &.disabled {
+                    background-color: gray;
+                    color: black;
+                }
+                &:hover {
+                    cursor: pointer;
+                    background-color: @color4;
+                }
             }
         }
     }

@@ -23,27 +23,14 @@ class ComboList {
             this.combos = [];
         }
 
-        if(process.env.DEVELOPMENT){
-            console.log("Skipping regular checks because DEV")
-            return
-        } 
-        if(!fs.existsSync(config.SSBM_ISO_PATH)){
-            throw "HEY, YOUR SSBM_ISO_PATH is invalid. Check config.json";
-        }
-        if(!fs.existsSync(config.AIRLOCK_PATH)){
-            throw "HEY, YOUR AIRLOCK_PATH is invalid. Check config.json";
-        }
+        if(process.env.DEVELOPMENT) return
         if(!fs.existsSync(DOLPHIN_PATH)){
-            throw "HEY, I couldn't find dolphin-emu in your slp-to-video module. Did you run './setup.sh'?";
+            throw "Could not find dolphin-emu in your slp-to-video module. Did you run './setup.sh'?";
         }
 
     }
 
     generateVideo(options){
-
-        console.log(this.combos);
-
-        return;
         return new Promise( async (resolve,reject) => {
   
             // await this.generateOverlay({
@@ -62,17 +49,17 @@ class ComboList {
             fs.mkdirSync(tmpDir);
             let outputFileName = "output.avi";
             let count = 1;
-            while(fs.existsSync(path.resolve(`${outputPath}/${outputFileName}`))){
+            while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
                 outputFileName = `output${count++}.avi`
             }
-            const json = [{"outputPath": outputFileName,"replays": []}]
+            const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
             this.combos.forEach((combo,index) => {
                 
                 const replayJSON = {
-                    replay: combo.game.slpPath,
-                    startFrame: combo.combo.startFrame,
-                    endFrame: combo.combo.endFrame
+                    replay: combo.slpPath,
+                    startFrame: combo.startFrame,
+                    endFrame: combo.endFrame
                 }
                 if(options.showOverlay){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
@@ -93,7 +80,7 @@ class ComboList {
                 EVENT_TRACKER: em,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen
+                WIDESCREEN_OFF: options.widescreen
             }
             em.on('primaryEventMsg',msg => {
                 console.log(msg);
@@ -108,7 +95,7 @@ class ComboList {
                 skippedFiles.push(file);
             })
             try {
-                await slpToVideo(slpToVideoConfig);
+                //await slpToVideo(slpToVideoConfig);
                 console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
                 resolve();
 
@@ -116,36 +103,50 @@ class ComboList {
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            await rimraf(tmpDir);
+            // rimraf(tmpDir, () => {
+            //     console.log("removed tmpdir")
+            // });
         });
     }
 
     generateOverlay(outputPath, combo, options){ 
+        console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
-        const { index, comboerTag, comboeeTag, comboer, comboee, tournament, date } = combo
+        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
         const { showPlayerTags, showTournament, showLogo, showDate, logoPath, overlayMargin, fontPath, devMode } = options
-        if(typeof char1Id === undefined || typeof char2Id === undefined || !outputPath ) throw "Combolist.generateOverlay missing required parameter"
-        const icon1 = characters[char1Id].img
-        const icon2 = characters[char2Id].img
+        const devText = index;
+        if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
+        console.log(outputPath);
+        const comboer = players.find(p=>p.playerIndex === playerIndex)
+        const comboee = players.find(p=>p.playerIndex === opponentIndex)
+
+        const icon1 = characters[comboer.characterId].img
+        const icon2 = characters[comboee.characterId].img
 
         const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
 
-        if(name1) args.push("--name1=" + name1);
-        if(name2) args.push("--name2=" + name2);
-        if(tournament) args.push("--tournament=" + tournament);
-        if(date) args.push("--date=" + date);
-        if(logoPath) args.push("--logoPath=" + logoPath);
-        if(margin) args.push("--margin=" + margin);
+        if(showPlayerTags){
+            if(comboer.tag) args.push("--name1=" + comboer.tag);
+            if(comboee.tag) args.push("--name2=" + comboee.tag);
+        }
+        if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
+        if(showDate && startedAt) {
+            const d = new Date(startedAt);
+            args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
+        };
+        if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
+        if(overlayMargin) args.push("--margin=" + overlayMargin);
         if(fontPath) args.push("--fontPath=" + fontPath);
-
-        if(devText){
+        
+        if(devMode){
             let line, devTextArg = "";
-            for(line of devText){
+            for(line of [devText]){
                 devTextArg += (line + ";");
             }
             devTextArg = devTextArg.slice(0,-1);
             args.push("--devText=" + devTextArg)
         }
+        console.log(args);
         const pyShellOptions = {
             mode: "text",
             pythonPath: 'python3',

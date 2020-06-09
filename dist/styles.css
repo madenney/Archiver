@@ -226,23 +226,24 @@
 #combo-body {
   color: #FAFFFD;
 }
-#combo-body #filters-container {
-  min-width: 670px;
-  display: inline-block;
-  padding: 20px 0px 20px 40px;
-  float: left;
+#combo-body #filters-and-options {
+  display: flex;
 }
-#combo-body #filters-container .filters-row {
+#combo-body #filters-and-options #filters-container {
+  min-width: 670px;
+  padding: 20px 0px 20px 40px;
+}
+#combo-body #filters-and-options #filters-container .filters-row {
   margin-top: 10px;
 }
-#combo-body #filters-container .filters-row select {
+#combo-body #filters-and-options #filters-container .filters-row select {
   margin: 10px;
   font-size: 20px;
 }
-#combo-body #filters-container .filters-row > span {
+#combo-body #filters-and-options #filters-container .filters-row > span {
   font-size: 25px;
 }
-#combo-body #filters-container .filters-row button {
+#combo-body #filters-and-options #filters-container .filters-row button {
   font-size: 18px;
   padding: 8px;
   margin: 0px 20px;
@@ -251,62 +252,62 @@
   background-color: #3C91E6;
   color: #FAFFFD;
 }
-#combo-body #filters-container .filters-row button:hover {
+#combo-body #filters-and-options #filters-container .filters-row button:hover {
   cursor: pointer;
   background-color: #9FD356;
 }
-#combo-body #filters-container .filters-row .filter {
+#combo-body #filters-and-options #filters-container .filters-row .filter {
   display: inline-block;
   margin-right: 20px;
 }
-#combo-body #filters-container .filters-row .filter .label {
+#combo-body #filters-and-options #filters-container .filters-row .filter .label {
   display: inline-block;
   font-size: 20px;
   margin-right: 5px;
 }
-#combo-body #filters-container .filters-row .filter input {
+#combo-body #filters-and-options #filters-container .filters-row .filter input {
   font-size: 20px;
   padding: 5px;
   width: 35px;
   text-align: center;
 }
-#combo-body #video-buttons-container {
-  display: inline-block;
+#combo-body #filters-and-options #video-buttons-container {
   min-width: 300px;
   height: 115px;
   border-left: solid white 2px;
   padding: 20px;
   margin: 20px 0px;
 }
-#combo-body #video-buttons-container .video-option {
+#combo-body #filters-and-options #video-buttons-container .video-option {
   margin-bottom: 4px;
   display: inline-block;
   width: 140px;
 }
-#combo-body #video-buttons-container .video-option .label {
+#combo-body #filters-and-options #video-buttons-container .video-option .label {
   display: inline-block;
   font-size: 20px;
   margin-right: 5px;
 }
-#combo-body #video-buttons-container .video-option input {
+#combo-body #filters-and-options #video-buttons-container .video-option input {
   font-size: 20px;
   padding: 5px;
   width: 20px;
   text-align: center;
 }
-#combo-body #video-buttons-container button {
+#combo-body #filters-and-options #video-buttons-container button {
   font-size: 18px;
   padding: 8px;
   width: 150px;
   height: auto;
   right: 10px;
   background-color: #3C91E6;
+  margin: 10px 5px;
 }
-#combo-body #video-buttons-container button.disabled {
+#combo-body #filters-and-options #video-buttons-container button.disabled {
   background-color: gray;
   color: black;
 }
-#combo-body #video-buttons-container button:hover {
+#combo-body #filters-and-options #video-buttons-container button:hover {
   cursor: pointer;
   background-color: #9FD356;
 }
