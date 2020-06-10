@@ -1,12 +1,14 @@
 import argparse
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
-# the actual margins will be the height of the image / MARGIN_SCALE_FACTOR
-MARGIN_SCALE = 40
-ICON_SCALE = 2          # icons at half size
-DEFAULT_FONT_SIZE = 32  # max size, will resize to lower size if name is too long
+MARGIN_SCALE = 40                   # vid height / this = px margins between elements and edge of video
+ICON_SCALE = 50                     # icons at 50% size
+DEFAULT_FONT_SIZE = 32              # max size, will resize to a lower size if name is too long
 MIN_FONT_SIZE = 20
 DEFAULT_LOGO_OPACITY = 100
+VERTICAL_TEXTBOX_MARGIN_SCALE = 30  # % of textbox between name lines and vertical edges
+HORIZONTAL_TEXTBOX_MARGIN = 10      # px between max size names/icons, & horizontal edges
+ICON_MARGIN = 2                     # min 2 px between end of text and icon
 
 # TODO
 def roundedBox(width, height, border, fill):
@@ -22,15 +24,11 @@ def pasteLogo(image, logo, coords, opacity):
     mask = logo.split()[3].point(lambda i: i * opacity / 100)
     image.paste(logo, coords, mask=mask)
 
-# set font size so the name can fit in the textbox
-# if the font size is below MIN_FONT_SIZE, the name trimmed and end in an ellipsis
-def adjustName(draw, name, fontPath, tbWidth, iconWidth):
-    width = 999999
+# set font size so the name can fit in the textbox (until MIN_FONT_SIZE)
+# if the text width is still too large, the name trimmed and end in an ellipsis
+def adjustName(draw, name, fontPath, maxTextWidth):
+    width = maxTextWidth + 1
     fontSize = DEFAULT_FONT_SIZE + 1
-    leftMargin = 10     # 10 px between edge of textbox and start of text
-    rightMargin = 10    # 10 px between edge of textbox and edge of icon
-    iconMargin = 2      # min 2 px between end of text and icon
-    maxTextWidth = tbWidth - (leftMargin + rightMargin + iconMargin + iconWidth)
 
     while((width > maxTextWidth) and (fontSize > MIN_FONT_SIZE)):
         fontSize -= 1
@@ -48,44 +46,52 @@ def adjustName(draw, name, fontPath, tbWidth, iconWidth):
 
     return name, fontSize
 
-def pasteNames(image, name1, name2, fontPath, tbCoords, tbSize, iconWidth):
+def pasteNames(image, name1, name2, fontPath, tbCoords, tbSize, iconWidth, center):
     # Drawing context
     draw = ImageDraw.Draw(image)
 
+    # constants
+    maxTextWidth = tbSize[0] - (2 * HORIZONTAL_TEXTBOX_MARGIN + ICON_MARGIN + iconWidth)
+
     # Get font and trim names
-    trimmedName1, fontSize1 = adjustName(draw, name1, fontPath, tbSize[0], iconWidth)
+    trimmedName1, fontSize1 = adjustName(draw, name1, fontPath, maxTextWidth)
     font1 = ImageFont.truetype(fontPath, fontSize1)
-    trimmedName2, fontSize2 = adjustName(draw, name2, fontPath, tbSize[0], iconWidth)
+    trimmedName2, fontSize2 = adjustName(draw, name2, fontPath, maxTextWidth)
     font2 = ImageFont.truetype(fontPath, fontSize2)
 
-    # Text heights
-    tHeight1 = draw.textsize(name1, font = font1)[1]
-    tHeight2 = draw.textsize(name2, font = font2)[1]
+    # Text widths [0] and heights [1]
+    tSize1 = draw.textsize(trimmedName1, font = font1)
+    tSize2 = draw.textsize(trimmedName2, font = font2)
 
     # Middle of name1 is 1/3 down textbox
-    position = (tbCoords[0] + 10, tbCoords[1] + tbSize[1]/3 - tHeight1 / 2)
-    draw.text(position, trimmedName1, font=font1, fill=(220,220,220,255))
+    x = tbCoords[0] + HORIZONTAL_TEXTBOX_MARGIN
+    if(center): x += (maxTextWidth - tSize1[0]) / 2
+    y = tbCoords[1] + tbSize[1] * VERTICAL_TEXTBOX_MARGIN_SCALE / 100 - tSize1[1] / 2
+    draw.text((x, y), trimmedName1, font=font1, fill=(220,220,220,255))
 
     # Middle of name2 is 2/3 down
-    position = (position[0], tbCoords[1] + tbSize[1] * 2/3 - tHeight2 / 2)
-    draw.text(position, trimmedName2, font=font2, fill=(220,220,220,255))
+    if(center): x = tbCoords[0] + HORIZONTAL_TEXTBOX_MARGIN + (maxTextWidth - tSize2[0]) / 2
+    y = tbCoords[1] + tbSize[1] * (100 - VERTICAL_TEXTBOX_MARGIN_SCALE) / 100 - tSize2[1] / 2
+    draw.text((x, y), trimmedName2, font=font2, fill=(220,220,220,255))
     
 def pasteIcons(image, icon1, icon2, tbCoords, tbSize):
 
-    icon1 = icon1.resize((int(icon1.width / ICON_SCALE), int(icon1.height / ICON_SCALE)))
-    icon2 = icon2.resize((int(icon2.width / ICON_SCALE), int(icon2.height / ICON_SCALE)))
+    icon1 = icon1.resize((int(icon1.width * ICON_SCALE / 100), int(icon1.height * ICON_SCALE / 100)))
+    icon2 = icon2.resize((int(icon2.width * ICON_SCALE / 100), int(icon2.height * ICON_SCALE / 100)))
 
     # Icon height
     iHeight = icon1.height
     iWidth = icon1.width
 
     # Middle of name1 is 1/3 down textbox
-    position = ((int)(tbCoords[0] + tbSize[0] - 10 - iWidth), (int)(tbCoords[1] + tbSize[1]/3 - iHeight/2))
-    image.paste(icon1, position, icon1)
+    x = tbCoords[0] + tbSize[0] - HORIZONTAL_TEXTBOX_MARGIN - (int)(iWidth)
+    y = tbCoords[1] + tbSize[1] * VERTICAL_TEXTBOX_MARGIN_SCALE / 100 - (int)(iHeight) / 2
+    image.paste(icon1, ((int)(x), (int)(y)), icon1)
 
     # Middle of name2 is 2/3 down
-    position = (position[0], int(position[1] + tbSize[1]/3))
-    image.paste(icon2, position, icon2)
+    x = tbCoords[0] + tbSize[0] - HORIZONTAL_TEXTBOX_MARGIN - (int)(iWidth)
+    y = tbCoords[1] + tbSize[1] * (100 - VERTICAL_TEXTBOX_MARGIN_SCALE) / 100 - (int)(iHeight) / 2
+    image.paste(icon2, ((int)(x), (int)(y)), icon2)
 
     return iWidth
 
@@ -93,6 +99,7 @@ def pasteIcons(image, icon1, icon2, tbCoords, tbSize):
 # T and Z are literally just the letters, everything else is year, minute, etc.
 def parseTimestamp(timestamp):
     date, time = timestamp.split('T')
+    # TODO make options for standard and military time formats
     time = time[:-1]
 
     # TODO make options for NA and EU date formats
@@ -158,15 +165,24 @@ def main():
     
     
     # Optional args
+    # strings
     parser.add_argument("--name1", default=None)
     parser.add_argument("--name2", default=None)
     parser.add_argument("--tournament", default=None)
     parser.add_argument("--timestamp", default=None)
+    parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
+
+    # values
     parser.add_argument("--margin", default=MARGIN_SCALE)
     parser.add_argument("--opacity", default=DEFAULT_LOGO_OPACITY)
+
+    # paths
     parser.add_argument("--logoPath", default=None)
     parser.add_argument("--fontPath", default="./fonts/LiberationSans-Regular.ttf")
-    parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
+
+    # toggles
+    parser.add_argument("--centerNames", default=True, 
+                            help="Center player names to the left of character icons, or keep them left aligned")
 
     args = parser.parse_args()
 
@@ -199,10 +215,12 @@ def main():
     # Margins
     margins = int(args.overlayHeight) / int(args.margin)
 
+    # Initialize textbox
+    textbox = Image.open("./images/overlay/textbox.png")
+
     # textbox (bottom left)
     # TODO make in pillow
     if (args.name1 is not None) and (args.name2 is not None):
-        textbox = Image.open("./images/overlay/textbox.png")
         coords = (int(margins), int(int(args.overlayHeight) - margins - textbox.height))
         pasteTextbox(image, textbox.copy(), coords)
 
@@ -213,7 +231,7 @@ def main():
         iconWidth = pasteIcons(image, icon1, icon2, coords, (textbox.width, textbox.height))
 
         # names (in text box)
-        pasteNames(image, args.name1, args.name2, args.fontPath, coords, (textbox.width, textbox.height), iconWidth)
+        pasteNames(image, args.name1, args.name2, args.fontPath, coords, (textbox.width, textbox.height), iconWidth, args.centerNames)
 
         
 

@@ -44,6 +44,23 @@ class ComboList {
 
     }
 
+    testOverlay(testSetPath){
+        let setData = JSON.parse(fs.readFileSync(testSetPath));
+        console.log("name1 " + setData.winnerTag);
+        this.generateOverlay({
+            outputPath: "./test_files/overlay.png",
+            char1Id: setData.winnerMains[0],
+            char2Id: setData.loserMains[0],
+            name1: setData.winnerTag,
+            name2: setData.loserTag,
+            tournament: setData.event,
+            timestamp: setData.completedAt,
+            opacity: 50,
+            logoPath: "./images/overlay/logos/Half Moon.png",
+            devText: ["dev text", "dev text line 2"]
+        });
+    }
+
     generateOverlay({
         outputPath = null,
         char1Id = null,
@@ -98,6 +115,12 @@ class ComboList {
     }
 
     generateVideo(){
+        //TODO test set
+        var testSetPath = './test_files/testSet.json';
+        this.testOverlay(testSetPath);
+        console.log(poo);
+        console.log(poo)
+
         return new Promise( async (resolve,reject) => {
             const tmpdir = path.join(os.tmpdir(),
                           `tmpo-${crypto.randomBytes(12).toString('hex')}`);
@@ -145,6 +168,7 @@ class ComboList {
                 console.log(msg);
                 skippedFiles.push(file);
             })
+            /*
             try {
                 await slpToVideo(config);
                 console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
@@ -154,8 +178,7 @@ class ComboList {
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            //TODO testing
-            console.log(poo)
+            */
             fs.rmdirSync(tmpdir, { recursive: True });
         });
     }
