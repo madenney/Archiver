@@ -261,6 +261,63 @@ class Data {
 
         });
 
+        $("#special-half-moon-button").click(() => {
+            // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            // let games = [];
+            // sets.forEach(s => games = games.concat(s.games));
+            // console.log(games.length)
+            // console.log(games[0])
+            // const macPath = "/Users/mattdenney/Projects/Labelled_Half_Moon_Slp_Files"
+            // const linuxPath = "/media/matt/Slippi Data/Labelled Half Moon Slp Files"
+            // games.forEach(game => {
+            //     game.slpPath = game.slpPath.replace(macPath,linuxPath)
+            //     console.log(game.slpPath)
+            // })
+            return
+            // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            // const x = asdf.find(set => set.id === "8f0852e0-334a-4e49-9c5b-70f5f06b1038" )
+            // x.isLinked = false;
+            // x.games = [];
+            // console.log(x)
+            // return;
+            //const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            sets.forEach((set,index) => {
+                try {
+                const playerIndex = set.games[0].players[0].playerIndex
+                let p1Score = 0;
+                set.games.forEach(game => {
+                    if(game.winner === playerIndex ){
+                        p1Score++;
+                    } 
+                })
+
+                
+                if(p1Score == set.winnerScore){
+                    set.games.forEach(game => {
+                        game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
+                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
+                    })
+                } else {
+                    set.games.forEach(game => {
+                        game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
+                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
+                    })
+                }
+                } catch(err){
+                    console.log(index);
+                    //set.games.splice(0,1);
+                    console.log("WHAT: ", set)
+                    // set.games[1].process().then(() => {
+                    //     console.log("BAHA")
+                    //     console.log(set.games[1])
+                    // })
+                    throw err
+                }
+                console.log(set);
+
+            })
+        })
+
     }
 }
 

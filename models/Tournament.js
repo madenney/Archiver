@@ -8,7 +8,7 @@ const taskkill = require('taskkill');
 // const fluent_ffmpeg = require("fluent-ffmpeg");
 // const concat = require('ffmpeg-concat')
 // const ffmpeg = require("ffmpeg")
-const graphQl = require('graphQl-client')
+const graphQL = require('graphql-client')
 const uuidv4 = require("uuid/v4")
 
 const { tournamentQuery, eventsQuery } = require("../constants/smashggQueries")
@@ -56,13 +56,13 @@ class Tournament {
             if( tournamentJSON.sets ){
                 this.sets = [];
                 tournamentJSON.sets.forEach(setJSON => {
-                    this.sets.push( new Set(setJSON) );
+                    this.sets.push( new Set(setJSON,this) );
                 })
             }
             if( tournamentJSON.unlinkedGames ){
                 this.unlinkedGames = [];
                 tournamentJSON.unlinkedGames.forEach(gameJSON => {
-                    this.unlinkedGames.push( new Game(gameJSON) );
+                    this.unlinkedGames.push( new Game(gameJSON,this));
                 })
             }
         } catch(err){
@@ -161,32 +161,37 @@ class Tournament {
 
         const tourneySlug = this.extractTourneySlug( tourneyUrl )
 
-        const smashGGQL = graphQl({
+        const smashGGQL = graphQL({
           url: 'https://api.smash.gg/gql/alpha',
           headers: {
-            Authorization: 'Bearer ' + '5d9c8c1a10899f7fa00b66043d74f86d'
+            Authorization: 'Bearer ' + '39def3ef8804cc6f8b86e441f1f4bda1'
           }
         })
         console.log("Getting events from ", tourneySlug)
         try {
-            const { data } = await smashGGQL.query(
+            const {data,message} = await smashGGQL.query(
                 tournamentQuery,
                 {
                   "slug":tourneySlug
                 }
             )
+            
+            if( !data ){
+                throw message
+            }
 
             this.smashggUrl = tourneyUrl;
             this.smashGGID = data.tournament.id
             this.name = data.tournament.name
             this.events = data.tournament.events
         } catch( err ){
-            console.log("Something went wrong with smashGG - ", err)
+            console.log("Something went wrong with smashGG - ")
+            throw err
         }
 
         console.log("Gettings sets from - ", this.name )
 
-        if( !this.events.length ){
+        if( !this.events || !this.events.length ){
             throw `Error: No events found in tournament: ${tourneySlug}`
         }
 

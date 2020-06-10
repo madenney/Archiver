@@ -6,6 +6,11 @@ const {moves} = require("../constants/moves");
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
 const { defaults } = require("../constants/comboFilterDefaults");
+const { videoOptions } = require("../constants/videoOptions");
+const { overlayOptions } = require("../constants/overlayOptions");
+
+var { remote: { dialog } } = require('electron');
+
 class ComboCreator {
     constructor(archive){
         this.archive = archive;
@@ -33,8 +38,10 @@ class ComboCreator {
         const minDamage = $("#min-damage").val();
         const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
-        this.combos = this.games.reduce((n,g) => {
-            const combos = g.getCombos({
+        console.log(this.games.length);
+        console.log(this.games[0])
+        this.combos = this.games.reduce((n,game) => {
+            const combos = game.getCombos({
                 comboer: char1,
                 comboee: char2,
                 didKill,
@@ -46,10 +53,15 @@ class ComboCreator {
 
             // Need to combine combo object and game object
             const returnArr = [];
-            combos.forEach(c => {
+            combos.forEach(combo => {
                 returnArr.push({
-                    combo: c,
-                    game: g
+                    ...combo,
+                    players: game.players,
+                    stage: game.stage,
+                    slpPath: game.slpPath,
+                    startedAt: game.startedAt,
+                    gameId: game.id,
+                    tournament: game.tournament
                 })
             });
             return n.concat( returnArr )
@@ -71,6 +83,9 @@ class ComboCreator {
         $("#end-move").val(defaults.endMove);
         $("#did-kill").prop('checked', defaults.didKill);
 
+        this.renderVideoOptions();
+        this.renderOverlayOptions();
+        
         this.loadCombos();
         this.assignClickListeners();
         this.renderPrimaryList(0,50);
@@ -78,6 +93,11 @@ class ComboCreator {
 
     assignClickListeners(){
         const filterButton = $("#filter-button");
+        const videoOptionsButton = $("#video-options-button");
+        const overlayOptionsButton = $("#overlay-options-button");
+        const videoOptionsContainer = $("#video-options-modal-container")
+        const overlayOptionsContainer = $("#overlay-options-modal-container")
+        const optionsModal = $(".options-modal");
         this.generateVideoButton = $("#generate-video-button");
         this.primaryListPrevButton = $("#primary-list-prev");
         this.primaryListNextButton = $("#primary-list-next");
@@ -92,11 +112,33 @@ class ComboCreator {
             this.loadCombos();
             this.renderPrimaryList(0)
         });
+        videoOptionsButton.off();
+        videoOptionsButton.click(() => {
+            videoOptionsContainer.show();
+            optionsModal.click((e) => e.stopPropagation());
+            videoOptionsContainer.off();
+            videoOptionsContainer.click(() => {
+                videoOptionsContainer.hide()
+            })
+        })
+        overlayOptionsButton.click(() => {
+            overlayOptionsContainer.show();
+            optionsModal.click((e) => e.stopPropagation());
+            overlayOptionsContainer.off();
+            overlayOptionsContainer.click(() => {
+                overlayOptionsContainer.hide()
+            })
+        })
+        
+        $("#show-logo").click(() => {
+            $("#logo-path-option").toggle()
+        })
 
         this.generateVideoButton.click(()=> {
             this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
             const comboList = new ComboList(this.combos);
-            comboList.generateVideo().then(() => {
+            const options = this.getOptions();
+            comboList.generateVideo(options).then(() => {
                 console.log("Huzzah :)");
                 this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Generate");
             }).catch((err) => {
@@ -104,7 +146,61 @@ class ComboCreator {
                 this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Sadness");
                 console.log(err);
             });
-        })
+        });
+
+        
+        $("#iso-path-button").click((e) => {
+            e.preventDefault();
+            const path = dialog.showOpenDialogSync({
+                properties: ['openFile'],
+                filters: [{
+                    name: 'SSBM ISO',
+                    extensions: ['iso']
+                }]
+            });
+            if(path && path[0]){
+                $("#iso-path").val(path[0])
+                localStorage.isoPath = path[0];
+            }
+        });
+        $("#output-path-button").click((e) => {
+            e.preventDefault();
+            const path = dialog.showOpenDialogSync({
+                properties: ['openDirectory','createDirectory']
+            });
+            if(path && path[0]){
+                $("#output-path").val(path[0])
+                localStorage.outputPath = path[0];
+            }
+        });
+        $("#logo-path-button").click((e) => {
+            e.preventDefault();
+            const path = dialog.showOpenDialogSync({
+                properties: ['openFile'],
+                filters: [{
+                    name: 'Logo',
+                    extensions: ['png','jpg','jpeg']
+                }]
+            });
+            if(path && path[0]){
+                $("#logo-path").val(path[0])
+                localStorage.logoPath = path[0];
+            }
+        });
+        $("#font-path-button").click((e) => {
+            e.preventDefault();
+            const path = dialog.showOpenDialogSync({
+                properties: ['openFile'],
+                filters: [{
+                    name: 'Font',
+                    extensions: ['otf','ttf']
+                }]
+            });
+            if(path && path[0]){
+                $("#font-path").val(path[0])
+                localStorage.fontPath = path[0];
+            }
+        });
     }
 
     
@@ -158,6 +254,88 @@ class ComboCreator {
             }
         } else {
             $("#primary-list-pagination-container").hide();
+        }
+    }
+
+    renderVideoOptions(){
+        $("#dev-mode").prop('checked', 
+            typeof localStorage.devMode == "string" ? localStorage.devMode == "true" : videoOptions.devMode);
+        $("#dev-mode").change(function(){localStorage.devMode = this.checked})
+        $("#show-overlay").prop('checked',
+            typeof localStorage.showOverlay == "string" ? localStorage.showOverlay == "true" : videoOptions.showOverlay);
+        $("#show-overlay").change(function(){localStorage.showOverlay = this.checked})
+        $("#show-hud").prop('checked',
+            typeof localStorage.showHud == "string" ? localStorage.showHud == "true" : videoOptions.showHud);
+        $("#show-hud").change(function(){localStorage.showHud = this.checked})
+        $("#game-music").prop('checked',
+            typeof localStorage.gameMusic == "string" ? localStorage.gameMusic == "true" : videoOptions.gameMusic);
+        $("#game-music").change(function(){localStorage.gameMusic = this.checked})
+        $("#widescreen").prop('checked',
+            typeof localStorage.widescreen == "string" ? localStorage.widescreen == "true" : videoOptions.widescreen);
+        $("#widescreen").change(function(){localStorage.widescreen = this.checked})
+        $("#num-cpus").val(
+            typeof localStorage.numCPUs ? localStorage.numCPUs : videoOptions.numCPUs);
+        $("#num-cpus").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = videoOptions.numCPUs;
+                return;
+            }
+            localStorage.numCPUs = this.value 
+        })
+        $("#iso-path").val(
+            localStorage.isoPath ? localStorage.isoPath : videoOptions.isoPath);
+        $("#output-path").val(
+            localStorage.outputPath ? localStorage.outputPath : videoOptions.outputPath);
+    }
+
+    renderOverlayOptions(){
+        $("#show-player-tags").prop('checked', 
+            typeof localStorage.showPlayerTags == "string" ? localStorage.showPlayerTags == "true" : overlayOptions.showPlayerTags);
+        $("#show-player-tags").change(function(){localStorage.showPlayerTags = this.checked})
+        $("#show-tournament").prop('checked',
+            typeof localStorage.showTournament == "string" ? localStorage.showTournament == "true" : overlayOptions.showTournament);
+        $("#show-tournament").change(function(){localStorage.showTournament = this.checked})
+        $("#show-logo").prop('checked',
+            typeof localStorage.showLogo == "string" ? localStorage.showLogo == "true" : overlayOptions.showLogo);
+        if($("#show-logo").is(":checked")) $("#logo-path-option").show();
+        $("#show-logo").change(function(){localStorage.showLogo = this.checked})
+        $("#logo-path").val(
+            localStorage.logoPath ? localStorage.logoPath : overlayOptions.logoPath);
+        $("#show-date").prop('checked',
+            typeof localStorage.showDate == "string" ? localStorage.showDate == "true" : overlayOptions.showDate);
+        $("#show-date").change(function(){localStorage.showDate = this.checked})
+        $("#overlay-margin").val(
+            typeof localStorage.overlayMargin == "string" ? localStorage.overlayMargin : overlayOptions.overlayMargin);
+        $("#overlay-margin").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = overlayOptions.overlayMargin;
+                return;
+            }
+            localStorage.overlayMargin = this.value 
+        })
+        $("#iso-path").val(
+            localStorage.isoPath ? localStorage.isoPath : overlayOptions.isoPath);
+    }
+
+    getOptions(){
+        return {
+            devMode: $("#dev-mode").is(":checked"),
+            showOverlay: $("#show-overlay").is(":checked"),
+            showHud: $("#show-hud").is(":checked"),
+            gameMusic: $("#game-music").is(":checked"),
+            widescreen: $("#widescreen").is(":checked"),
+            numCPUs: $("#num-cpus").val(),
+            isoPath: $("#iso-path").val(),
+            outputPath: $("#output-path").val(),
+            showPlayerTags: $("#show-player-tags").is(":checked"),
+            showTournament: $("#show-tournament").is(":checked"),
+            showLogo: $("#show-logo").is(":checked"),
+            logoPath: $("#logo-path").val(),
+            showDate: $("#show-date").is(":checked"),
+            overlayMargin: $("#overlay-margin").val(),
+            fontPath: $("#font-path").val(),
         }
     }
 
