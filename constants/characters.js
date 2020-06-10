@@ -135,6 +135,7 @@ const characters = [{
   name: "Dr. Mario",
   shortName: "Doc",
   colors: ["Default", "Red", "Blue", "Green", "Black"],
+  img: "../images/character-icons/doc.png"
 }, {
   id: 23,
   name: "Roy",

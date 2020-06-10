@@ -1,5 +1,3 @@
 {
-	"SSBM_ISO_PATH": "./iso/SSBM.iso",
-	"AIRLOCK_PATH": "./test_files/"
-	
+	"defaultTab": "combo"
 }

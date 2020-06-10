@@ -7,7 +7,7 @@ const fs = require("fs");
 const { Archive } = require("../models/index");
 const { MainController } = require("../controllers/Main");
 const { Startup } = require("../controllers/Startup");
-
+const config = require("../config.json");
 const mainContentId = "main-content";
 const startupId = "startup";
 
@@ -25,7 +25,7 @@ const main = () => {
             console.log(err);
         }
         controller = new MainController( archive, mainContentId );
-        controller.showTab('data');
+        controller.showTab(config.defaultTab);
     } else {
         console.log("No Last Archive");
         new Startup(startupId, (archivePath) => {

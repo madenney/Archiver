@@ -2,7 +2,7 @@ const { Game } = require("./Game")
 
 class Set {
 
-    constructor(setJSON){
+    constructor(setJSON,tournament){
         this.id = setJSON.id;
         this.completedAt = setJSON.completedAt;
         this.fullRoundText = setJSON.fullRoundText;
@@ -16,11 +16,11 @@ class Set {
         this.winnerColors = setJSON.winnerColors;
         this.loserColors = setJSON.loserColors;
         this.isLinked = setJSON.isLinked;
-        
+        this.tournament = tournament;
         if( setJSON.games ){
             this.games = [];
-            setJSON.games.forEach(game => {
-                this.games.push( new Game( game ));
+            setJSON.games.forEach(gameJSON => {
+                this.games.push( new Game(gameJSON,tournament));
             })
         }
     }

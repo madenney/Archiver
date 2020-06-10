@@ -13,7 +13,7 @@ const validStageIds = [2,3,8,28,31,32]
 
 class Game {
 
-    constructor(gameJSON){
+    constructor(gameJSON,tournament){
         this.id = gameJSON.id;
         this.players = gameJSON.players;
         this.startedAt = gameJSON.startedAt;
@@ -25,6 +25,7 @@ class Game {
         this.isFriendly = gameJSON.isFriendly;
         this.isProcessed = gameJSON.isProcessed;
         this.info = gameJSON.info;
+        this.tournament = tournament
 
         // Break this into it's own Combo class? 
         this.combos = gameJSON.combos;
@@ -84,9 +85,9 @@ class Game {
                 this.info = "No length";
                 return resolve();
             }
-            if( length < 45 ){ 
+            if( length < 40 ){ 
                 this.isValid = false;
-                this.info = "Game Length < 45 seconds";
+                this.info = "Game Length < 40 seconds";
                 return resolve();
             }
 
@@ -177,7 +178,7 @@ class Game {
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
-        });
+        })
     }
 
 
