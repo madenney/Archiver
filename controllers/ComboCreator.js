@@ -315,6 +315,26 @@ class ComboCreator {
             }
             localStorage.overlayMargin = this.value 
         })
+        $("#logo-opacity").val(
+            typeof localStorage.logoOpacity == "string" ? localStorage.logoOpacity : overlayOptions.logoOpacity);
+        $("#logo-opacity").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = overlayOptions.logoOpacity;
+                return;
+            }
+            localStorage.logoOpacity = this.value 
+        })
+        $("#textbox-opacity").val(
+            typeof localStorage.textboxOpacity == "string" ? localStorage.textboxOpacity : overlayOptions.textboxOpacity);
+        $("#textbox-opacity").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = overlayOptions.textboxOpacity;
+                return;
+            }
+            localStorage.textboxOpacity = this.value 
+        })
         $("#iso-path").val(
             localStorage.isoPath ? localStorage.isoPath : overlayOptions.isoPath);
     }
@@ -335,6 +355,8 @@ class ComboCreator {
             logoPath: $("#logo-path").val(),
             showDate: $("#show-date").is(":checked"),
             overlayMargin: $("#overlay-margin").val(),
+            logoOpacity: $("#logo-opacity").val(),
+            textboxOpacity: $("#textbox-opacity").val(),
             fontPath: $("#font-path").val(),
         }
     }
