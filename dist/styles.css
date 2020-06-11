@@ -360,7 +360,11 @@
 #combo-body #video-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #overlay-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #video-options-modal-container .options-modal .extra-video-option #overlay-margin,
-#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin {
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #textbox-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #textbox-opacity {
   width: 40px;
 }
 #combo-body #video-options-modal-container .options-modal .extra-video-option #output-path,

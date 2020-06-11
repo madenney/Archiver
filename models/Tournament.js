@@ -8,7 +8,7 @@ const taskkill = require('taskkill');
 // const fluent_ffmpeg = require("fluent-ffmpeg");
 // const concat = require('ffmpeg-concat')
 // const ffmpeg = require("ffmpeg")
-const graphQL = require('graphql-client')
+// const graphQL = require('graphql-client')
 const uuidv4 = require("uuid/v4")
 
 const { tournamentQuery, eventsQuery } = require("../constants/smashggQueries")

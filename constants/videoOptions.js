@@ -4,7 +4,7 @@ const videoOptions = {
     showHud: true,
     gameMusic: false,
     widescreen: true,
-    numCPUs: 8,
+    numCPUs: 6,
 	ssbmIsoPath: "",
     outputPath: "",
 }
