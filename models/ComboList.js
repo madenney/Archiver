@@ -29,16 +29,6 @@ class ComboList {
         }
 
     }
-    /*
-    testOverlay(testSetPath){
-        let setData = JSON.parse(fs.readFileSync(testSetPath));
-
-        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
-        const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
-            logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-
-    }
-    */
 
     generateVideo(options){
         return new Promise( async (resolve,reject) => {
@@ -129,21 +119,14 @@ class ComboList {
 
         const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
         
-        // uncomment this for testing
-        //const args = ['./test_files/overlay.png', icon1, icon2, VIDEO_WIDTH, VIDEO_HEIGHT]
-
-        // uncomment this for testing
-        /*
-        args.push("--name1=" + "test 1")
-        args.push("--name2=" + "test 2")
-        */
         if(showPlayerTags){
             if(comboer.tag) args.push("--name1=" + comboer.tag);
             if(comboee.tag) args.push("--name2=" + comboee.tag);
         }
         if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
         if(showDate && startedAt) {
-            args.push("--timestamp=" + startedAt);
+            const d = new Date(startedAt);
+            args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
         };
         if(overlayMargin) args.push("--margin=" + overlayMargin);
         
