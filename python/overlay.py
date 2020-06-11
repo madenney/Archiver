@@ -5,8 +5,10 @@ MARGIN_SCALE = 40                   # vid height / this = px margins between ele
 ICON_SCALE = 50                     # icons at 50% size
 DEFAULT_FONT_SIZE = 32              # max size, will resize to a lower size if name is too long
 MIN_FONT_SIZE = 20
-DEFAULT_LOGO_OPACITY = 100
-DEFAULT_TEXTBOX_OPACITY = 100
+DEFAULT_LOGO_OPACITY = 50
+DEFAULT_TEXTBOX_OPACITY = 75
+DEFAULT_TEXT_OPACITY = 100
+DEFAULT_ICON_OPACITY = 90
 VERTICAL_TEXTBOX_MARGIN_SCALE = 30  # % of textbox between name lines and vertical edges
 HORIZONTAL_TEXTBOX_MARGIN = 10      # px between max size names/icons, & horizontal edges
 ICON_MARGIN = 2                     # min 2 px between end of text and icon
@@ -17,21 +19,26 @@ DEFAULT_TIME_FORMAT = "12H"         # 12H or 24H
 def roundedBox(width, height, border, fill):
     return
 
+def translucify(image, opacity):
+
+    translucified = Image.new("RGBA", (image.width, image.height), color=(0,0,0,0))
+    mask = image.split()[3].point(lambda i: i * opacity / 100)
+    translucified.paste(image, (0,0), mask=mask)
+    return translucified
+
+
 # TODO create in pillow using roundedBox()
-def createTextbox():
-    return Image.open("./images/overlay/textbox.png")
+def createTextbox(opacity):
+    return (translucify(Image.open("./images/overlay/textbox.png"), opacity))
 
-def pasteTextbox(image, textbox, coords, opacity):
-    
-    # translucify
-    mask = textbox.split()[3].point(lambda i: i * opacity / 100)
+def pasteTextbox(image, textbox, coords):
 
-    image.paste(textbox, coords, mask=mask)
+    image.paste(textbox, coords, mask=textbox)
 
 def pasteLogo(image, logo, coords, opacity):
     logo = logo.resize((250,250))
 
-    # translucify
+    # translucify (more direct to use this than the function)
     mask = logo.split()[3].point(lambda i: i * opacity / 100)
 
     image.paste(logo, coords, mask=mask)
@@ -58,12 +65,13 @@ def adjustName(draw, name, fontPath, maxTextWidth):
 
     return name, fontSize
 
-def pasteNames(textbox, name1, name2, fontPath, iconWidth, center):
+def pasteNames(textbox, name1, name2, fontPath, iconWidth, center, textOpacity):
     # Drawing context
     draw = ImageDraw.Draw(textbox)
 
     # constants
     maxTextWidth = textbox.width - (2 * HORIZONTAL_TEXTBOX_MARGIN + ICON_MARGIN + iconWidth)
+    alpha = int(255 * textOpacity / 100)
 
     # Get font and trim names
     trimmedName1, fontSize1 = adjustName(draw, name1, fontPath, maxTextWidth)
@@ -79,17 +87,22 @@ def pasteNames(textbox, name1, name2, fontPath, iconWidth, center):
     x = HORIZONTAL_TEXTBOX_MARGIN
     if(center): x += (maxTextWidth - tSize1[0]) / 2
     y = int(textbox.height * VERTICAL_TEXTBOX_MARGIN_SCALE / 100 - tSize1[1] / 2)
-    draw.text((x, y), trimmedName1, font=font1, fill=(220,220,220,255))
+    draw.text((x, y), trimmedName1, font=font1, fill=(220,220,220,alpha))
 
     # Middle of name2 is 2/3 down
     if(center): x = HORIZONTAL_TEXTBOX_MARGIN + (maxTextWidth - tSize2[0]) / 2
     y = int(textbox.height * (100 - VERTICAL_TEXTBOX_MARGIN_SCALE) / 100 - tSize2[1] / 2)
-    draw.text((x, y), trimmedName2, font=font2, fill=(220,220,220,255))
+    draw.text((x, y), trimmedName2, font=font2, fill=(220,220,220,alpha))
     
-def pasteIcons(textbox, icon1, icon2):
+def pasteIcons(textbox, icon1, icon2, iconOpacity):
 
+    # Resize
     icon1 = icon1.resize((int(icon1.width * ICON_SCALE / 100), int(icon1.height * ICON_SCALE / 100)))
     icon2 = icon2.resize((int(icon2.width * ICON_SCALE / 100), int(icon2.height * ICON_SCALE / 100)))
+
+    # Translucify
+    icon1 = translucify(icon1, iconOpacity)
+    icon2 = translucify(icon2, iconOpacity)
 
     # Icon height
     iHeight = icon1.height
@@ -136,10 +149,13 @@ def parseTimestamp(timestamp, dateFormat, timeFormat):
 
     return date, time
 
-def pasteInfo(textbox, tournament, timestamp, fontPath, dateFormat, timeFormat):
+def pasteInfo(textbox, tournament, timestamp, fontPath, dateFormat, timeFormat, textOpacity):
     font = ImageFont.truetype(fontPath, 32)
 
     draw = ImageDraw.Draw(textbox)
+
+    # Alpha values
+    alpha = int(255 * textOpacity / 100)
 
     scale = 1 # determines how the lines are spaced out
     if timestamp is not None: scale += 2
@@ -150,22 +166,23 @@ def pasteInfo(textbox, tournament, timestamp, fontPath, dateFormat, timeFormat):
         textSize = draw.textsize(tournament, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
         y = int(textbox.height / scale - textSize[1] / 2)
-        draw.text((x,y), tournament, font=font, fill=(220, 220, 220, 255))
+        draw.text((x,y), tournament, font=font, fill=(220, 220, 220, alpha))
 
-    # timestamp
+    # Timestamp
     if timestamp is not None:
         date, time = parseTimestamp(timestamp, dateFormat, timeFormat)
 
-        # date
+        # Date
         textSize = draw.textsize(date, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
         y = int(textbox.height * (scale - 2) / scale - textSize[1] / 2)
-        draw.text((x,y), date, font=font, fill=(220, 220, 220, 255))
+        draw.text((x,y), date, font=font, fill=(220, 220, 220, alpha))
 
+        # Time
         textSize = draw.textsize(time, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
         y = int(textbox.height * (scale - 1) / scale - textSize[1] / 2)
-        draw.text((x,y), time, font=font, fill=(220, 220, 220, 255))
+        draw.text((x,y), time, font=font, fill=(220, 220, 220, alpha))
 
 def pasteDevText(image, text, fontPath, margins):
     lines = text.split(";")
@@ -179,8 +196,6 @@ def pasteDevText(image, text, fontPath, margins):
         y += (draw.textsize(line, font=font)[1] + margins/2)
 
 
-    
-
 def main():
     parser = argparse.ArgumentParser(description="Generate overlay for a Melee combo video")
 
@@ -188,8 +203,8 @@ def main():
     parser.add_argument("outputPath")
     parser.add_argument("icon1")
     parser.add_argument("icon2")
-    parser.add_argument("overlayWidth")
-    parser.add_argument("overlayHeight")
+    parser.add_argument("overlayWidth", type=int)
+    parser.add_argument("overlayHeight", type=int)
     
     
     # Optional args
@@ -203,9 +218,11 @@ def main():
     parser.add_argument("--timeFormat", default=DEFAULT_TIME_FORMAT, help="either 12H or 24H")
 
     # values
-    parser.add_argument("--margin", default=MARGIN_SCALE)
-    parser.add_argument("--logoOpacity", default=DEFAULT_LOGO_OPACITY)
-    parser.add_argument("--textboxOpacity", default=DEFAULT_TEXTBOX_OPACITY)
+    parser.add_argument("--margin", type=int, default=MARGIN_SCALE)
+    parser.add_argument("--logoOpacity", type=int, default=DEFAULT_LOGO_OPACITY)
+    parser.add_argument("--textboxOpacity", type=int, default=DEFAULT_TEXTBOX_OPACITY)
+    parser.add_argument("--iconOpacity", type=int, default=DEFAULT_ICON_OPACITY)
+    parser.add_argument("--textOpacity", type=int, default=DEFAULT_TEXT_OPACITY)
 
     # paths
     parser.add_argument("--logoPath", default=None)
@@ -213,7 +230,7 @@ def main():
 
     # toggles
     # TODO might have to parse string and convert to boolean
-    parser.add_argument("--centerNames", default=True, 
+    parser.add_argument("--centerNames", default=True, type=bool, 
                             help="Center player names to the left of character icons, or keep them left aligned")
 
     args = parser.parse_args()
@@ -228,7 +245,6 @@ def main():
 
     '''
     # Probably not going to use this in the future; instead will just take logoPath as an arg
-    # TODO fix this and use a logo constants file
     if tournament is not None:
         # remove nums from a tournament to try to find the series
         tournamentSeries = tournament(''.join([c for c in tournament if not c.isdigit()]))
@@ -243,33 +259,33 @@ def main():
     # New transparent image
     image = Image.new("RGBA", (int(args.overlayWidth), int(args.overlayHeight)), color=(0,0,0,0))
 
-    # Margins
+    # Number of pixels for margins
     margins = int(int(args.overlayHeight) / int(args.margin))
 
     # textbox (bottom left) + names + icons
     if (args.name1 is not None) and (args.name2 is not None):
 
         # Initialize textbox
-        leftTextbox = createTextbox()
+        leftTextbox = createTextbox(args.textboxOpacity)
 
         # Left textbox coordinates
-        textboxCoords = (margins, int(args.overlayHeight) - margins - leftTextbox.height)
+        textboxCoords = (margins, args.overlayHeight - margins - leftTextbox.height)
 
         # I change the file name strings so they start with . instead of ..
         icon1 = Image.open(args.icon1[1:])
         icon2 = Image.open(args.icon2[1:])
-        iconWidth = pasteIcons(leftTextbox, icon1, icon2)
+        iconWidth = pasteIcons(leftTextbox, icon1, icon2, args.iconOpacity)
 
         # names (in text box)
-        pasteNames(leftTextbox, args.name1, args.name2, args.fontPath, iconWidth, args.centerNames)
+        pasteNames(leftTextbox, args.name1, args.name2, args.fontPath, iconWidth, args.centerNames, args.textOpacity)
 
-        pasteTextbox(image, leftTextbox, textboxCoords, int(args.textboxOpacity))
+        pasteTextbox(image, leftTextbox, textboxCoords)
 
     # another textbox (bottom right) + tournament data + time
     if (args.tournament is not None) or (args.timestamp is not None):
 
         # Initialize textbox
-        rightTextbox = createTextbox()
+        rightTextbox = createTextbox(args.textboxOpacity)
 
         # Right textbox coordinates
         textboxCoords = (int(args.overlayWidth) - margins - rightTextbox.width, 
@@ -287,9 +303,9 @@ def main():
             timeFormat = DEFAULT_TIME_FORMAT
 
         # Info (tournament and/or timestamp)
-        pasteInfo(rightTextbox, args.tournament, args.timestamp, args.fontPath, dateFormat, timeFormat)
+        pasteInfo(rightTextbox, args.tournament, args.timestamp, args.fontPath, dateFormat, timeFormat, args.textOpacity)
 
-        pasteTextbox(image, rightTextbox, textboxCoords, int(args.textboxOpacity))
+        pasteTextbox(image, rightTextbox, textboxCoords)
 
     # logo
     if logo is not None:
