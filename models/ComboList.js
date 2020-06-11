@@ -132,15 +132,15 @@ class ComboList {
         // uncomment this for testing
         //const args = ['./test_files/overlay.png', icon1, icon2, VIDEO_WIDTH, VIDEO_HEIGHT]
 
-        // TODO: change this back when done testing
-        args.push("--name1=" + "Nash Lawrence Wellington")
-        args.push("--name2=" + "Matt")
+        // uncomment this for testing
         /*
+        args.push("--name1=" + "test 1")
+        args.push("--name2=" + "test 2")
+        */
         if(showPlayerTags){
             if(comboer.tag) args.push("--name1=" + comboer.tag);
             if(comboee.tag) args.push("--name2=" + comboee.tag);
         }
-        */
         if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
         if(showDate && startedAt) {
             args.push("--timestamp=" + startedAt);
