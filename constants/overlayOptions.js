@@ -4,7 +4,7 @@ const overlayOptions = {
     showLogo: false,
     showDate: false,
     overlayMargin: 40,
-    logoOpacity: 75,
+    logoOpacity: 85,
     textboxOpacity: 100,
     fontPath: "",
 	logoPath: ""
