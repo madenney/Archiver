@@ -120,6 +120,7 @@ def pasteIcons(textbox, icon1, icon2, iconOpacity):
 
     return iWidth
 
+''' This function is deprecated. Timestamp parsing will soon be handled JS-side
 # format: YYYY-MM-DDTHH:MM:SSZ      (Z is usually not present)
 # T and Z are literally just the letters, everything else is year, minute, etc.
 def parseTimestamp(timestamp, dateFormat, timeFormat):
@@ -148,8 +149,9 @@ def parseTimestamp(timestamp, dateFormat, timeFormat):
         date = day + '/' + month + '/' + year
 
     return date, time
+'''
 
-def pasteInfo(textbox, tournament, timestamp, fontPath, dateFormat, timeFormat, textOpacity):
+def pasteInfo(textbox, tournament, date, time, fontPath, dateFormat, timeFormat, textOpacity):
     font = ImageFont.truetype(fontPath, 32)
 
     draw = ImageDraw.Draw(textbox)
@@ -157,31 +159,36 @@ def pasteInfo(textbox, tournament, timestamp, fontPath, dateFormat, timeFormat, 
     # Alpha values
     alpha = int(255 * textOpacity / 100)
 
-    scale = 1 # determines how the lines are spaced out
-    if timestamp is not None: scale += 2
+    scale = 1                       # determines how the lines are spaced out
+    index = 1                       # determines which line each item is placed
+    if date is not None: scale += 1
+    if time is not None: scale += 1
+
+    # I would make this a for loop, but I'm keeping it like this in case I make some changes
+    # to individual items (i.e. if tournament names are different colors than dates)
 
     # Tournament
     if tournament is not None:
         scale += 1
         textSize = draw.textsize(tournament, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
-        y = int(textbox.height / scale - textSize[1] / 2)
+        y = int(textbox.height * index / scale - textSize[1] / 2)
         draw.text((x,y), tournament, font=font, fill=(220, 220, 220, alpha))
+        index += 1
 
-    # Timestamp
-    if timestamp is not None:
-        date, time = parseTimestamp(timestamp, dateFormat, timeFormat)
-
-        # Date
+    # Date
+    if date is not None:
         textSize = draw.textsize(date, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
-        y = int(textbox.height * (scale - 2) / scale - textSize[1] / 2)
+        y = int(textbox.height * index / scale - textSize[1] / 2)
         draw.text((x,y), date, font=font, fill=(220, 220, 220, alpha))
+        index += 1
 
-        # Time
+    # Time
+    if time is not None:
         textSize = draw.textsize(time, font=font)
         x = int(textbox.width / 2 - textSize[0] / 2)
-        y = int(textbox.height * (scale - 1) / scale - textSize[1] / 2)
+        y = int(textbox.height * index / scale - textSize[1] / 2)
         draw.text((x,y), time, font=font, fill=(220, 220, 220, alpha))
 
 def pasteDevText(image, text, fontPath, margins):
@@ -212,7 +219,8 @@ def main():
     parser.add_argument("--name1", default=None)
     parser.add_argument("--name2", default=None)
     parser.add_argument("--tournament", default=None)
-    parser.add_argument("--timestamp", default=None)
+    parser.add_argument("--date", default=None)
+    parser.add_argument("--time", default=None)
     parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
     parser.add_argument("--dateFormat", default=DEFAULT_DATE_FORMAT, help="NA for MM/DD/YYYY, EU for DD/MM/YYYY")
     parser.add_argument("--timeFormat", default=DEFAULT_TIME_FORMAT, help="either 12H or 24H")
@@ -282,7 +290,7 @@ def main():
         pasteTextbox(image, leftTextbox, textboxCoords)
 
     # another textbox (bottom right) + tournament data + time
-    if (args.tournament is not None) or (args.timestamp is not None):
+    if (args.tournament is not None) or (args.date is not None) or (args.time is not None):
 
         # Initialize textbox
         rightTextbox = createTextbox(args.textboxOpacity)
@@ -302,8 +310,8 @@ def main():
         else: 
             timeFormat = DEFAULT_TIME_FORMAT
 
-        # Info (tournament and/or timestamp)
-        pasteInfo(rightTextbox, args.tournament, args.timestamp, args.fontPath, dateFormat, timeFormat, args.textOpacity)
+        # Info (tournament, date, time)
+        pasteInfo(rightTextbox, args.tournament, args.date, args.time, args.fontPath, dateFormat, timeFormat, args.textOpacity)
 
         pasteTextbox(image, rightTextbox, textboxCoords)
 
