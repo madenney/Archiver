@@ -12,8 +12,6 @@ DEFAULT_ICON_OPACITY = 90
 VERTICAL_TEXTBOX_MARGIN_SCALE = 30  # % of textbox between name lines and vertical edges
 HORIZONTAL_TEXTBOX_MARGIN = 10      # px between max size names/icons, & horizontal edges
 ICON_MARGIN = 2                     # min 2 px between end of text and icon
-DEFAULT_DATE_FORMAT = "NA"          # NA = MM/DD/YYYY, EU = DD/MM/YYYY
-DEFAULT_TIME_FORMAT = "12H"         # 12H or 24H
 
 # TODO
 def roundedBox(width, height, border, fill):
@@ -151,7 +149,7 @@ def parseTimestamp(timestamp, dateFormat, timeFormat):
     return date, time
 '''
 
-def pasteInfo(textbox, tournament, date, time, fontPath, dateFormat, timeFormat, textOpacity):
+def pasteInfo(textbox, tournament, date, time, fontPath, textOpacity):
     font = ImageFont.truetype(fontPath, 32)
 
     draw = ImageDraw.Draw(textbox)
@@ -222,8 +220,6 @@ def main():
     parser.add_argument("--date", default=None)
     parser.add_argument("--time", default=None)
     parser.add_argument("--devText", default=None, help="Strings to display on top right, delimited by ;")
-    parser.add_argument("--dateFormat", default=DEFAULT_DATE_FORMAT, help="NA for MM/DD/YYYY, EU for DD/MM/YYYY")
-    parser.add_argument("--timeFormat", default=DEFAULT_TIME_FORMAT, help="either 12H or 24H")
 
     # values
     parser.add_argument("--margin", type=int, default=MARGIN_SCALE)
@@ -299,19 +295,8 @@ def main():
         textboxCoords = (int(args.overlayWidth) - margins - rightTextbox.width, 
                             int(args.overlayHeight) - margins - rightTextbox.height)
 
-        # Handling date and time format toggles
-        if((args.dateFormat == "NA") or (args.dateFormat == "EU")):
-            dateFormat = args.dateFormat
-        else: 
-            dateFormat = DEFAULT_DATE_FORMAT
-
-        if((args.timeFormat == "12H") or (args.timeFormat == "24H")):
-            timeFormat = args.timeFormat
-        else: 
-            timeFormat = DEFAULT_TIME_FORMAT
-
         # Info (tournament, date, time)
-        pasteInfo(rightTextbox, args.tournament, args.date, args.time, args.fontPath, dateFormat, timeFormat, args.textOpacity)
+        pasteInfo(rightTextbox, args.tournament, args.date, args.time, args.fontPath, args.textOpacity)
 
         pasteTextbox(image, rightTextbox, textboxCoords)
 
