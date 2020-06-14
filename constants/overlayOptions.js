@@ -2,10 +2,12 @@ const overlayOptions = {
     showPlayerTags: false,
     showTournament: false,
     showLogo: false,
-	logoPath: "",
     showDate: false,
     overlayMargin: 40,
-	fontPath: "",
+    logoOpacity: 85,
+    textboxOpacity: 100,
+    fontPath: "",
+	logoPath: ""
 }
 
 module.exports = { overlayOptions };
