@@ -73,7 +73,8 @@ class ComboList {
                 EVENT_TRACKER: em,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen
+                WIDESCREEN_OFF: !options.widescreen,
+                BITRATE_KBPS: 15000
             }
             em.on('primaryEventMsg',msg => {
                 console.log(msg);
