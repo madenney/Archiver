@@ -11,8 +11,8 @@ const os = require("os");
 const { characters } = require("../constants/characters");
 
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const VIDEO_WIDTH = 1878;
-const VIDEO_HEIGHT = 1056;
+const VIDEO_WIDTH = 1920;
+const VIDEO_HEIGHT = 1080;
 
 class ComboList {
 
@@ -50,8 +50,8 @@ class ComboList {
                 
                 const replayJSON = {
                     replay: combo.slpPath,
-                    startFrame: combo.startFrame,
-                    endFrame: combo.endFrame
+                    startFrame: combo.startFrame - 20,
+                    endFrame: combo.endFrame + 15
                 }
                 if(options.showOverlay){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");

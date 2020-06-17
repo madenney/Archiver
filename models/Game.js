@@ -20,6 +20,7 @@ class Game {
         this.winner = gameJSON.winner;
         this.stage = gameJSON.stage;
         this.startedAt = gameJSON.startedAt;
+        this.lastFrame = gameJSON.lastFrame;
         this.slpPath = gameJSON.slpPath;
         this.isValid = gameJSON.isValid;
         this.isFriendly = gameJSON.isFriendly;
@@ -138,7 +139,7 @@ class Game {
 
             this.isValid = true;
             this.startedAt = metadata.startAt;
-            this.length = Math.floor( metadata.lastFrame / 60 );
+            this.lastFrame = metadata.lastFrame;
             this.stage = settings.stageId;
             this.winner = winnerIndex;
             this.players = [{
@@ -189,7 +190,7 @@ class Game {
             winner: this.winner,
             stage: this.stage,
             startedAt: this.startedAt,
-            length: this.length,
+            lastFrame: this.lastFrame,
             slpPath: this.slpPath,
             isValid: this.isValid,
             isFriendly: this.isFriendly,
@@ -197,6 +198,13 @@ class Game {
             isProcessed: this.isProcessed,
             info: this.info
         }
+    }
+
+    updateLength(){
+        const game = new slpParser.default( this.slpPath )
+        const metadata = game.getMetadata()
+        this.lastFrame = metadata.lastFrame
+        console.log(this.lastFrame)
     }
 
     // 4/3
