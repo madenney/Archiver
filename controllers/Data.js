@@ -266,10 +266,8 @@ class Data {
             let games = [];
             sets.forEach(s => games = games.concat(s.games));
             console.log(games.length)
-            games.forEach(game =>{
-                game.updateLength()
-            })
-            console.log("DONE :)")
+
+            console.log("DONE :)", count)
             
             return
             // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);

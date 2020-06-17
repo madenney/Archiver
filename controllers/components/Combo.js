@@ -5,8 +5,8 @@ const { stages } = require("../../constants/stages");
 const darkStages = [2,3,31,32];
 
 class ComboController {
-    constructor(combo,id){
-        this.id = id
+    constructor(combo){
+        this.id = combo.id
         this.combo = combo;
         this.slpPath = combo.slpPath;
         this.comboer = combo.players.find(p => {
@@ -50,8 +50,10 @@ class ComboController {
                     <div class='data'>${slpPath}</div>
                 </div>
             </div>
-            <input class="combo-checkbox" type="checkbox">
-            <div class="included-indicator"></div>
+            <div class="combo-meta">
+                <div class="combo-id">${id}</div>
+                <input c-id=${id} class="combo-checkbox" type="checkbox">
+            </div>
         </div>
         `);
     }

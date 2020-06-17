@@ -203,6 +203,20 @@ class ComboCreator {
                 localStorage.fontPath = path[0];
             }
         });
+
+        $("#remove-selected").click(() => {
+
+            const combosIdsToDelete = [];
+            $(".combo .combo-checkbox:checked").each((i,e) => {
+                combosIdsToDelete.push($(e).attr('c-id'))
+            })
+            combosIdsToDelete.forEach(id => {
+                const comboIndex = this.combos.indexOf(this.combos.find(c => c.id === id));
+                this.combos.splice(comboIndex,1);
+            })
+            this.renderPrimaryList(0);
+
+        })
     }
 
     

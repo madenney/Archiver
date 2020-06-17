@@ -118,10 +118,10 @@ class ComboList {
     generateOverlay(outputPath, combo, options){ 
         console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
-        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
+        const { id, players, playerIndex, opponentIndex, tournament, startedAt } = combo
         const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
             logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-        const devText = index;
+        const devText = id;
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
         console.log(outputPath);
         const comboer = players.find(p=>p.playerIndex === playerIndex)

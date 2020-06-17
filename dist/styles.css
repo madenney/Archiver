@@ -402,10 +402,11 @@
   width: 100px;
   display: inline-block;
 }
-#combo-body #middle-container button {
+#combo-body #middle-container #remove-selected {
   margin: 5px;
-  width: 80px;
-  height: 40px;
+  width: 100px;
+  height: 50px;
+  font-size: 18px;
 }
 #combo-body .combo {
   margin: 5px;
@@ -451,18 +452,19 @@
   display: inline-block;
   width: 20px;
 }
-#combo-body .combo .combo-checkbox {
-  position: absolute;
-  height: 20px;
-  width: 20px;
-}
-#combo-body .combo .included-indicator {
-  position: absolute;
+#combo-body .combo .combo-meta {
   display: inline-block;
-  margin: 20px 40px;
-  height: 30px;
-  width: 30px;
-  background-color: transparent;
+  width: auto;
+  vertical-align: top;
+  padding-left: 50px;
+}
+#combo-body .combo .combo-meta .combo-checkbox {
+  height: 50px;
+  width: 80px;
+}
+#combo-body .combo .combo-meta .combo-id {
+  font-size: 20px;
+  margin: 5px;
 }
 #combo-body .pagination-container {
   text-align: center;
