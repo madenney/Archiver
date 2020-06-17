@@ -19,6 +19,7 @@ class ComboCreator {
         this.numberPerPage = 50;
         this.games = [];
         this.combos = [];
+        this.secondaryCombos = [];
         this.archiveSize = this.archive.getAllSlpFiles().filter(f => f.isValid ).length;
     }
 
@@ -60,6 +61,7 @@ class ComboCreator {
                     stage: game.stage,
                     slpPath: game.slpPath,
                     startedAt: game.startedAt,
+                    gameEndFrame: game.lastFrame,
                     gameId: game.id,
                     tournament: game.tournament
                 })
@@ -201,6 +203,20 @@ class ComboCreator {
                 localStorage.fontPath = path[0];
             }
         });
+
+        $("#remove-selected").click(() => {
+
+            const combosIdsToDelete = [];
+            $(".combo .combo-checkbox:checked").each((i,e) => {
+                combosIdsToDelete.push($(e).attr('c-id'))
+            })
+            combosIdsToDelete.forEach(id => {
+                const comboIndex = this.combos.indexOf(this.combos.find(c => c.id === id));
+                this.combos.splice(comboIndex,1);
+            })
+            this.renderPrimaryList(0);
+
+        })
     }
 
     
@@ -233,8 +249,36 @@ class ComboCreator {
         this.primaryListCurrentPage = page;
         this.primaryList.empty();
         $("#primary-total").html(`${this.combos.length}`);
+        $("#primary-total-time").html(`${this.combos.reduce((n,c)=>{return n+((c.endFrame-c.startFrame)/60)},0).toFixed(1)}`);
         const combosToDisplay = this.combos.slice(page*this.numberPerPage,(page*this.numberPerPage)+this.numberPerPage)
         combosToDisplay.forEach(c => {
+            this.primaryList.append( new ComboController(c).html());
+        });
+        console.log(combosToDisplay)
+        //pagination
+        if(combosToDisplay.length < this.combos.length){
+            $("#primary-list-pagination-container").show();
+            $("#primary-list-current-page").html(page + 1);
+            if(page === 0){
+                this.primaryListPrevButton.addClass("disable-button");
+            } else {
+                this.primaryListPrevButton.removeClass("disable-button");
+            }
+            if(page * this.numberPerPage > this.combos.length ){
+                this.primaryListNextButton.addClass("disable-button");
+            } else {
+                this.primaryListNextButton.removeClass("disable-button");
+            }
+        } else {
+            $("#primary-list-pagination-container").hide();
+        }
+    }
+
+    renderSecondaryList(page){
+        console.log("Rendering Secondary List: ");
+        $("#primary-total").html(`${this.secondaryCombos.length}`);
+        $("#primary-total-time").html(`${this.secondaryCombos.reduce((n,c)=>{return n+((c.endFrame-c.startFrame)/60)},0).toFixed(1)}`);
+        this.secondaryCombos.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
         console.log(combosToDisplay)
@@ -315,6 +359,26 @@ class ComboCreator {
             }
             localStorage.overlayMargin = this.value 
         })
+        $("#logo-opacity").val(
+            typeof localStorage.logoOpacity == "string" ? localStorage.logoOpacity : overlayOptions.logoOpacity);
+        $("#logo-opacity").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = overlayOptions.logoOpacity;
+                return;
+            }
+            localStorage.logoOpacity = this.value 
+        })
+        $("#textbox-opacity").val(
+            typeof localStorage.textboxOpacity == "string" ? localStorage.textboxOpacity : overlayOptions.textboxOpacity);
+        $("#textbox-opacity").change(function(){ 
+            if(!Number.isInteger(parseFloat(this.value))){
+                alert("Please enter a whole number");
+                this.value = overlayOptions.textboxOpacity;
+                return;
+            }
+            localStorage.textboxOpacity = this.value 
+        })
         $("#iso-path").val(
             localStorage.isoPath ? localStorage.isoPath : overlayOptions.isoPath);
     }
@@ -335,6 +399,8 @@ class ComboCreator {
             logoPath: $("#logo-path").val(),
             showDate: $("#show-date").is(":checked"),
             overlayMargin: $("#overlay-margin").val(),
+            logoOpacity: $("#logo-opacity").val(),
+            textboxOpacity: $("#textbox-opacity").val(),
             fontPath: $("#font-path").val(),
         }
     }

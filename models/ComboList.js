@@ -11,8 +11,8 @@ const os = require("os");
 const { characters } = require("../constants/characters");
 
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const VIDEO_WIDTH = 1878;
-const VIDEO_HEIGHT = 1056;
+const VIDEO_WIDTH = 1920;
+const VIDEO_HEIGHT = 1080;
 
 class ComboList {
 
@@ -53,6 +53,18 @@ class ComboList {
                     startFrame: combo.startFrame,
                     endFrame: combo.endFrame
                 }
+                if(combo.moves.length < 3 ){
+                    replayJSON.startFrame -= 20
+                } else {
+                    replayJSON.startFrame -= 10
+                }
+                if(combo.didKill){
+                    if(combo.endFrame < combo.gameEndFrame - 37 ){
+                        replayJSON.endFrame += 36
+                    } else if (combo.endFrame < combo.gameEndFrame - 21){
+                        replayJSON.endFrame += 20
+                    }
+                } 
                 if(options.showOverlay){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
@@ -73,7 +85,8 @@ class ComboList {
                 EVENT_TRACKER: em,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen
+                WIDESCREEN_OFF: !options.widescreen,
+                BITRATE_KBPS: 15000
             }
             em.on('primaryEventMsg',msg => {
                 console.log(msg);
@@ -105,9 +118,10 @@ class ComboList {
     generateOverlay(outputPath, combo, options){ 
         console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
-        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
-        const { showPlayerTags, showTournament, showLogo, showDate, logoPath, overlayMargin, fontPath, devMode } = options
-        const devText = index;
+        const { id, players, playerIndex, opponentIndex, tournament, startedAt } = combo
+        const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
+            logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
+        const devText = id;
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
         console.log(outputPath);
         const comboer = players.find(p=>p.playerIndex === playerIndex)
@@ -117,7 +131,7 @@ class ComboList {
         const icon2 = characters[comboee.characterId].img
 
         const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
-
+        
         if(showPlayerTags){
             if(comboer.tag) args.push("--name1=" + comboer.tag);
             if(comboee.tag) args.push("--name2=" + comboee.tag);
@@ -127,8 +141,12 @@ class ComboList {
             const d = new Date(startedAt);
             args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
         };
-        if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
         if(overlayMargin) args.push("--margin=" + overlayMargin);
+        
+        if(logoOpacity) args.push("--logoOpacity=" + logoOpacity);
+        if(textboxOpacity) args.push("--textboxOpacity=" + textboxOpacity);
+
+        if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
         if(fontPath) args.push("--fontPath=" + fontPath);
         
         if(devMode){

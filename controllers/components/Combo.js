@@ -6,6 +6,7 @@ const darkStages = [2,3,31,32];
 
 class ComboController {
     constructor(combo){
+        this.id = combo.id
         this.combo = combo;
         this.slpPath = combo.slpPath;
         this.comboer = combo.players.find(p => {
@@ -14,14 +15,15 @@ class ComboController {
         this.comboee = combo.players.find(p => {
             return p.playerIndex === combo.opponentIndex
         });
+        this.isSelected = false;
     }
 
     html(){
-        const { combo, comboer, comboee, slpPath } = this;
+        const { combo, comboer, comboee, slpPath, id } = this;
         const damage = Math.floor(combo.endPercent - combo.startPercent);
         const seconds = (( combo.endFrame - combo.startFrame ) / 60).toFixed(1);
         return $(`
-        <div id="${combo.id}" class="combo">
+        <div id="${id}" class="combo">
             <div class='game-info'>
                 <div class='characters'>
                     <img class='char1' src=${characters[comboer.characterId].img}>
@@ -47,6 +49,10 @@ class ComboController {
                     <div class='label'>Path:</div>
                     <div class='data'>${slpPath}</div>
                 </div>
+            </div>
+            <div class="combo-meta">
+                <div class="combo-id">${id}</div>
+                <input c-id=${id} class="combo-checkbox" type="checkbox">
             </div>
         </div>
         `);

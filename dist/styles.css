@@ -328,7 +328,7 @@
   background-color: #342E37;
   border-radius: 3px;
   width: 650px;
-  height: 400px;
+  height: 500px;
   margin: auto;
   margin-top: 140px;
   padding: 10px 30px;
@@ -360,7 +360,11 @@
 #combo-body #video-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #overlay-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #video-options-modal-container .options-modal .extra-video-option #overlay-margin,
-#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin {
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #textbox-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #textbox-opacity {
   width: 40px;
 }
 #combo-body #video-options-modal-container .options-modal .extra-video-option #output-path,
@@ -385,14 +389,24 @@
 }
 #combo-body .list-container .info .row .label {
   display: inline-block;
-  width: 65px;
+  width: 150px;
 }
 #combo-body .list-container .info .row .data {
   display: inline-block;
-  width: 20px;
+  width: 50px;
 }
 #combo-body .list-container .list {
   padding-left: 0px;
+}
+#combo-body #middle-container {
+  width: 100px;
+  display: inline-block;
+}
+#combo-body #middle-container #remove-selected {
+  margin: 5px;
+  width: 100px;
+  height: 50px;
+  font-size: 18px;
 }
 #combo-body .combo {
   margin: 5px;
@@ -437,6 +451,20 @@
 #combo-body .combo .combo-info .row .data {
   display: inline-block;
   width: 20px;
+}
+#combo-body .combo .combo-meta {
+  display: inline-block;
+  width: auto;
+  vertical-align: top;
+  padding-left: 50px;
+}
+#combo-body .combo .combo-meta .combo-checkbox {
+  height: 50px;
+  width: 80px;
+}
+#combo-body .combo .combo-meta .combo-id {
+  font-size: 20px;
+  margin: 5px;
 }
 #combo-body .pagination-container {
   text-align: center;

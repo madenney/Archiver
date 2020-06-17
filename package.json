@@ -11,8 +11,8 @@
   "author": "Matt Denney",
   "license": "ISC",
   "dependencies": {
-    "graphql": "^15.1.0",
     "graphql-client": "^2.0.1",
+    "jquery-ui-dist": "^1.12.1",
     "node-dir": "^0.1.17",
     "slp-parser-js": "^4.1.0",
     "slp-to-video": "https://github.com/madenney/slp-to-video",

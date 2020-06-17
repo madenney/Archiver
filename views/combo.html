@@ -125,6 +125,14 @@
             <input type="text" id="overlay-margin">
           </div>
           <div class="extra-video-option">
+            <div class="label">Logo Opacity</div>
+            <input type="text" id="logo-opacity">
+          </div>
+          <div class="extra-video-option">
+            <div class="label">Textbox Opacity</div>
+            <input type="text" id="textbox-opacity">
+          </div>
+          <div class="extra-video-option">
             <div class="label">Font Path</div>
             <button id="font-path-button">Choose</button>
             <input type="text" id="iso-path" placeholder="default font">
@@ -134,11 +142,11 @@
     <div id="primary-list-container" class="list-container">
       <div class="info">
         <div class="row">
-          <div class="label">Total:</div>
+          <div class="label">Total Combos:</div>
           <div class="data" id="primary-total"></div>
         </div>
         <div class="row">
-          <div class="label">Time:</div>
+          <div class="label">Time (seconds):</div>
           <div class="data" id="primary-total-time"></div>
         </div>
       </div>
@@ -148,6 +156,9 @@
         <div class="pagination-element" id="primary-list-current-page"></div>
         <div class="pagination-button" id="primary-list-next">Next</div>
       </div>
+    </div>
+    <div id="middle-container">
+      <button id="remove-selected">Remove Selected</button>
     </div>
     <div id="secondary-list-container" class="list-container">
         <div class="info">
