@@ -127,10 +127,17 @@ class ComboList {
         const comboer = players.find(p=>p.playerIndex === playerIndex)
         const comboee = players.find(p=>p.playerIndex === opponentIndex)
 
-        const icon1 = characters[comboer.characterId].img + characters[comboer.characterColor] + ".png"
-        const icon2 = characters[comboee.characterId].img + characters[comboee.characterColor] + ".png"
+        const icon1 = characters[comboer.characterId].img + 
+                        characters[comboer.characterId].colors[comboer.characterColor] + ".png"
+        const icon2 = characters[comboee.characterId].img + 
+                        characters[comboee.characterId].colors[comboee.characterColor] + ".png"
 
-        const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
+        const args = [outputPath, VIDEO_WIDTH, VIDEO_HEIGHT]
+
+        if(icon1 && icon2){
+            args.push("--icon1=" + icon1)
+            args.push("--icon2=" + icon2)
+        }
         
         if(showPlayerTags){
             if(comboer.tag) args.push("--name1=" + comboer.tag);
