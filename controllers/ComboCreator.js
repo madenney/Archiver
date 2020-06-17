@@ -61,6 +61,7 @@ class ComboCreator {
                     stage: game.stage,
                     slpPath: game.slpPath,
                     startedAt: game.startedAt,
+                    gameEndFrame: game.lastFrame,
                     gameId: game.id,
                     tournament: game.tournament
                 })
