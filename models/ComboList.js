@@ -11,8 +11,8 @@ const os = require("os");
 const { characters } = require("../constants/characters");
 
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const VIDEO_WIDTH = 1878;
-const VIDEO_HEIGHT = 1056;
+const VIDEO_WIDTH = 1920;
+const VIDEO_HEIGHT = 1080;
 
 class ComboList {
 
@@ -53,6 +53,18 @@ class ComboList {
                     startFrame: combo.startFrame,
                     endFrame: combo.endFrame
                 }
+                if(combo.moves.length < 3 ){
+                    replayJSON.startFrame -= 20
+                } else {
+                    replayJSON.startFrame -= 10
+                }
+                if(combo.didKill){
+                    if(combo.endFrame < combo.gameEndFrame - 37 ){
+                        replayJSON.endFrame += 36
+                    } else if (combo.endFrame < combo.gameEndFrame - 21){
+                        replayJSON.endFrame += 20
+                    }
+                } 
                 if(options.showOverlay){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
@@ -73,7 +85,8 @@ class ComboList {
                 EVENT_TRACKER: em,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen
+                WIDESCREEN_OFF: !options.widescreen,
+                BITRATE_KBPS: 15000
             }
             em.on('primaryEventMsg',msg => {
                 console.log(msg);
