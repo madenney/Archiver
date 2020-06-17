@@ -19,6 +19,7 @@ class ComboCreator {
         this.numberPerPage = 50;
         this.games = [];
         this.combos = [];
+        this.secondaryCombos = [];
         this.archiveSize = this.archive.getAllSlpFiles().filter(f => f.isValid ).length;
     }
 
@@ -233,8 +234,36 @@ class ComboCreator {
         this.primaryListCurrentPage = page;
         this.primaryList.empty();
         $("#primary-total").html(`${this.combos.length}`);
+        $("#primary-total-time").html(`${this.combos.reduce((n,c)=>{return n+((c.endFrame-c.startFrame)/60)},0).toFixed(1)}`);
         const combosToDisplay = this.combos.slice(page*this.numberPerPage,(page*this.numberPerPage)+this.numberPerPage)
         combosToDisplay.forEach(c => {
+            this.primaryList.append( new ComboController(c).html());
+        });
+        console.log(combosToDisplay)
+        //pagination
+        if(combosToDisplay.length < this.combos.length){
+            $("#primary-list-pagination-container").show();
+            $("#primary-list-current-page").html(page + 1);
+            if(page === 0){
+                this.primaryListPrevButton.addClass("disable-button");
+            } else {
+                this.primaryListPrevButton.removeClass("disable-button");
+            }
+            if(page * this.numberPerPage > this.combos.length ){
+                this.primaryListNextButton.addClass("disable-button");
+            } else {
+                this.primaryListNextButton.removeClass("disable-button");
+            }
+        } else {
+            $("#primary-list-pagination-container").hide();
+        }
+    }
+
+    renderSecondaryList(page){
+        console.log("Rendering Secondary List: ");
+        $("#primary-total").html(`${this.secondaryCombos.length}`);
+        $("#primary-total-time").html(`${this.secondaryCombos.reduce((n,c)=>{return n+((c.endFrame-c.startFrame)/60)},0).toFixed(1)}`);
+        this.secondaryCombos.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
         console.log(combosToDisplay)

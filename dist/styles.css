@@ -389,14 +389,23 @@
 }
 #combo-body .list-container .info .row .label {
   display: inline-block;
-  width: 65px;
+  width: 150px;
 }
 #combo-body .list-container .info .row .data {
   display: inline-block;
-  width: 20px;
+  width: 50px;
 }
 #combo-body .list-container .list {
   padding-left: 0px;
+}
+#combo-body #middle-container {
+  width: 100px;
+  display: inline-block;
+}
+#combo-body #middle-container button {
+  margin: 5px;
+  width: 80px;
+  height: 40px;
 }
 #combo-body .combo {
   margin: 5px;
@@ -441,6 +450,19 @@
 #combo-body .combo .combo-info .row .data {
   display: inline-block;
   width: 20px;
+}
+#combo-body .combo .combo-checkbox {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+}
+#combo-body .combo .included-indicator {
+  position: absolute;
+  display: inline-block;
+  margin: 20px 40px;
+  height: 30px;
+  width: 30px;
+  background-color: transparent;
 }
 #combo-body .pagination-container {
   text-align: center;
