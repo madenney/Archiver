@@ -127,8 +127,8 @@ class ComboList {
         const comboer = players.find(p=>p.playerIndex === playerIndex)
         const comboee = players.find(p=>p.playerIndex === opponentIndex)
 
-        const icon1 = characters[comboer.characterId].img
-        const icon2 = characters[comboee.characterId].img
+        const icon1 = characters[comboer.characterId].img + characters[comboer.characterColor] + ".png"
+        const icon2 = characters[comboee.characterId].img + characters[comboee.characterColor] + ".png"
 
         const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
         
