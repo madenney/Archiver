@@ -16,7 +16,7 @@ class ComboCreator {
         this.archive = archive;
         this.primaryComboList = null;
         this.primaryListCurrentPage = 0;
-        this.numberPerPage = 50;
+        this.numberPerPage = 300;
         this.games = [];
         this.combos = [];
         this.secondaryCombos = [];

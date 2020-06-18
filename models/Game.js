@@ -4,7 +4,7 @@ const {
     getDeepInfoFromSlpFile,
     getGameStats
 } = require("../lib")
-
+const crypto = require("crypto");
 
 const slpParser = require("slp-parser-js")
 
@@ -97,7 +97,11 @@ class Game {
             console.log(x);
             const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
             // TODO: Come back to this
-            if( !gameComplete ){ throw "INCOMPLETE GAME???? " + this.slpPath }
+            if( !gameComplete ){ 
+                this.isValid = false;
+                this.info = "Incomplete game";
+                return resolve();
+            }
             if( overall.every( p => p.totalDamage < 100 )){ 
                 this.isValid = false;
                 this.info = "Damage < 100";
@@ -155,7 +159,17 @@ class Game {
                 characterColor: p2.characterColor,
                 nametag: p2.nametag
             }];
-            this.combos = combos;
+
+            //Filter Combos
+            this.combos = combos.filter(combo => {
+                if( combo.moves.length < 4 ){
+                    return false
+                }
+                return true
+            });
+            this.combos.forEach(combo => {
+                combo.id = crypto.randomBytes(8).toString('hex')
+            })
 
             resolve()
         },1));

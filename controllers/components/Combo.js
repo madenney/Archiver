@@ -51,7 +51,7 @@ class ComboController {
                 </div>
             </div>
             <div class="combo-meta">
-                <div class="combo-id">${id}</div>
+                <div class="combo-id">${id.substring(0,4)}</div>
                 <input c-id=${id} class="combo-checkbox" type="checkbox">
             </div>
         </div>

@@ -65,7 +65,7 @@ class ComboList {
                         replayJSON.endFrame += 20
                     }
                 } 
-                if(options.showOverlay){
+                if(options.showOverlay || options.devMode ){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
                     overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
@@ -109,47 +109,51 @@ class ComboList {
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            // rimraf(tmpDir, () => {
-            //     console.log("removed tmpdir")
-            // });
+            rimraf(tmpDir, () => {
+                console.log("removed tmp-overlay dir")
+            });
         });
     }
 
     generateOverlay(outputPath, combo, options){ 
-        console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
         const { id, players, playerIndex, opponentIndex, tournament, startedAt } = combo
-        const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
+        const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
             logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-        const devText = id;
+        
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
-        console.log(outputPath);
+        const args = [outputPath]
         const comboer = players.find(p=>p.playerIndex === playerIndex)
         const comboee = players.find(p=>p.playerIndex === opponentIndex)
 
         const icon1 = characters[comboer.characterId].img
         const icon2 = characters[comboee.characterId].img
 
-        const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
-        
-        if(showPlayerTags){
-            if(comboer.tag) args.push("--name1=" + comboer.tag);
-            if(comboee.tag) args.push("--name2=" + comboee.tag);
-        }
-        if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
-        if(showDate && startedAt) {
-            const d = new Date(startedAt);
-            args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
-        };
-        if(overlayMargin) args.push("--margin=" + overlayMargin);
-        
-        if(logoOpacity) args.push("--logoOpacity=" + logoOpacity);
-        if(textboxOpacity) args.push("--textboxOpacity=" + textboxOpacity);
+        args.push(icon1)
+        args.push(icon2)
+        args.push(VIDEO_WIDTH)
+        args.push(VIDEO_HEIGHT)
+        if(showOverlay){
+            
+            if(showPlayerTags){
+                if(comboer.tag) args.push("--name1=" + comboer.tag);
+                if(comboee.tag) args.push("--name2=" + comboee.tag);
+            }
+            if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
+            if(showDate && startedAt) {
+                const d = new Date(startedAt);
+                args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
+            };
+            if(overlayMargin) args.push("--margin=" + overlayMargin);
+            
+            if(logoOpacity) args.push("--logoOpacity=" + logoOpacity);
+            if(textboxOpacity) args.push("--textboxOpacity=" + textboxOpacity);
 
-        if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
-        if(fontPath) args.push("--fontPath=" + fontPath);
-        
+            if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
+            if(fontPath) args.push("--fontPath=" + fontPath);
+        }
         if(devMode){
+            const devText = id;
             let line, devTextArg = "";
             for(line of [devText]){
                 devTextArg += (line + ";");
@@ -157,7 +161,7 @@ class ComboList {
             devTextArg = devTextArg.slice(0,-1);
             args.push("--devText=" + devTextArg)
         }
-        console.log(args);
+
         const pyShellOptions = {
             mode: "text",
             pythonPath: 'python3',

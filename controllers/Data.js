@@ -262,12 +262,19 @@ class Data {
         });
 
         $("#special-half-moon-button").click(() => {
-            const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
-            let games = [];
-            sets.forEach(s => games = games.concat(s.games));
+            // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            // let games = [];
+            // sets.forEach(s => games = games.concat(s.games));
+            const games = this.archive.getGames();
             console.log(games.length)
+            const crypto = require("crypto");
 
-            console.log("DONE :)", count)
+            games.forEach(game => {
+                game.combos.forEach(combo => {
+                    combo.id = crypto.randomBytes(8).toString('hex')
+                })
+            })
+            console.log("DONE :)")
             
             return
             // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
