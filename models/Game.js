@@ -161,9 +161,10 @@ class Game {
         },1));
     }
 
-    getCombos({comboer,comboee,didKill,minMoves,minDamage,includesMove,endMove}){
+    getCombos({comboer,comboee,didKill,minMoves,maxMoves,minDamage,includesMove,endMove}){
         return this.combos.filter(c => {
             if( minMoves && !(c.moves.length >= minMoves) ) return false;
+            if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
             const comboerCharId = this.players.find(p => {
                 return p.playerIndex === c.playerIndex;
             }).characterId;

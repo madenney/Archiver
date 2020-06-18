@@ -22,6 +22,10 @@
             <input id="min-moves">
           </div>
           <div class="filter">
+            <div class="label">Max Moves</div>
+            <input id="max-moves">
+          </div>
+          <div class="filter">
             <div class="label">Min Damage</div>
             <input id="min-damage">
           </div>
@@ -43,23 +47,6 @@
           </div>
           <button id="filter-button">Filter</button>
         </div>
-      </div>
-      <div id="video-buttons-container">
-        <div>
-          <div class="video-option">
-            <div class="label">Overlay</div>
-            <input id="show-overlay" type="checkbox">
-          </div>
-          <div class="video-option">
-            <div class="label">Dev Mode</div>
-            <input id="dev-mode" type="checkbox">
-          </div>
-        </div>
-        <div>
-          <button id="video-options-button" class="normal-button">Video Options</button>
-          <button id="overlay-options-button" class="normal-button">Overlay Options</button>
-        </div>
-        <button id="generate-video-button" class="normal-button">Generate</button>
       </div>
     </div>
     <div id="video-options-modal-container">
@@ -157,20 +144,25 @@
         <div class="pagination-button" id="primary-list-next">Next</div>
       </div>
     </div>
-    <div id="middle-container">
-      <button id="remove-selected">Remove Selected</button>
-    </div>
     <div id="secondary-list-container" class="list-container">
-        <div class="info">
-            <div class="row">
-              <div class="label">Total:</div>
-              <div class="data" id="secondary-total"></div>
-            </div>
-            <div class="row">
-              <div class="label">Time:</div>
-              <div class="data" id="primary-total-time"></div>
-            </div>
+      <button id="remove-selected">Remove Selected</button>
+      <div id="video-buttons-container">
+        <div>
+          <div class="video-option">
+            <div class="label">Overlay</div>
+            <input id="show-overlay" type="checkbox">
           </div>
+          <div class="video-option">
+            <div class="label">Dev Mode</div>
+            <input id="dev-mode" type="checkbox">
+          </div>
+        </div>
+        <div>
+          <button id="video-options-button" class="normal-button">Video Options</button>
+          <button id="overlay-options-button" class="normal-button">Overlay Options</button>
+        </div>
+        <button id="generate-video-button" class="normal-button">Generate</button>
+      </div>
       <ul class="list"></ul>
     </div>
   </div>
