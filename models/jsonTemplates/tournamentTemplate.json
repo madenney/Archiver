@@ -1,9 +1,10 @@
 {
     "id": null,
 	"name": null,
-    "timestamp": null,
-    "smashggUrl": null,
-    "smashggId": null,
+    "startAt": null,
+    "endAt": null,
+    "smashGGUrl": null,
+    "smashGGId": null,
     "sets": [],
     "unlinkedGames": [],
     "events": null,

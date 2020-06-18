@@ -265,18 +265,18 @@ class Data {
             // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
             // let games = [];
             // sets.forEach(s => games = games.concat(s.games));
-            const games = this.archive.getGames();
-            console.log(games.length)
-            const crypto = require("crypto");
+            // const games = this.archive.getGames();
+            // console.log(games.length)
+            // const crypto = require("crypto");
 
-            games.forEach(game => {
-                game.combos.forEach(combo => {
-                    combo.id = crypto.randomBytes(8).toString('hex')
-                })
-            })
-            console.log("DONE :)")
+            // games.forEach(game => {
+            //     game.combos.forEach(combo => {
+            //         combo.id = crypto.randomBytes(8).toString('hex')
+            //     })
+            // })
+            // console.log("DONE :)")
             
-            return
+            //return
             // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
             // const x = asdf.find(set => set.id === "8f0852e0-334a-4e49-9c5b-70f5f06b1038" )
             // x.isLinked = false;
@@ -284,41 +284,82 @@ class Data {
             // console.log(x)
             // return;
             //const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
-            sets.forEach((set,index) => {
-                try {
-                const playerIndex = set.games[0].players[0].playerIndex
-                let p1Score = 0;
-                set.games.forEach(game => {
-                    if(game.winner === playerIndex ){
-                        p1Score++;
-                    } 
-                })
+            // sets.forEach((set,index) => {
+            //     try {
+            //     const playerIndex = set.games[0].players[0].playerIndex
+            //     let p1Score = 0;
+            //     set.games.forEach(game => {
+            //         if(game.winner === playerIndex ){
+            //             p1Score++;
+            //         } 
+            //     })
 
                 
-                if(p1Score == set.winnerScore){
-                    set.games.forEach(game => {
-                        game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
-                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
-                    })
-                } else {
-                    set.games.forEach(game => {
-                        game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
-                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
-                    })
-                }
-                } catch(err){
-                    console.log(index);
-                    //set.games.splice(0,1);
-                    console.log("WHAT: ", set)
-                    // set.games[1].process().then(() => {
-                    //     console.log("BAHA")
-                    //     console.log(set.games[1])
-                    // })
+            //     if(p1Score == set.winnerScore){
+            //         set.games.forEach(game => {
+            //             game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
+            //             game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
+            //         })
+            //     } else {
+            //         set.games.forEach(game => {
+            //             game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
+            //             game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
+            //         })
+            //     }
+            //     } catch(err){
+            //         console.log(index);
+            //         //set.games.splice(0,1);
+            //         console.log("WHAT: ", set)
+            //         // set.games[1].process().then(() => {
+            //         //     console.log("BAHA")
+            //         //     console.log(set.games[1])
+            //         // })
+            //         throw err
+            //     }
+            //     console.log(set);
+
+            // })
+            const graphQL = require('graphql-client')
+            const { tournamentQuery } = require("../constants/smashggQueries")
+            const uuidv4 = require("uuid/v4")
+            const smashGGQL = graphQL({
+              url: 'https://api.smash.gg/gql/alpha',
+              headers: {
+                Authorization: 'Bearer ' + '39def3ef8804cc6f8b86e441f1f4bda1'
+              }
+            })
+            this.archive.tournaments.forEach(async tournament => {
+                console.log(tournament.name);
+                let str = tournament.name;
+                str = str.replace("H","h");
+                str = str.replace(" ","-");
+                str = str.replace("M","m");
+                str = str.replace(" ","-");
+                str = str.replace("#","");
+                console.log(str);
+
+                try {
+                    const {data,message} = await smashGGQL.query(
+                        tournamentQuery,
+                        {
+                          "slug":str
+                        }
+                    )
+                    
+                    if( !data ){
+                        throw message
+                    }
+
+                    tournament.smashGGId = data.tournament.id
+
+                } catch( err ){
+                    console.log("Something went wrong with smashGG - ")
                     throw err
                 }
-                console.log(set);
-
+                console.log(tournament);
+                console.log("-----")
             })
+
         })
 
     }
