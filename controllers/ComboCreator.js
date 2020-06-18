@@ -38,6 +38,8 @@ class ComboCreator {
         const minMoves = $("#min-moves").val();
         const maxMoves = $("#max-moves").val();
         const minDamage = $("#min-damage").val();
+        const comboerTag = $("#comboer-tag").val();
+        const comboeeTag = $("#comboee-tag").val();
         const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
         console.log(this.games.length);
@@ -46,6 +48,8 @@ class ComboCreator {
             const combos = game.getCombos({
                 comboer: char1,
                 comboee: char2,
+                comboerTag,
+                comboeeTag,
                 didKill,
                 minMoves,
                 maxMoves,

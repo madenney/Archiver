@@ -80,7 +80,7 @@ const characters = [{
   id: 13,
   name: "Pikachu",
   shortName: "Pikachu",
-  colors: ["Default", "Red", "Party Hat", "Fedora"],
+  colors: ["Default", "Red", "Party_Hat", "Fedora"],
   img: "../images/character-icons/pikachu/"
 }, {
   id: 14,

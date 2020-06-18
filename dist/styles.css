@@ -271,6 +271,10 @@
   width: 35px;
   text-align: center;
 }
+#combo-body #filters-and-options #filters-container .filters-row .filter input.tag {
+  width: 100px;
+  text-align: left;
+}
 #combo-body #video-options-modal-container,
 #combo-body #overlay-options-modal-container {
   width: 100vw;

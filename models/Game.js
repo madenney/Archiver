@@ -175,20 +175,26 @@ class Game {
         },1));
     }
 
-    getCombos({comboer,comboee,didKill,minMoves,maxMoves,minDamage,includesMove,endMove}){
+    getCombos(options){
+        const {
+            comboer,comboee,comboerTag,comboeeTag,didKill,
+            minMoves,maxMoves,minDamage,includesMove,endMove
+        } = options
+        const _comboerTag = comboerTag.toLowerCase();
+        const _comboeeTag = comboeeTag.toLowerCase();
         return this.combos.filter(c => {
             if( minMoves && !(c.moves.length >= minMoves) ) return false;
             if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
-            const comboerCharId = this.players.find(p => {
-                return p.playerIndex === c.playerIndex;
-            }).characterId;
+            const comboerPlayer = this.players.find(p => p.playerIndex === c.playerIndex);
+            const comboeePlayer = this.players.find(p => p.playerIndex === c.opponentIndex)
+
+            const comboerCharId = comboerPlayer.characterId;
             //fuck ice climbers
             if( comboerCharId === 14 ) return false;
-            const comboeeCharId = this.players.find(p => {
-                return p.playerIndex === c.opponentIndex;
-            }).characterId;
             if(comboer && !(comboerCharId == comboer) ) return false;
-            if(comboee && !(comboeeCharId == comboee) ) return false;
+            if(comboee && !(comboeePlayer.characterId == comboee) ) return false;
+            if(comboerTag && !(comboerPlayer.tag.toLowerCase() == _comboerTag)) return false;
+            if(comboeeTag && !(comboeePlayer.tag.toLowerCase() == _comboeeTag)) return false;
             if( didKill && !c.didKill ) return false;
             if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
