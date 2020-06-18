@@ -1,4 +1,3 @@
-
 const slpToVideo = require("slp-to-video");
 const fs = require("fs");
 const rimraf = require("rimraf");
@@ -65,7 +64,7 @@ class ComboList {
                         replayJSON.endFrame += 20
                     }
                 } 
-                if(options.showOverlay || options.devMode ){
+                if(options.showOverlay){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
                     overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
@@ -110,30 +109,34 @@ class ComboList {
                 reject(err);
             }
             rimraf(tmpDir, () => {
-                console.log("removed tmp-overlay dir")
+                console.log("removed tmpdir")
             });
         });
     }
 
     generateOverlay(outputPath, combo, options){ 
+        console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
         const { id, players, playerIndex, opponentIndex, tournament, startedAt } = combo
         const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
             logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-        
+        const devText = id;
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
-        const args = [outputPath]
-        const comboer = players.find(p=>p.playerIndex === playerIndex)
-        const comboee = players.find(p=>p.playerIndex === opponentIndex)
+        
+        const args = [outputPath, VIDEO_WIDTH, VIDEO_HEIGHT]
 
-        const icon1 = characters[comboer.characterId].img
-        const icon2 = characters[comboee.characterId].img
-
-        args.push(icon1)
-        args.push(icon2)
-        args.push(VIDEO_WIDTH)
-        args.push(VIDEO_HEIGHT)
         if(showOverlay){
+
+            const comboer = players.find(p=>p.playerIndex === playerIndex)
+            const comboee = players.find(p=>p.playerIndex === opponentIndex)
+
+            const icon1 = characters[comboer.characterId].img + 
+                            characters[comboer.characterId].colors[comboer.characterColor] + ".png"
+            const icon2 = characters[comboee.characterId].img + 
+                            characters[comboee.characterId].colors[comboee.characterColor] + ".png"
+
+            args.push("--icon1=" + icon1)
+            args.push("--icon2=" + icon2)
             
             if(showPlayerTags){
                 if(comboer.tag) args.push("--name1=" + comboer.tag);
@@ -153,7 +156,6 @@ class ComboList {
             if(fontPath) args.push("--fontPath=" + fontPath);
         }
         if(devMode){
-            const devText = id;
             let line, devTextArg = "";
             for(line of [devText]){
                 devTextArg += (line + ";");
@@ -161,7 +163,7 @@ class ComboList {
             devTextArg = devTextArg.slice(0,-1);
             args.push("--devText=" + devTextArg)
         }
-
+        console.log(args);
         const pyShellOptions = {
             mode: "text",
             pythonPath: 'python3',

@@ -36,6 +36,7 @@ class ComboCreator {
 
         console.log("Getting combos...")
         const minMoves = $("#min-moves").val();
+        const maxMoves = $("#max-moves").val();
         const minDamage = $("#min-damage").val();
         const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
@@ -47,6 +48,7 @@ class ComboCreator {
                 comboee: char2,
                 didKill,
                 minMoves,
+                maxMoves,
                 minDamage,
                 //includesMove,
                 endMove
@@ -81,6 +83,7 @@ class ComboCreator {
         $("#char-2-select").val(defaults.comboee);
         $("#stage-select").val(defaults.stage);
         $("#min-moves").val(defaults.minMoves);
+        $("#max-moves").val(defaults.maxMoves);
         $("#min-damage").val(defaults.minDamage);
         $("#end-move").val(defaults.endMove);
         $("#did-kill").prop('checked', defaults.didKill);

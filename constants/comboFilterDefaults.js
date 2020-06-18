@@ -3,6 +3,7 @@ const defaults = {
     comboee: "",
     stage: "",
     minMoves: 8,
+    maxMoves: 20,
     minDamage: 60,
     endMove: "",
     didKill: false

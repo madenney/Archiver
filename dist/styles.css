@@ -271,46 +271,6 @@
   width: 35px;
   text-align: center;
 }
-#combo-body #filters-and-options #video-buttons-container {
-  min-width: 300px;
-  height: 115px;
-  border-left: solid white 2px;
-  padding: 20px;
-  margin: 20px 0px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option {
-  margin-bottom: 4px;
-  display: inline-block;
-  width: 140px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option .label {
-  display: inline-block;
-  font-size: 20px;
-  margin-right: 5px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option input {
-  font-size: 20px;
-  padding: 5px;
-  width: 20px;
-  text-align: center;
-}
-#combo-body #filters-and-options #video-buttons-container button {
-  font-size: 18px;
-  padding: 8px;
-  width: 150px;
-  height: auto;
-  right: 10px;
-  background-color: #3C91E6;
-  margin: 10px 5px;
-}
-#combo-body #filters-and-options #video-buttons-container button.disabled {
-  background-color: gray;
-  color: black;
-}
-#combo-body #filters-and-options #video-buttons-container button:hover {
-  cursor: pointer;
-  background-color: #9FD356;
-}
 #combo-body #video-options-modal-container,
 #combo-body #overlay-options-modal-container {
   width: 100vw;
@@ -395,18 +355,54 @@
   display: inline-block;
   width: 50px;
 }
-#combo-body .list-container .list {
-  padding-left: 0px;
+#combo-body .list-container #video-buttons-container {
+  min-width: 300px;
+  height: 115px;
+  border-top: solid white 2px;
+  padding: 20px;
+  margin: 20px 0px;
 }
-#combo-body #middle-container {
-  width: 100px;
+#combo-body .list-container #video-buttons-container .video-option {
+  margin-bottom: 4px;
   display: inline-block;
+  width: 140px;
 }
-#combo-body #middle-container #remove-selected {
+#combo-body .list-container #video-buttons-container .video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+}
+#combo-body .list-container #video-buttons-container .video-option input {
+  font-size: 20px;
+  padding: 5px;
+  width: 20px;
+  text-align: center;
+}
+#combo-body .list-container #video-buttons-container button {
+  font-size: 18px;
+  padding: 8px;
+  width: 150px;
+  height: auto;
+  right: 10px;
+  background-color: #3C91E6;
+  margin: 10px 5px;
+}
+#combo-body .list-container #video-buttons-container button.disabled {
+  background-color: gray;
+  color: black;
+}
+#combo-body .list-container #video-buttons-container button:hover {
+  cursor: pointer;
+  background-color: #9FD356;
+}
+#combo-body .list-container #remove-selected {
   margin: 5px;
   width: 100px;
   height: 50px;
   font-size: 18px;
+}
+#combo-body .list-container .list {
+  padding-left: 0px;
 }
 #combo-body .combo {
   margin: 5px;

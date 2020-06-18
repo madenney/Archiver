@@ -49,47 +49,6 @@
                 }
             }
         }
-    
-        #video-buttons-container {
-            min-width: 300px;
-            height: 115px;
-            border-left: solid white 2px;
-            padding: 20px;
-            margin: 20px 0px;
-            .video-option {
-                margin-bottom: 4px;
-                display: inline-block; 
-                width: 140px;
-                .label {
-                    display: inline-block;
-                    font-size: 20px;
-                    margin-right: 5px;
-                }
-                input {
-                    font-size: 20px;
-                    padding: 5px;
-                    width: 20px;
-                    text-align: center;
-                }
-            }
-            button {
-                font-size: 18px;
-                padding: 8px;
-                width: 150px;
-                height: auto;
-                right: 10px;
-                background-color: @color3;
-                margin: 10px 5px;
-                &.disabled {
-                    background-color: gray;
-                    color: black;
-                }
-                &:hover {
-                    cursor: pointer;
-                    background-color: @color4;
-                }
-            }
-        }
     }
 
     #video-options-modal-container, #overlay-options-modal-container {
@@ -166,26 +125,55 @@
                 }
             }
         }
-
-        .list {
-            padding-left: 0px;
+        #video-buttons-container {
+            min-width: 300px;
+            height: 115px;
+            border-top: solid white 2px;
+            padding: 20px;
+            margin: 20px 0px;
+            .video-option {
+                margin-bottom: 4px;
+                display: inline-block; 
+                width: 140px;
+                .label {
+                    display: inline-block;
+                    font-size: 20px;
+                    margin-right: 5px;
+                }
+                input {
+                    font-size: 20px;
+                    padding: 5px;
+                    width: 20px;
+                    text-align: center;
+                }
+            }
+            button {
+                font-size: 18px;
+                padding: 8px;
+                width: 150px;
+                height: auto;
+                right: 10px;
+                background-color: @color3;
+                margin: 10px 5px;
+                &.disabled {
+                    background-color: gray;
+                    color: black;
+                }
+                &:hover {
+                    cursor: pointer;
+                    background-color: @color4;
+                }
+            }
         }
-    }
-    #middle-container {
-        width: 100px;
-        display: inline-block;
         #remove-selected {
             margin: 5px;
             width: 100px;
             height: 50px;
             font-size: 18px;
         }
-    }
-    #primary-list-container {
-
-    }
-    #secondary-list-container {
-
+        .list {
+            padding-left: 0px;
+        }
     }
 
     .combo {

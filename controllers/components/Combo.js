@@ -22,13 +22,15 @@ class ComboController {
         const { combo, comboer, comboee, slpPath, id } = this;
         const damage = Math.floor(combo.endPercent - combo.startPercent);
         const seconds = (( combo.endFrame - combo.startFrame ) / 60).toFixed(1);
+        const comboerIconPath = characters[comboer.characterId].img + characters[comboer.characterId].colors[comboer.characterColor] + ".png"
+        const comboeeIconPath = characters[comboee.characterId].img + characters[comboee.characterId].colors[comboee.characterColor] + ".png"
         return $(`
         <div id="${id}" class="combo">
             <div class='game-info'>
                 <div class='characters'>
-                    <img class='char1' src=${characters[comboer.characterId].img}>
+                    <img class='char1' src=${comboerIconPath}>
                     <img class='arrow' src='../images/${darkStages.indexOf(combo.stage) != -1 ? "white":""}next.png'>
-                    <img class='char2' src=${characters[comboee.characterId].img}>
+                    <img class='char2' src=${comboeeIconPath}>
                 </div>
                 <img class='stage' src=${stages[combo.stage].img}>
             </div>
