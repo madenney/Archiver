@@ -10,13 +10,14 @@ const { videoOptions } = require("../constants/videoOptions");
 const { overlayOptions } = require("../constants/overlayOptions");
 
 var { remote: { dialog } } = require('electron');
+const events = require("events");
 
 class ComboCreator {
     constructor(archive){
         this.archive = archive;
         this.primaryComboList = null;
         this.primaryListCurrentPage = 0;
-        this.numberPerPage = 300;
+        this.numberPerPage = 50;
         this.games = [];
         this.combos = [];
         this.secondaryCombos = [];
@@ -66,10 +67,11 @@ class ComboCreator {
                     players: game.players,
                     stage: game.stage,
                     slpPath: game.slpPath,
-                    startedAt: game.startedAt,
+                    startAt: game.tournament ? 
+                        game.tournament.startAt : game.startAt,
                     gameEndFrame: game.lastFrame,
                     gameId: game.id,
-                    tournament: game.tournament
+                    tournamentName: game.tournament ? game.tournament.name : "N/A"
                 })
             });
             return n.concat( returnArr )
@@ -147,8 +149,27 @@ class ComboCreator {
             this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
             const comboList = new ComboList(this.combos);
             const options = this.getOptions();
-            comboList.generateVideo(options).then(() => {
-                console.log("Huzzah :)");
+            const vgMessage = $("#video-generate-message");
+            const vgCount = $("#video-generate-count");
+            const em = new events.EventEmitter();
+            em.on('primaryEventMsg',msg => {
+                vgMessage.html(msg);
+                vgCount.html(`0/${totalVideos}`);
+            });
+            const totalVideos = this.combos.length;
+            em.on('count', count => {
+                vgCount.html(`${count+1}/${totalVideos}`);
+            });
+            const skippedFiles = [];
+            em.on('errorEventMsg',(msg,file) => {
+                skippedFiles.push(file);
+            })
+            comboList.generateVideo(options,em).then(() => {
+                vgMessage.html("Done :)");
+                vgCount.html("")
+                setTimeout(() => {
+                    vgMessage.html("");
+                }, 5000 )
                 this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Generate");
             }).catch((err) => {
                 console.log("Oh no :(")

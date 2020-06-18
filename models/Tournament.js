@@ -44,8 +44,10 @@ class Tournament {
     constructor(tournamentJSON) {
         this.id = tournamentJSON.id;
         this.name = tournamentJSON.name;
-        this.timestamp = tournamentJSON.timestamp;
-        this.smashGGUrl = tournamentJSON.smashggUrl;
+        this.startAt = tournamentJSON.startAt;
+        this.endAt = tournamentJSON.endAt;
+        this.smashGGUrl = tournamentJSON.smashGGUrl;
+        this.smashGGId = tournamentJSON.smashGGId;
         this.events = tournamentJSON.events;
         this.players = tournamentJSON.players;
         // need to keep these?
@@ -94,9 +96,10 @@ class Tournament {
         return {
             id: this.id,
             name: this.name,
-            timestamp: this.timestamp,
-            smashggUrl: this.smashGGUrl,
-            smashggId: this.smashggId,
+            startAt: this.startAt,
+            endAt: this.endAt,
+            smashGGUrl: this.smashGGUrl,
+            smashGGId: this.smashGGId,
             sets: this.sets.map(s=>s.generateJSON()),
             unlinkedGames: this.unlinkedGames.map(g=>g.generateJSON()),
             events: this.events,
@@ -180,8 +183,10 @@ class Tournament {
                 throw message
             }
 
-            this.smashggUrl = tourneyUrl;
-            this.smashGGID = data.tournament.id
+            this.startAt = data.tournament.startAt
+            this.endAt = data.tournament.endAt
+            this.smashGGUrl = tourneyUrl
+            this.smashGGId = data.tournament.id
             this.name = data.tournament.name
             this.events = data.tournament.events
         } catch( err ){

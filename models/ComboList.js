@@ -1,7 +1,6 @@
 const slpToVideo = require("slp-to-video");
 const fs = require("fs");
 const rimraf = require("rimraf");
-const events = require("events");
 const path = require("path");
 const { PythonShell} = require("python-shell");
 const config = require("../config.json");
@@ -29,7 +28,7 @@ class ComboList {
 
     }
 
-    generateVideo(options){
+    generateVideo(options,eventEmitter){
         return new Promise( async (resolve,reject) => {
   
             console.log(options);
@@ -75,35 +74,21 @@ class ComboList {
 
             fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
 
-            const em = new events.EventEmitter();
             const slpToVideoConfig = {
                 INPUT_FILE: path.join(tmpDir,`replays.json`),
                 DOLPHIN_PATH,
                 SSBM_ISO_PATH: options.isoPath,
                 NUM_PROCESSES: options.numCPUs,
-                EVENT_TRACKER: em,
+                EVENT_TRACKER: eventEmitter,
                 GAME_MUSIC_ON: options.gameMusic,
                 HIDE_HUD: !options.showHud,
                 WIDESCREEN_OFF: !options.widescreen,
                 BITRATE_KBPS: 15000
             }
-            em.on('primaryEventMsg',msg => {
-                console.log(msg);
-            });
-            const totalVideos = this.combos.length;
-            em.on('count', count => {
-                console.log(`${count}/${totalVideos}`);
-            });
-            const skippedFiles = [];
-            em.on('errorEventMsg',(msg,file) => {
-                console.log(msg);
-                skippedFiles.push(file);
-            })
+
             try {
                 await slpToVideo(slpToVideoConfig);
-                console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
                 resolve();
-
             } catch(err){
                 console.log("Error occurred in slp-to-video");
                 reject(err);
@@ -115,9 +100,8 @@ class ComboList {
     }
 
     generateOverlay(outputPath, combo, options){ 
-        console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
-        const { id, players, playerIndex, opponentIndex, tournament, startedAt } = combo
+        const { id, players, playerIndex, opponentIndex, startAt, tournamentName } = combo
         const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
             logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
         const devText = id;
@@ -142,9 +126,10 @@ class ComboList {
                 if(comboer.tag) args.push("--name1=" + comboer.tag);
                 if(comboee.tag) args.push("--name2=" + comboee.tag);
             }
-            if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
-            if(showDate && startedAt) {
-                const d = new Date(startedAt);
+            if(showTournament && tournamentName ) args.push("--tournament=" + tournamentName);
+            if(showDate && startAt) {
+                const d = new Date(startAt * 1000);
+                if(tournamentName) d.setHours(d.getHours()-8) // UTC -> PST
                 args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
             };
             if(overlayMargin) args.push("--margin=" + overlayMargin);
@@ -163,7 +148,6 @@ class ComboList {
             devTextArg = devTextArg.slice(0,-1);
             args.push("--devText=" + devTextArg)
         }
-        console.log(args);
         const pyShellOptions = {
             mode: "text",
             pythonPath: 'python3',

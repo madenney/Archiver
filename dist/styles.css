@@ -408,6 +408,14 @@
 #combo-body .list-container .list {
   padding-left: 0px;
 }
+#combo-body .list-container #video-generate-message {
+  font-size: 20px;
+  margin: 10px 10px 0px;
+}
+#combo-body .list-container #video-generate-count {
+  font-size: 20px;
+  margin: 5px 10px;
+}
 #combo-body .combo {
   margin: 5px;
   padding: 5px;
