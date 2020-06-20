@@ -104,6 +104,19 @@
             #logo-path-option {
                 display: none;
             }
+
+            #video-options-ok-button, #overlay-options-ok-button {
+                font-size: 20px;
+                background-color: @color3;
+                width: 100px;
+                height: 50px;
+                margin: 30px;
+                margin-left: 400px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
         }
     }
     
@@ -131,7 +144,7 @@
         }
         #video-buttons-container {
             min-width: 300px;
-            height: 115px;
+            
             border-top: solid white 2px;
             padding: 20px;
             margin: 20px 0px;
@@ -177,6 +190,9 @@
         }
         .list {
             padding-left: 0px;
+        }
+        #generate-warning-message {
+            color: lightcoral;
         }
         #video-generate-message {
             font-size: 20px;

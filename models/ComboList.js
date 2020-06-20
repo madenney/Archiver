@@ -81,8 +81,8 @@ class ComboList {
                 NUM_PROCESSES: options.numCPUs,
                 EVENT_TRACKER: eventEmitter,
                 GAME_MUSIC_ON: options.gameMusic,
-                HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen,
+                HIDE_HUD: options.hideHude,
+                WIDESCREEN_OFF: options.widescreenOff,
                 BITRATE_KBPS: 15000
             }
 

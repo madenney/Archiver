@@ -39,10 +39,12 @@ class MainController {
         })
 
         this.closeButton = $("#close-archive-button");
-        //this.closeButton.show();
+        this.closeButton.show();
         this.closeButton.click(async () => {
             delete localStorage.last_archive;
-            alert("Archive path removed from local storage. Restart the app to start a new one.")
+            const app = require('electron').remote.app
+            app.relaunch();
+            app.exit();
         })
 
     }

@@ -1,9 +1,9 @@
 const videoOptions = {
     devMode: false,
     showOverlay: false,
-    showHud: true,
+    hideHud: false,
     gameMusic: false,
-    widescreen: true,
+    widescreenOff: false,
     numCPUs: 8,
 	ssbmIsoPath: "",
     outputPath: "",
