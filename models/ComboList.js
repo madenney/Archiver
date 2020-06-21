@@ -63,7 +63,7 @@ class ComboList {
                         replayJSON.endFrame += 20
                     }
                 } 
-                if(options.showOverlay){
+                if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
                     overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
