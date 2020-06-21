@@ -277,7 +277,22 @@ class ComboCreator {
         this.primaryListCurrentPage = page;
         this.primaryList.empty();
         $("#primary-total").html(`${this.combos.length}`);
-        $("#primary-total-time").html(`${this.combos.reduce((n,c)=>{return n+((c.endFrame-c.startFrame)/60)},0).toFixed(1)}`);
+        $("#primary-total-time").html(`${(this.combos.reduce((n,c)=>{
+            let a = c.endFrame - c.startFrame;
+            if(c.moves.length < 3 ){
+                a += 20
+            } else {
+                a += 10
+            }
+            if(c.didKill){
+                if(c.endFrame < c.gameEndFrame - 37 ){
+                    a += 36
+                } else if (c.endFrame < c.gameEndFrame - 21){
+                    a += 20
+                }
+            }
+            return n+a
+        },0)/60).toFixed(1)}`);
         const combosToDisplay = this.combos.slice(page*this.numberPerPage,(page*this.numberPerPage)+this.numberPerPage)
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
