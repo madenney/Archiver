@@ -27,7 +27,7 @@
 }
 #close-archive-button {
   position: fixed;
-  right: 50px;
+  left: 100px;
   top: 10px;
   background-color: #FA824C;
   color: #342E37;
@@ -339,6 +339,23 @@
 #combo-body #overlay-options-modal-container .options-modal #logo-path-option {
   display: none;
 }
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button {
+  font-size: 20px;
+  background-color: #3C91E6;
+  width: 100px;
+  height: 50px;
+  margin: 30px;
+  margin-left: 400px;
+}
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button:hover {
+  cursor: pointer;
+}
 #combo-body .list-container {
   display: inline-block;
   max-width: 400px;
@@ -361,7 +378,6 @@
 }
 #combo-body .list-container #video-buttons-container {
   min-width: 300px;
-  height: 115px;
   border-top: solid white 2px;
   padding: 20px;
   margin: 20px 0px;
@@ -407,6 +423,9 @@
 }
 #combo-body .list-container .list {
   padding-left: 0px;
+}
+#combo-body .list-container #generate-warning-message {
+  color: lightcoral;
 }
 #combo-body .list-container #video-generate-message {
   font-size: 20px;

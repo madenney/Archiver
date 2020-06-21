@@ -54,6 +54,7 @@
             <input id="did-kill" type="checkbox">
           </div>
           <button id="filter-button">Filter</button>
+          <button id="filter-reset-button">Reset</button>
         </div>
       </div>
     </div>
@@ -62,15 +63,15 @@
         <h1>Video Options</h1>
         <div class="extra-video-option">
           <div class="label">Show HUD</div>
-          <input id="show-hud" type="checkbox">
+          <input id="hide-hud" type="checkbox">
         </div>
         <div class="extra-video-option">
           <div class="label">Game Music</div>
           <input id="game-music" type="checkbox">
         </div>
         <div class="extra-video-option">
-          <div class="label">Widescreen</div>
-          <input id="widescreen" type="checkbox">
+          <div class="label">Widescreen Off</div>
+          <input id="widescreen-off" type="checkbox">
         </div>
         <br>
         <div class="extra-video-option">
@@ -88,6 +89,7 @@
           <button id="output-path-button">Choose</button>
           <input type="text" id="output-path" placeholder="/video/output/directory">
         </div>
+        <button id="video-options-ok-button">OK</button>
       </div>
     </div>
     <div id="overlay-options-modal-container">
@@ -132,6 +134,7 @@
             <button id="font-path-button">Choose</button>
             <input type="text" id="iso-path" placeholder="default font">
           </div>
+          <button id="overlay-options-ok-button">OK</button>
         </div>
       </div>
     <div id="primary-list-container" class="list-container">
@@ -170,6 +173,7 @@
           <button id="overlay-options-button" class="normal-button">Overlay Options</button>
         </div>
         <button id="generate-video-button" class="normal-button">Generate</button>
+        <div id="generate-warning-message"></div>
       </div>
       <div id="video-generate-message"></div>
       <div id="video-generate-count"></div>

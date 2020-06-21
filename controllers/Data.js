@@ -248,6 +248,9 @@ class Data {
                 if(count % 10 === 0 ){
                     this.render();
                 }
+                if(count % 250 === 0 ){
+                    this.archive.save();
+                }
                 $("#current-number-processed").html(count++);
                 await game.process();;
             })
