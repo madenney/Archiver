@@ -1,11 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-<<<<<<< HEAD
-const arrayMove = require('array-move')
-=======
 const arrayMove = require('array-move');
-
->>>>>>> 3dd9021eb9719e76fe11ff56ad022dc7353885e0
 const {characters} = require("../constants/characters");
 const {legalStages} = require("../constants/stages");
 const {moves} = require("../constants/moves");
@@ -198,6 +193,9 @@ class ComboCreator {
         const minDamage = $("#min-damage").val();
         const comboerTag = $("#comboer-tag").val();
         const comboeeTag = $("#comboee-tag").val();
+        const firstMove = $("#first-move").val();
+        const secondToLastMove = $("#second-to-last-move").val();
+        const thirdToLastMove = $("#third-to-last-move").val();
         const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
         console.log(this.games.length);
@@ -213,6 +211,9 @@ class ComboCreator {
                 maxMoves,
                 minDamage,
                 //includesMove,
+                secondToLastMove,
+                thirdToLastMove,
+                firstMove,
                 endMove
             });
 
@@ -362,6 +363,9 @@ class ComboCreator {
         const char2Select = $("#char-2-select");
         const stageSelect = $("#stage-select");
         const endMoveSelect = $("#end-move");
+        const firstMoveSelect = $("#first-move");
+        const secondToLastMoveSelect = $("#second-to-last-move");
+        const thirdToLastMoveSelect = $("#third-to-last-move");
         characters.forEach(c => {
             const option = $(`<option value="${c.id}">${c.shortName}</option>`);
             char1Select.append(option);
@@ -378,6 +382,18 @@ class ComboCreator {
             const option = $(`<option value="${m.id}">${m.shortName}</option>`)
             endMoveSelect.append(option);
         })
+        moves.forEach(m => {
+            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
+            firstMoveSelect.append(option);
+        })
+        moves.forEach(m => {
+            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
+            secondToLastMoveSelect.append(option);
+        })
+        moves.forEach(m => {
+            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
+            thirdToLastMoveSelect.append(option);
+        })
     }
 
     resetFiltersToDefaults(){
@@ -390,6 +406,9 @@ class ComboCreator {
         $("#max-moves").val(defaults.maxMoves);
         $("#min-damage").val(defaults.minDamage);
         $("#end-move").val(defaults.endMove);
+        $("#first-move").val(defaults.firstMove);
+        $("#second-to-last-move").val(defaults.secondToLastMove);
+        $("#third-to-last-move").val(defaults.thirdToLastMove);
         $("#did-kill").prop('checked', defaults.didKill);
         delete localStorage.comboerChar
         delete localStorage.comboeeChar
@@ -399,6 +418,9 @@ class ComboCreator {
         delete localStorage.minMoves
         delete localStorage.maxMoves
         delete localStorage.minDamage
+        delete localStorage.firstMove
+        delete localStorage.secondToLastMove
+        delete localStorage.thirdToLastMove
         delete localStorage.endMove
         delete localStorage.didKill
     }
@@ -446,6 +468,15 @@ class ComboCreator {
         $("#end-move").val(
             typeof localStorage.endMove == "string" ? localStorage.endMove : defaults.endMove);
         $("#end-move").change(function(){localStorage.endMove = $(this).val()})
+        $("#first-move").val(
+            typeof localStorage.firstMove == "string" ? localStorage.firstMove : defaults.firstMove);
+        $("#first-move").change(function(){localStorage.endMove = $(this).val()})
+        $("#second-to-last-move").val(
+            typeof localStorage.secondToLastMove == "string" ? localStorage.secondToLastMove : defaults.secondToLastMove);
+        $("#second-to-last-move").change(function(){localStorage.secondToLastMove = $(this).val()})
+        $("#third-to-last-move").val(
+            typeof localStorage.thirdToLastMove == "string" ? localStorage.thirdToLastMove : defaults.thirdToLastMove);
+        $("#third-to-last-move").change(function(){localStorage.thirdToLastMove = $(this).val()})
         $("#did-kill").prop('checked',
             typeof localStorage.didKill == "string" ? localStorage.didKill == "true" : defaults.didKill);
         $("#did-kill").change(function(){localStorage.didKill = this.checked})

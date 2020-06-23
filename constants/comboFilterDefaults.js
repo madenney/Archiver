@@ -8,6 +8,9 @@ const defaults = {
     maxMoves: 99,
     minDamage: 60,
     endMove: "",
+    firstMove: "",
+    secondToLastMove: "",
+    thirdToLastMove: "",
     didKill: false
 }
 

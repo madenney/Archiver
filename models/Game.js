@@ -178,7 +178,8 @@ class Game {
     getCombos(options){
         const {
             comboer,comboee,comboerTag,comboeeTag,didKill,
-            minMoves,maxMoves,minDamage,includesMove,endMove
+            minMoves,maxMoves,minDamage,includesMove,endMove,
+            firstMove,secondToLastMove,thirdToLastMove
         } = options
         const _comboerTag = comboerTag.toLowerCase();
         const _comboeeTag = comboeeTag.toLowerCase();
@@ -198,6 +199,9 @@ class Game {
             if( didKill && !c.didKill ) return false;
             if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
+            if( firstMove && !(c.moves[0].moveId == firstMove) ) return false;
+            if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
+            if( thirdToLastMove && !(c.moves[c.moves.length-3].moveId == thirdToLastMove) ) return false;
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
         })
