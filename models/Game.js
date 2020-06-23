@@ -162,9 +162,9 @@ class Game {
 
             //Filter Combos
             this.combos = combos.filter(combo => {
-                if( combo.moves.length < 4 ){
-                    return false
-                }
+                // if( combo.moves.length < 4 ){
+                //     return false
+                // }
                 return true
             });
             this.combos.forEach(combo => {

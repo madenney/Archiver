@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const arrayMove = require('array-move')
 const {characters} = require("../constants/characters");
 const {legalStages} = require("../constants/stages");
 const {moves} = require("../constants/moves");
@@ -58,6 +59,14 @@ class ComboCreator {
 
         this.generateVideoButton.click(() => this.generateVideo() );
 
+        $("#primary-list").sortable({
+            stop: (e,ui) => {
+                const combo = this.combos.find(c => c.id === ui.item.attr('id'));
+                const originalIndex = this.combos.indexOf(combo);
+                arrayMove.mutate(this.combos,originalIndex,ui.item.index())
+            },
+            scroll: true
+        })
 
         this.primaryListPrevButton.click(()=> {
             this.renderPrimaryList(this.primaryListCurrentPage-1);
