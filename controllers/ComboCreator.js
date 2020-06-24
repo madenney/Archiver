@@ -7,9 +7,9 @@ const {moves} = require("../constants/moves");
 
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
-const { defaults } = require("../constants/comboFilterDefaults");
-const { videoOptions } = require("../constants/videoOptions");
-const { overlayOptions } = require("../constants/overlayOptions");
+const { comboDefaults } = require("../constants/defaults/comboFilterDefaults");
+const { videoDefaults } = require("../constants/defaults/videoDefaults");
+const { overlayDefaults } = require("../constants/defaults/overlayDefaults");
 
 var { remote: { dialog } } = require('electron');
 const events = require("events");
@@ -397,19 +397,19 @@ class ComboCreator {
     }
 
     resetFiltersToDefaults(){
-        $("#char-1-select").val(defaults.comboerChar);
-        $("#char-2-select").val(defaults.comboeeChar);
-        $("#comboer-tag").val(defaults.comboer);
-        $("#comboee-tag").val(defaults.comboee);
-        $("#stage-select").val(defaults.stage);
-        $("#min-moves").val(defaults.minMoves);
-        $("#max-moves").val(defaults.maxMoves);
-        $("#min-damage").val(defaults.minDamage);
-        $("#end-move").val(defaults.endMove);
-        $("#first-move").val(defaults.firstMove);
-        $("#second-to-last-move").val(defaults.secondToLastMove);
-        $("#third-to-last-move").val(defaults.thirdToLastMove);
-        $("#did-kill").prop('checked', defaults.didKill);
+        $("#char-1-select").val(comboDefaults.comboerChar);
+        $("#char-2-select").val(comboDefaults.comboeeChar);
+        $("#comboer-tag").val(comboDefaults.comboer);
+        $("#comboee-tag").val(comboDefaults.comboee);
+        $("#stage-select").val(comboDefaults.stage);
+        $("#min-moves").val(comboDefaults.minMoves);
+        $("#max-moves").val(comboDefaults.maxMoves);
+        $("#min-damage").val(comboDefaults.minDamage);
+        $("#end-move").val(comboDefaults.endMove);
+        $("#first-move").val(comboDefaults.firstMove);
+        $("#second-to-last-move").val(comboDefaults.secondToLastMove);
+        $("#third-to-last-move").val(comboDefaults.thirdToLastMove);
+        $("#did-kill").prop('checked', comboDefaults.didKill);
         delete localStorage.comboerChar
         delete localStorage.comboeeChar
         delete localStorage.comboerTag
@@ -427,64 +427,64 @@ class ComboCreator {
 
     renderFilterValues(){
         $("#char-1-select").val(
-            typeof localStorage.comboerChar == "string" ? localStorage.comboerChar : defaults.comboerChar);
+            typeof localStorage.comboerChar == "string" ? localStorage.comboerChar : comboDefaults.comboerChar);
         $("#char-1-select").change(function(){localStorage.comboerChar = $(this).val()})
         $("#char-2-select").val(
-            typeof localStorage.comboeeChar == "string" ? localStorage.comboeeChar : defaults.comboeeChar);
+            typeof localStorage.comboeeChar == "string" ? localStorage.comboeeChar : comboDefaults.comboeeChar);
         $("#char-2-select").change(function(){localStorage.comboeeChar = $(this).val()})
         $("#stage-select").val(
-            typeof localStorage.stage == "string" ? localStorage.stage : defaults.stage);
+            typeof localStorage.stage == "string" ? localStorage.stage : comboDefaults.stage);
         $("#stage-select").change(function(){localStorage.stage = $(this).val()})
         $("#min-moves").val(
-            localStorage.minMoves ? localStorage.minMoves : defaults.minMoves);
+            localStorage.minMoves ? localStorage.minMoves : comboDefaults.minMoves);
         $("#min-moves").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = defaults.minMoves;
+                this.value = comboDefaults.minMoves;
                 return;
             }
             localStorage.minMoves = this.value 
         })
         $("#max-moves").val(
-            localStorage.maxMoves ? localStorage.maxMoves : defaults.maxMoves);
+            localStorage.maxMoves ? localStorage.maxMoves : comboDefaults.maxMoves);
         $("#max-moves").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = defaults.maxMoves;
+                this.value = comboDefaults.maxMoves;
                 return;
             }
             localStorage.maxMoves = this.value 
         })
         $("#min-damage").val(
-            localStorage.minDamage ? localStorage.minDamage : defaults.minDamage);
+            localStorage.minDamage ? localStorage.minDamage : comboDefaults.minDamage);
         $("#min-damage").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = defaults.minDamage;
+                this.value = comboDefaults.minDamage;
                 return;
             }
             localStorage.minDamage = this.value 
         })
         $("#end-move").val(
-            typeof localStorage.endMove == "string" ? localStorage.endMove : defaults.endMove);
+            typeof localStorage.endMove == "string" ? localStorage.endMove : comboDefaults.endMove);
         $("#end-move").change(function(){localStorage.endMove = $(this).val()})
         $("#first-move").val(
-            typeof localStorage.firstMove == "string" ? localStorage.firstMove : defaults.firstMove);
+            typeof localStorage.firstMove == "string" ? localStorage.firstMove : comboDefaults.firstMove);
         $("#first-move").change(function(){localStorage.endMove = $(this).val()})
         $("#second-to-last-move").val(
-            typeof localStorage.secondToLastMove == "string" ? localStorage.secondToLastMove : defaults.secondToLastMove);
+            typeof localStorage.secondToLastMove == "string" ? localStorage.secondToLastMove : comboDefaults.secondToLastMove);
         $("#second-to-last-move").change(function(){localStorage.secondToLastMove = $(this).val()})
         $("#third-to-last-move").val(
-            typeof localStorage.thirdToLastMove == "string" ? localStorage.thirdToLastMove : defaults.thirdToLastMove);
+            typeof localStorage.thirdToLastMove == "string" ? localStorage.thirdToLastMove : comboDefaults.thirdToLastMove);
         $("#third-to-last-move").change(function(){localStorage.thirdToLastMove = $(this).val()})
         $("#did-kill").prop('checked',
-            typeof localStorage.didKill == "string" ? localStorage.didKill == "true" : defaults.didKill);
+            typeof localStorage.didKill == "string" ? localStorage.didKill == "true" : comboDefaults.didKill);
         $("#did-kill").change(function(){localStorage.didKill = this.checked})
         $("#comboer-tag").val(
-            localStorage.comboerTag ? localStorage.comboerTag : defaults.comboerTag);
+            localStorage.comboerTag ? localStorage.comboerTag : comboDefaults.comboerTag);
         $("#comboer-tag").change(function(){localStorage.comboerTag = $(this).val()})
         $("#comboee-tag").val(
-            localStorage.comboeeTag ? localStorage.comboeeTag : defaults.comboeeTag);
+            localStorage.comboeeTag ? localStorage.comboeeTag : comboDefaults.comboeeTag);
         $("#comboee-tag").change(function(){localStorage.comboeeTag = $(this).val()})
 
     }
@@ -492,84 +492,84 @@ class ComboCreator {
 
     renderVideoOptions(){
         $("#dev-mode").prop('checked', 
-            typeof localStorage.devMode == "string" ? localStorage.devMode == "true" : videoOptions.devMode);
+            typeof localStorage.devMode == "string" ? localStorage.devMode == "true" : videoDefaults.devMode);
         $("#dev-mode").change(function(){localStorage.devMode = this.checked})
         $("#show-overlay").prop('checked',
-            typeof localStorage.showOverlay == "string" ? localStorage.showOverlay == "true" : videoOptions.showOverlay);
+            typeof localStorage.showOverlay == "string" ? localStorage.showOverlay == "true" : videoDefaults.showOverlay);
         $("#show-overlay").change(function(){localStorage.showOverlay = this.checked})
         $("#hide-hud").prop('checked',
-            typeof localStorage.hideHud == "string" ? localStorage.hideHud == "true" : videoOptions.hideHud);
+            typeof localStorage.hideHud == "string" ? localStorage.hideHud == "true" : videoDefaults.hideHud);
         $("#hide-hud").change(function(){localStorage.hideHud = this.checked})
         $("#game-music").prop('checked',
-            typeof localStorage.gameMusic == "string" ? localStorage.gameMusic == "true" : videoOptions.gameMusic);
+            typeof localStorage.gameMusic == "string" ? localStorage.gameMusic == "true" : videoDefaults.gameMusic);
         $("#game-music").change(function(){localStorage.gameMusic = this.checked})
         $("#widescreen-off").prop('checked',
-            typeof localStorage.widescreenOff == "string" ? localStorage.widescreenOff == "true" : videoOptions.widescreenOff);
+            typeof localStorage.widescreenOff == "string" ? localStorage.widescreenOff == "true" : videoDefaults.widescreenOff);
         $("#widescreen-off").change(function(){localStorage.widescreenOff = this.checked})
         $("#num-cpus").val(
-            localStorage.numCPUs ? localStorage.numCPUs : videoOptions.numCPUs);
+            localStorage.numCPUs ? localStorage.numCPUs : videoDefaults.numCPUs);
         $("#num-cpus").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = videoOptions.numCPUs;
+                this.value = videoDefaults.numCPUs;
                 return;
             }
             localStorage.numCPUs = this.value 
         })
         $("#iso-path").val(
-            localStorage.isoPath ? localStorage.isoPath : videoOptions.isoPath);
+            localStorage.isoPath ? localStorage.isoPath : videoDefaults.isoPath);
         $("#output-path").val(
-            localStorage.outputPath ? localStorage.outputPath : videoOptions.outputPath);
+            localStorage.outputPath ? localStorage.outputPath : videoDefaults.outputPath);
     }
 
     renderOverlayOptions(){
         $("#show-player-tags").prop('checked', 
-            typeof localStorage.showPlayerTags == "string" ? localStorage.showPlayerTags == "true" : overlayOptions.showPlayerTags);
+            typeof localStorage.showPlayerTags == "string" ? localStorage.showPlayerTags == "true" : overlayDefaults.showPlayerTags);
         $("#show-player-tags").change(function(){localStorage.showPlayerTags = this.checked})
         $("#show-tournament").prop('checked',
-            typeof localStorage.showTournament == "string" ? localStorage.showTournament == "true" : overlayOptions.showTournament);
+            typeof localStorage.showTournament == "string" ? localStorage.showTournament == "true" : overlayDefaults.showTournament);
         $("#show-tournament").change(function(){localStorage.showTournament = this.checked})
         $("#show-logo").prop('checked',
-            typeof localStorage.showLogo == "string" ? localStorage.showLogo == "true" : overlayOptions.showLogo);
+            typeof localStorage.showLogo == "string" ? localStorage.showLogo == "true" : overlayDefaults.showLogo);
         if($("#show-logo").is(":checked")) $("#logo-path-option").show();
         $("#show-logo").change(function(){localStorage.showLogo = this.checked})
         $("#logo-path").val(
-            localStorage.logoPath ? localStorage.logoPath : overlayOptions.logoPath);
+            localStorage.logoPath ? localStorage.logoPath : overlayDefaults.logoPath);
         $("#show-date").prop('checked',
-            typeof localStorage.showDate == "string" ? localStorage.showDate == "true" : overlayOptions.showDate);
+            typeof localStorage.showDate == "string" ? localStorage.showDate == "true" : overlayDefaults.showDate);
         $("#show-date").change(function(){localStorage.showDate = this.checked})
         $("#overlay-margin").val(
-            typeof localStorage.overlayMargin == "string" ? localStorage.overlayMargin : overlayOptions.overlayMargin);
+            typeof localStorage.overlayMargin == "string" ? localStorage.overlayMargin : overlayDefaults.overlayMargin);
         $("#overlay-margin").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = overlayOptions.overlayMargin;
+                this.value = overlayDefaults.overlayMargin;
                 return;
             }
             localStorage.overlayMargin = this.value 
         })
         $("#logo-opacity").val(
-            typeof localStorage.logoOpacity == "string" ? localStorage.logoOpacity : overlayOptions.logoOpacity);
+            typeof localStorage.logoOpacity == "string" ? localStorage.logoOpacity : overlayDefaults.logoOpacity);
         $("#logo-opacity").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = overlayOptions.logoOpacity;
+                this.value = overlayDefaults.logoOpacity;
                 return;
             }
             localStorage.logoOpacity = this.value 
         })
         $("#textbox-opacity").val(
-            typeof localStorage.textboxOpacity == "string" ? localStorage.textboxOpacity : overlayOptions.textboxOpacity);
+            typeof localStorage.textboxOpacity == "string" ? localStorage.textboxOpacity : overlayDefaults.textboxOpacity);
         $("#textbox-opacity").change(function(){ 
             if(!Number.isInteger(parseFloat(this.value))){
                 alert("Please enter a whole number");
-                this.value = overlayOptions.textboxOpacity;
+                this.value = overlayDefaults.textboxOpacity;
                 return;
             }
             localStorage.textboxOpacity = this.value 
         })
         $("#iso-path").val(
-            localStorage.isoPath ? localStorage.isoPath : overlayOptions.isoPath);
+            localStorage.isoPath ? localStorage.isoPath : overlayDefaults.isoPath);
     }
 
     getOptions(){

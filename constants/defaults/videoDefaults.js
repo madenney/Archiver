@@ -1,4 +1,4 @@
-const videoOptions = {
+const videoDefaults = {
     devMode: false,
     showOverlay: false,
     hideHud: false,
@@ -9,4 +9,4 @@ const videoOptions = {
     outputPath: "",
 }
 
-module.exports = { videoOptions };
+module.exports = { videoDefaults };
