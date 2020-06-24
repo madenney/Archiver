@@ -12,8 +12,6 @@ class Data {
     }
 
     render(){
-        console.log("Rendering Data Tab");
-
         this.assignClickListeners();
 
         const a = this.archive;

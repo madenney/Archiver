@@ -1,6 +1,7 @@
-const overlayOptions = {
+const overlayDefaults = {
     showPlayerTags: false,
     showTournament: false,
+    showRound: false,
     showLogo: false,
     showDate: false,
     overlayMargin: 40,
@@ -10,4 +11,4 @@ const overlayOptions = {
 	logoPath: ""
 }
 
-module.exports = { overlayOptions };
+module.exports = { overlayDefaults };

@@ -9,7 +9,7 @@ const { Uploader } = require('./Uploader');
 class MainController {
 
     constructor(archive){
-        console.log(archive.generateJSON());
+        console.log("Archive: ",archive.generateJSON());
         this.archive = archive;
         this.mainView = $(`#main-content`);
         this.dataTabController = new Data(archive);

@@ -292,7 +292,7 @@
   background-color: #342E37;
   border-radius: 3px;
   width: 650px;
-  height: 500px;
+  height: auto;
   margin: auto;
   margin-top: 140px;
   padding: 10px 30px;
@@ -321,6 +321,8 @@
   width: 300px;
   text-align: center;
 }
+#combo-body #video-options-modal-container .options-modal .extra-video-option #last-combo-offset,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #last-combo-offset,
 #combo-body #video-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #overlay-options-modal-container .options-modal .extra-video-option #num-cpus,
 #combo-body #video-options-modal-container .options-modal .extra-video-option #overlay-margin,
@@ -342,18 +344,27 @@
 #combo-body #video-options-modal-container .options-modal #video-options-ok-button,
 #combo-body #overlay-options-modal-container .options-modal #video-options-ok-button,
 #combo-body #video-options-modal-container .options-modal #overlay-options-ok-button,
-#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button {
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button,
+#combo-body #video-options-modal-container .options-modal #overlay-options-reset-button,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-reset-button,
+#combo-body #video-options-modal-container .options-modal #video-options-reset-button,
+#combo-body #overlay-options-modal-container .options-modal #video-options-reset-button {
+  display: inline-block;
   font-size: 20px;
   background-color: #3C91E6;
   width: 100px;
   height: 50px;
   margin: 30px;
-  margin-left: 400px;
+  margin-left: 40px;
 }
 #combo-body #video-options-modal-container .options-modal #video-options-ok-button:hover,
 #combo-body #overlay-options-modal-container .options-modal #video-options-ok-button:hover,
 #combo-body #video-options-modal-container .options-modal #overlay-options-ok-button:hover,
-#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button:hover {
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button:hover,
+#combo-body #video-options-modal-container .options-modal #overlay-options-reset-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-reset-button:hover,
+#combo-body #video-options-modal-container .options-modal #video-options-reset-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #video-options-reset-button:hover {
   cursor: pointer;
 }
 #combo-body .list-container {
