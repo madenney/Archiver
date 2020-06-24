@@ -70,12 +70,12 @@ class ComboList {
                 }
                 json[0].replays.push(replayJSON);
             });
-            
             if(options.lastComboOffset){
-                json.replays[json.replays.length-1].endFrame += options.lastComboOffset
-                if( json.replays[json.replays.length-1].endFrame >
-                this.combos[this.combos.length-1].lastFrame ){
-                    json.replays[json.replays.length-1] = this.combos[this.combos.length-1].lastFrame - 1
+                const replays = json[0].replays
+                replays[replays.length-1].endFrame += parseInt(options.lastComboOffset)
+                if( replays[replays.length-1].endFrame >
+                this.combos[this.combos.length-1].gameEndFrame ){
+                    replays[replays.length-1].endFrame = this.combos[this.combos.length-1].gameEndFrame - 1
                 }
             }
             await Promise.all(overlayPromises);
