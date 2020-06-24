@@ -4,7 +4,7 @@ const videoDefaults = {
     hideHud: false,
     gameMusic: false,
     widescreenOff: false,
-    lastComboLastFrameOffset: 0,
+    lastComboOffset: 0,
     numCPUs: 8,
 	ssbmIsoPath: "",
     outputPath: "",
