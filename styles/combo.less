@@ -69,7 +69,7 @@
             background-color: @color1;
             border-radius: 3px;
             width: 650px;
-            height: 500px;
+            height: auto;
             margin: auto;
             margin-top: 140px;
             padding: 10px 30px;
@@ -93,7 +93,7 @@
                     text-align: center;
                 }
 
-                #num-cpus, #overlay-margin, #logo-opacity, #textbox-opacity {
+                #last-combo-offset,#num-cpus, #overlay-margin, #logo-opacity, #textbox-opacity {
                     width: 40px;
                 }
 
@@ -105,13 +105,15 @@
                 display: none;
             }
 
-            #video-options-ok-button, #overlay-options-ok-button {
+            #video-options-ok-button, #overlay-options-ok-button,
+            #overlay-options-reset-button, #video-options-reset-button {
+                display: inline-block;
                 font-size: 20px;
                 background-color: @color3;
                 width: 100px;
                 height: 50px;
                 margin: 30px;
-                margin-left: 400px;
+                margin-left: 40px;
                 &:hover {
                     cursor: pointer;
                 }
@@ -143,8 +145,7 @@
             }
         }
         #video-buttons-container {
-            min-width: 300px;
-            
+            min-width: 300px;   
             border-top: solid white 2px;
             padding: 20px;
             margin: 20px 0px;

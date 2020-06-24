@@ -31,8 +31,8 @@ class ComboList {
     generateVideo(options,eventEmitter){
         return new Promise( async (resolve,reject) => {
   
-            console.log(options);
-            console.log(this.combos);
+            console.log("Options:",options);
+            console.log("Combos:",this.combos);
             
             const tmpDir = path.join(os.tmpdir(),
                           `tmp-${crypto.randomBytes(12).toString('hex')}`);
@@ -70,6 +70,14 @@ class ComboList {
                 }
                 json[0].replays.push(replayJSON);
             });
+            
+            if(options.lastComboOffset){
+                json.replays[json.replays.length-1].endFrame += options.lastComboOffset
+                if( json.replays[json.replays.length-1].endFrame >
+                this.combos[this.combos.length-1].lastFrame ){
+                    json.replays[json.replays.length-1] = this.combos[this.combos.length-1].lastFrame - 1
+                }
+            }
             await Promise.all(overlayPromises);
 
             fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
