@@ -195,7 +195,7 @@ class ComboCreator {
         const comboeeTag = $("#comboee-tag").val();
         const firstMove = $("#first-move").val();
         const secondToLastMove = $("#second-to-last-move").val();
-        const thirdToLastMove = $("#third-to-last-move").val();
+        const testMove = $("#test-move").val();
         const endMove = $("#end-move").val();
         const didKill = $("#did-kill").is(":checked");
         console.log(this.games.length);
@@ -212,15 +212,16 @@ class ComboCreator {
                 minDamage,
                 //includesMove,
                 secondToLastMove,
-                thirdToLastMove,
+                testMove,
                 firstMove,
                 endMove
             });
 
+
             // Need to combine combo object and game object
             const returnArr = [];
             combos.forEach(combo => {
-                returnArr.push({
+                const newCombo = {
                     ...combo,
                     players: game.players,
                     stage: game.stage,
@@ -230,7 +231,25 @@ class ComboCreator {
                     gameEndFrame: game.lastFrame,
                     gameId: game.id,
                     tournamentName: game.tournament ? game.tournament.name : "N/A"
-                })
+                }
+                if( !n.filter(a => {
+                    if( a.startFrame == newCombo.startFrame
+                        && a.endFrame == newCombo.endFrame
+                    ) return true
+                }).length ){
+                    returnArr.push(newCombo)
+                }
+                // returnArr.push({
+                //     ...combo,
+                //     players: game.players,
+                //     stage: game.stage,
+                //     slpPath: game.slpPath,
+                //     startAt: game.tournament ? 
+                //         game.tournament.startAt : game.startAt,
+                //     gameEndFrame: game.lastFrame,
+                //     gameId: game.id,
+                //     tournamentName: game.tournament ? game.tournament.name : "N/A"
+                // })
             });
             return n.concat( returnArr )
         },[])
@@ -365,7 +384,7 @@ class ComboCreator {
         const endMoveSelect = $("#end-move");
         const firstMoveSelect = $("#first-move");
         const secondToLastMoveSelect = $("#second-to-last-move");
-        const thirdToLastMoveSelect = $("#third-to-last-move");
+        const testSelect = $("#test-move");
         characters.forEach(c => {
             const option = $(`<option value="${c.id}">${c.shortName}</option>`);
             char1Select.append(option);
@@ -392,7 +411,7 @@ class ComboCreator {
         })
         moves.forEach(m => {
             const option = $(`<option value="${m.id}">${m.shortName}</option>`)
-            thirdToLastMoveSelect.append(option);
+            testSelect.append(option);
         })
     }
 
@@ -408,7 +427,7 @@ class ComboCreator {
         $("#end-move").val(defaults.endMove);
         $("#first-move").val(defaults.firstMove);
         $("#second-to-last-move").val(defaults.secondToLastMove);
-        $("#third-to-last-move").val(defaults.thirdToLastMove);
+        $("#test-move").val(defaults.testMove);
         $("#did-kill").prop('checked', defaults.didKill);
         delete localStorage.comboerChar
         delete localStorage.comboeeChar
@@ -420,7 +439,7 @@ class ComboCreator {
         delete localStorage.minDamage
         delete localStorage.firstMove
         delete localStorage.secondToLastMove
-        delete localStorage.thirdToLastMove
+        delete localStorage.testMove
         delete localStorage.endMove
         delete localStorage.didKill
     }
@@ -474,9 +493,9 @@ class ComboCreator {
         $("#second-to-last-move").val(
             typeof localStorage.secondToLastMove == "string" ? localStorage.secondToLastMove : defaults.secondToLastMove);
         $("#second-to-last-move").change(function(){localStorage.secondToLastMove = $(this).val()})
-        $("#third-to-last-move").val(
-            typeof localStorage.thirdToLastMove == "string" ? localStorage.thirdToLastMove : defaults.thirdToLastMove);
-        $("#third-to-last-move").change(function(){localStorage.thirdToLastMove = $(this).val()})
+        $("#test-move").val(
+            typeof localStorage.testMove == "string" ? localStorage.testMove : defaults.testMove);
+        $("#test-move").change(function(){localStorage.testMove = $(this).val()})
         $("#did-kill").prop('checked',
             typeof localStorage.didKill == "string" ? localStorage.didKill == "true" : defaults.didKill);
         $("#did-kill").change(function(){localStorage.didKill = this.checked})

@@ -179,7 +179,7 @@ class Game {
         const {
             comboer,comboee,comboerTag,comboeeTag,didKill,
             minMoves,maxMoves,minDamage,includesMove,endMove,
-            firstMove,secondToLastMove,thirdToLastMove
+            firstMove,secondToLastMove,testMove
         } = options
         const _comboerTag = comboerTag.toLowerCase();
         const _comboeeTag = comboeeTag.toLowerCase();
@@ -201,7 +201,12 @@ class Game {
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
             if( firstMove && !(c.moves[0].moveId == firstMove) ) return false;
             if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
-            if( thirdToLastMove && !(c.moves[c.moves.length-3].moveId == thirdToLastMove) ) return false;
+            //if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
+            if( testMove ){
+                const firstIndex = c.moves.indexOf(c => c.moveId == testMove );
+                if(!(c.moves.slice(firstIndex).every(m=>m.moveId == testMove) )) return false;
+            } 
+
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
         })
