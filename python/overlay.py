@@ -2,13 +2,13 @@ import argparse
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 MARGIN_SCALE = 40                   # vid height / this = px margins between elements and edge of video
-ICON_SCALE = 50                     # icons at 50% size
+ICON_SCALE = 25                     # icons at 25% textbox height
 DEFAULT_FONT_SIZE = 32              # max size, will resize to a lower size if name is too long
 MIN_FONT_SIZE = 20
 DEFAULT_LOGO_OPACITY = 50
-DEFAULT_TEXTBOX_OPACITY = 75
+DEFAULT_TEXTBOX_OPACITY = 100
 DEFAULT_TEXT_OPACITY = 100
-DEFAULT_ICON_OPACITY = 90
+DEFAULT_ICON_OPACITY = 100
 VERTICAL_TEXTBOX_MARGIN_SCALE = 30  # % of textbox between name lines and vertical edges
 HORIZONTAL_TEXTBOX_MARGIN = 10      # px between max size names/icons, & horizontal edges
 ICON_MARGIN = 2                     # min 2 px between end of text and icon
@@ -95,8 +95,10 @@ def pasteNames(textbox, name1, name2, fontPath, iconWidth, center, textOpacity):
 def pasteIcons(textbox, icon1, icon2, iconOpacity):
 
     # Resize
-    icon1 = icon1.resize((int(icon1.width * ICON_SCALE / 100), int(icon1.height * ICON_SCALE / 100)))
-    icon2 = icon2.resize((int(icon2.width * ICON_SCALE / 100), int(icon2.height * ICON_SCALE / 100)))
+    iconSize = int(textbox.height * ICON_SCALE / 100)               # square images so width == height
+
+    icon1 = icon1.resize((iconSize, iconSize))
+    icon2 = icon2.resize((iconSize, iconSize))
 
     # Translucify
     icon1 = translucify(icon1, iconOpacity)
@@ -117,37 +119,6 @@ def pasteIcons(textbox, icon1, icon2, iconOpacity):
     textbox.paste(icon2, ((int)(x), (int)(y)), icon2)
 
     return iWidth
-
-''' This function is deprecated. Timestamp parsing will soon be handled JS-side
-# format: YYYY-MM-DDTHH:MM:SSZ      (Z is usually not present)
-# T and Z are literally just the letters, everything else is year, minute, etc.
-def parseTimestamp(timestamp, dateFormat, timeFormat):
-    date, time = timestamp.split('T')
-
-    # Time
-    hours, minutes, seconds = time.split(':')
-    seconds = seconds[:2]                       # trim trailing Z if present
-    if(timeFormat == "12H"):
-        hours = int(hours)
-        period = "AM"
-        if(hours >= 12):
-            hours -= 12
-            period = "PM"
-        if(hours == 0):
-            hours = 12
-        time = str(hours) + ':' + minutes + ':' + seconds + ' ' + period
-    else:
-        time = hours + ':' + minutes + ':' + seconds
-
-    # Date
-    year, month, day = date.split('-')
-    if(dateFormat == "NA"):
-        date = month + '/' + day + '/' + year
-    elif(dateFormat == "EU"):
-        date = day + '/' + month + '/' + year
-
-    return date, time
-'''
 
 def pasteInfo(textbox, tournament, date, time, fontPath, textOpacity):
     font = ImageFont.truetype(fontPath, 32)
@@ -206,14 +177,14 @@ def main():
 
     # Positional args
     parser.add_argument("outputPath")
-    parser.add_argument("icon1")
-    parser.add_argument("icon2")
     parser.add_argument("overlayWidth", type=int)
     parser.add_argument("overlayHeight", type=int)
     
     
     # Optional args
     # strings
+    parser.add_argument("--icon1", default=None)
+    parser.add_argument("--icon2", default=None)
     parser.add_argument("--name1", default=None)
     parser.add_argument("--name2", default=None)
     parser.add_argument("--tournament", default=None)
@@ -247,19 +218,6 @@ def main():
         except IOError:
             logo = None
 
-    '''
-    # Probably not going to use this in the future; instead will just take logoPath as an arg
-    if tournament is not None:
-        # remove nums from a tournament to try to find the series
-        tournamentSeries = tournament(''.join([c for c in tournament if not c.isdigit()]))
-        # remove trailing whitespace
-        tournamentSeries = tournamentSeries.trim()
-        try:
-            logo = Image.open(args.logoFolder + tournamentSeries + ".png")
-        except IOError:
-            logo = None
-    '''
-
     # New transparent image
     image = Image.new("RGBA", (int(args.overlayWidth), int(args.overlayHeight)), color=(0,0,0,0))
 
@@ -267,7 +225,7 @@ def main():
     margins = int(int(args.overlayHeight) / int(args.margin))
 
     # textbox (bottom left) + names + icons
-    if (args.name1 is not None) and (args.name2 is not None):
+    if (args.name1 is not None) and (args.name2 is not None) and (args.icon1 is not None) and (args.icon2 is not None):
 
         # Initialize textbox
         leftTextbox = createTextbox(args.textboxOpacity)

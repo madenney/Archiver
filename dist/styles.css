@@ -27,7 +27,7 @@
 }
 #close-archive-button {
   position: fixed;
-  right: 50px;
+  left: 100px;
   top: 10px;
   background-color: #FA824C;
   color: #342E37;
@@ -271,45 +271,9 @@
   width: 35px;
   text-align: center;
 }
-#combo-body #filters-and-options #video-buttons-container {
-  min-width: 300px;
-  height: 115px;
-  border-left: solid white 2px;
-  padding: 20px;
-  margin: 20px 0px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option {
-  margin-bottom: 4px;
-  display: inline-block;
-  width: 140px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option .label {
-  display: inline-block;
-  font-size: 20px;
-  margin-right: 5px;
-}
-#combo-body #filters-and-options #video-buttons-container .video-option input {
-  font-size: 20px;
-  padding: 5px;
-  width: 20px;
-  text-align: center;
-}
-#combo-body #filters-and-options #video-buttons-container button {
-  font-size: 18px;
-  padding: 8px;
-  width: 150px;
-  height: auto;
-  right: 10px;
-  background-color: #3C91E6;
-  margin: 10px 5px;
-}
-#combo-body #filters-and-options #video-buttons-container button.disabled {
-  background-color: gray;
-  color: black;
-}
-#combo-body #filters-and-options #video-buttons-container button:hover {
-  cursor: pointer;
-  background-color: #9FD356;
+#combo-body #filters-and-options #filters-container .filters-row .filter input.tag {
+  width: 100px;
+  text-align: left;
 }
 #combo-body #video-options-modal-container,
 #combo-body #overlay-options-modal-container {
@@ -328,7 +292,7 @@
   background-color: #342E37;
   border-radius: 3px;
   width: 650px;
-  height: 400px;
+  height: 500px;
   margin: auto;
   margin-top: 140px;
   padding: 10px 30px;
@@ -375,6 +339,23 @@
 #combo-body #overlay-options-modal-container .options-modal #logo-path-option {
   display: none;
 }
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button {
+  font-size: 20px;
+  background-color: #3C91E6;
+  width: 100px;
+  height: 50px;
+  margin: 30px;
+  margin-left: 400px;
+}
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button:hover {
+  cursor: pointer;
+}
 #combo-body .list-container {
   display: inline-block;
   max-width: 400px;
@@ -389,14 +370,70 @@
 }
 #combo-body .list-container .info .row .label {
   display: inline-block;
-  width: 65px;
+  width: 150px;
 }
 #combo-body .list-container .info .row .data {
   display: inline-block;
+  width: 50px;
+}
+#combo-body .list-container #video-buttons-container {
+  min-width: 300px;
+  border-top: solid white 2px;
+  padding: 20px;
+  margin: 20px 0px;
+}
+#combo-body .list-container #video-buttons-container .video-option {
+  margin-bottom: 4px;
+  display: inline-block;
+  width: 140px;
+}
+#combo-body .list-container #video-buttons-container .video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+}
+#combo-body .list-container #video-buttons-container .video-option input {
+  font-size: 20px;
+  padding: 5px;
   width: 20px;
+  text-align: center;
+}
+#combo-body .list-container #video-buttons-container button {
+  font-size: 18px;
+  padding: 8px;
+  width: 150px;
+  height: auto;
+  right: 10px;
+  background-color: #3C91E6;
+  margin: 10px 5px;
+}
+#combo-body .list-container #video-buttons-container button.disabled {
+  background-color: gray;
+  color: black;
+}
+#combo-body .list-container #video-buttons-container button:hover {
+  cursor: pointer;
+  background-color: #9FD356;
+}
+#combo-body .list-container #remove-selected {
+  margin: 5px;
+  width: 100px;
+  height: 50px;
+  font-size: 18px;
 }
 #combo-body .list-container .list {
   padding-left: 0px;
+}
+#combo-body .list-container #generate-warning-message {
+  color: lightcoral;
+}
+#combo-body .list-container #video-generate-message {
+  font-size: 20px;
+  margin: 10px 10px 0px;
+}
+#combo-body .list-container #video-generate-count {
+  font-size: 20px;
+  margin: 5px 10px;
 }
 #combo-body .combo {
   margin: 5px;
@@ -441,6 +478,20 @@
 #combo-body .combo .combo-info .row .data {
   display: inline-block;
   width: 20px;
+}
+#combo-body .combo .combo-meta {
+  display: inline-block;
+  width: auto;
+  vertical-align: top;
+  padding-left: 50px;
+}
+#combo-body .combo .combo-meta .combo-checkbox {
+  height: 50px;
+  width: 80px;
+}
+#combo-body .combo .combo-meta .combo-id {
+  font-size: 20px;
+  margin: 5px;
 }
 #combo-body .pagination-container {
   text-align: center;

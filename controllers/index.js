@@ -1,6 +1,6 @@
 
-window.$ = require("jquery");
-
+window.$ = window.jQuery = require("jquery");
+require('jquery-ui-dist/jquery-ui')
 const { remote } = require('electron')
 const fs = require("fs");
 

@@ -1,8 +1,6 @@
-
 const slpToVideo = require("slp-to-video");
 const fs = require("fs");
 const rimraf = require("rimraf");
-const events = require("events");
 const path = require("path");
 const { PythonShell} = require("python-shell");
 const config = require("../config.json");
@@ -11,8 +9,8 @@ const os = require("os");
 const { characters } = require("../constants/characters");
 
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const VIDEO_WIDTH = 1878;
-const VIDEO_HEIGHT = 1056;
+const VIDEO_WIDTH = 1920;
+const VIDEO_HEIGHT = 1080;
 
 class ComboList {
 
@@ -29,18 +27,8 @@ class ComboList {
         }
 
     }
-    /*
-    testOverlay(testSetPath){
-        let setData = JSON.parse(fs.readFileSync(testSetPath));
 
-        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
-        const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
-            logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-
-    }
-    */
-
-    generateVideo(options){
+    generateVideo(options,eventEmitter){
         return new Promise( async (resolve,reject) => {
   
             console.log(options);
@@ -63,7 +51,19 @@ class ComboList {
                     startFrame: combo.startFrame,
                     endFrame: combo.endFrame
                 }
-                if(options.showOverlay){
+                if(combo.moves.length < 3 ){
+                    replayJSON.startFrame -= 20
+                } else {
+                    replayJSON.startFrame -= 10
+                }
+                if(combo.didKill){
+                    if(combo.endFrame < combo.gameEndFrame - 37 ){
+                        replayJSON.endFrame += 36
+                    } else if (combo.endFrame < combo.gameEndFrame - 21){
+                        replayJSON.endFrame += 20
+                    }
+                } 
+                if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
                     overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
@@ -74,85 +74,72 @@ class ComboList {
 
             fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
 
-            const em = new events.EventEmitter();
             const slpToVideoConfig = {
                 INPUT_FILE: path.join(tmpDir,`replays.json`),
                 DOLPHIN_PATH,
                 SSBM_ISO_PATH: options.isoPath,
                 NUM_PROCESSES: options.numCPUs,
-                EVENT_TRACKER: em,
+                EVENT_TRACKER: eventEmitter,
                 GAME_MUSIC_ON: options.gameMusic,
-                HIDE_HUD: !options.showHud,
-                WIDESCREEN_OFF: !options.widescreen
+                HIDE_HUD: options.hideHud,
+                WIDESCREEN_OFF: options.widescreenOff,
+                BITRATE_KBPS: 15000
             }
-            em.on('primaryEventMsg',msg => {
-                console.log(msg);
-            });
-            const totalVideos = this.combos.length;
-            em.on('count', count => {
-                console.log(`${count}/${totalVideos}`);
-            });
-            const skippedFiles = [];
-            em.on('errorEventMsg',(msg,file) => {
-                console.log(msg);
-                skippedFiles.push(file);
-            })
+
             try {
                 await slpToVideo(slpToVideoConfig);
-                console.log("Skipped Files: ", skippedFiles.length, skippedFiles );
                 resolve();
-
             } catch(err){
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            // rimraf(tmpDir, () => {
-            //     console.log("removed tmpdir")
-            // });
+            rimraf(tmpDir, () => {
+                console.log("removed tmpdir")
+            });
         });
     }
 
     generateOverlay(outputPath, combo, options){ 
-        console.log("generate",options)
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
-        const { index, players, playerIndex, opponentIndex, tournament, startedAt } = combo
-        const { showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
+        const { id, players, playerIndex, opponentIndex, startAt, tournamentName } = combo
+        const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
             logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
-        const devText = index;
+        const devText = id;
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
-        console.log(outputPath);
-        const comboer = players.find(p=>p.playerIndex === playerIndex)
-        const comboee = players.find(p=>p.playerIndex === opponentIndex)
-
-        const icon1 = characters[comboer.characterId].img
-        const icon2 = characters[comboee.characterId].img
-
-        const args = [outputPath, icon1,icon2,VIDEO_WIDTH, VIDEO_HEIGHT]
         
-        // uncomment this for testing
-        //const args = ['./test_files/overlay.png', icon1, icon2, VIDEO_WIDTH, VIDEO_HEIGHT]
+        const args = [outputPath, VIDEO_WIDTH, VIDEO_HEIGHT]
 
-        // uncomment this for testing
-        /*
-        args.push("--name1=" + "test 1")
-        args.push("--name2=" + "test 2")
-        */
-        if(showPlayerTags){
-            if(comboer.tag) args.push("--name1=" + comboer.tag);
-            if(comboee.tag) args.push("--name2=" + comboee.tag);
+        if(showOverlay){
+
+            const comboer = players.find(p=>p.playerIndex === playerIndex)
+            const comboee = players.find(p=>p.playerIndex === opponentIndex)
+
+            const icon1 = characters[comboer.characterId].img + 
+                            characters[comboer.characterId].colors[comboer.characterColor] + ".png"
+            const icon2 = characters[comboee.characterId].img + 
+                            characters[comboee.characterId].colors[comboee.characterColor] + ".png"
+
+            args.push("--icon1=" + icon1)
+            args.push("--icon2=" + icon2)
+            
+            if(showPlayerTags){
+                if(comboer.tag) args.push("--name1=" + comboer.tag);
+                if(comboee.tag) args.push("--name2=" + comboee.tag);
+            }
+            if(showTournament && tournamentName ) args.push("--tournament=" + tournamentName);
+            if(showDate && startAt) {
+                const d = new Date(startAt * 1000);
+                if(tournamentName) d.setHours(d.getHours()-8) // UTC -> PST
+                args.push("--date=" + `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`)
+            };
+            if(overlayMargin) args.push("--margin=" + overlayMargin);
+            
+            if(logoOpacity) args.push("--logoOpacity=" + logoOpacity);
+            if(textboxOpacity) args.push("--textboxOpacity=" + textboxOpacity);
+
+            if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
+            if(fontPath) args.push("--fontPath=" + fontPath);
         }
-        if(showTournament && tournament && tournament.name) args.push("--tournament=" + tournament.name);
-        if(showDate && startedAt) {
-            args.push("--timestamp=" + startedAt);
-        };
-        if(overlayMargin) args.push("--margin=" + overlayMargin);
-        
-        if(logoOpacity) args.push("--logoOpacity=" + logoOpacity);
-        if(textboxOpacity) args.push("--textboxOpacity=" + textboxOpacity);
-
-        if(showLogo && logoPath) args.push("--logoPath=" + logoPath);
-        if(fontPath) args.push("--fontPath=" + fontPath);
-        
         if(devMode){
             let line, devTextArg = "";
             for(line of [devText]){
@@ -161,7 +148,6 @@ class ComboList {
             devTextArg = devTextArg.slice(0,-1);
             args.push("--devText=" + devTextArg)
         }
-        console.log(args);
         const pyShellOptions = {
             mode: "text",
             pythonPath: 'python3',

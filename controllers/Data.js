@@ -248,6 +248,9 @@ class Data {
                 if(count % 10 === 0 ){
                     this.render();
                 }
+                if(count % 250 === 0 ){
+                    this.archive.save();
+                }
                 $("#current-number-processed").html(count++);
                 await game.process();;
             })
@@ -262,18 +265,65 @@ class Data {
         });
 
         $("#special-half-moon-button").click(() => {
-            // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            console.log(sets.length)
+            const k = sets.filter(set => {
+                if(set.winnerTag.toLowerCase()  == "sudo") return true
+                if(set.loserTag.toLowerCase()  == "sudo") return true
+
+            })
+            console.log(k.length);
+            console.log(k)
+            k.forEach(set => {
+                if(set.winnerTag  == "Sudo") set.winnerTag = "sudo"
+                if(set.loserTag  == "Sudo") set.loserTag = "sudo"
+                set.games.forEach(g => {
+                    g.players.forEach(p => {
+                        if(p.tag == "Sudo") p.tag = "sudo"
+                    })
+                })
+            })
+            console.log(k)
+            // sus.isLinked = false;
+            // sus.games = []
+            // console.log(sus)
+            // const tempGames = []
+            // sus[0].games.forEach(g => tempGames.push(g))
+            // sus[0].games = []
+            // sus[1].games.forEach(g => sus[0].games.push(g))
+            // sus[1].games = []
+            // tempGames.forEach(g => sus[1].games.push(g))
+
+            // sus.forEach(s => {
+            //     s.games.forEach(g =>{
+            //         g.players.forEach(p => {
+            //             if(p.tag === "Gooms") {
+            //                 p.tag = ".jpg"
+            //                 return
+            //             }
+            //             if(p.tag === ".jpg") {
+            //                 p.tag = "Gooms"
+            //                 return
+            //             }
+            //         })
+            //     })
+            // })
+            // console.log(sus)
+
             // let games = [];
             // sets.forEach(s => games = games.concat(s.games));
+            // const games = this.archive.getGames();
             // console.log(games.length)
-            // console.log(games[0])
-            // const macPath = "/Users/mattdenney/Projects/Labelled_Half_Moon_Slp_Files"
-            // const linuxPath = "/media/matt/Slippi Data/Labelled Half Moon Slp Files"
+            // const crypto = require("crypto");
+
             // games.forEach(game => {
-            //     game.slpPath = game.slpPath.replace(macPath,linuxPath)
-            //     console.log(game.slpPath)
+            //     game.combos.forEach(combo => {
+            //         combo.id = crypto.randomBytes(8).toString('hex')
+            //     })
             // })
-            return
+            // console.log("DONE :)")
+            
+            //return
             // const asdf = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
             // const x = asdf.find(set => set.id === "8f0852e0-334a-4e49-9c5b-70f5f06b1038" )
             // x.isLinked = false;
@@ -281,41 +331,82 @@ class Data {
             // console.log(x)
             // return;
             //const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
-            sets.forEach((set,index) => {
-                try {
-                const playerIndex = set.games[0].players[0].playerIndex
-                let p1Score = 0;
-                set.games.forEach(game => {
-                    if(game.winner === playerIndex ){
-                        p1Score++;
-                    } 
-                })
+            // sets.forEach((set,index) => {
+            //     try {
+            //     const playerIndex = set.games[0].players[0].playerIndex
+            //     let p1Score = 0;
+            //     set.games.forEach(game => {
+            //         if(game.winner === playerIndex ){
+            //             p1Score++;
+            //         } 
+            //     })
 
                 
-                if(p1Score == set.winnerScore){
-                    set.games.forEach(game => {
-                        game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
-                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
-                    })
-                } else {
-                    set.games.forEach(game => {
-                        game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
-                        game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
-                    })
-                }
-                } catch(err){
-                    console.log(index);
-                    //set.games.splice(0,1);
-                    console.log("WHAT: ", set)
-                    // set.games[1].process().then(() => {
-                    //     console.log("BAHA")
-                    //     console.log(set.games[1])
-                    // })
-                    throw err
-                }
-                console.log(set);
+            //     if(p1Score == set.winnerScore){
+            //         set.games.forEach(game => {
+            //             game.players.find(p=>p.playerIndex === playerIndex).tag = set.winnerTag
+            //             game.players.find(p=>p.playerIndex !== playerIndex).tag = set.loserTag
+            //         })
+            //     } else {
+            //         set.games.forEach(game => {
+            //             game.players.find(p=>p.playerIndex == playerIndex).tag = set.loserTag
+            //             game.players.find(p=>p.playerIndex !== playerIndex).tag = set.winnerTag
+            //         })
+            //     }
+            //     } catch(err){
+            //         console.log(index);
+            //         //set.games.splice(0,1);
+            //         console.log("WHAT: ", set)
+            //         // set.games[1].process().then(() => {
+            //         //     console.log("BAHA")
+            //         //     console.log(set.games[1])
+            //         // })
+            //         throw err
+            //     }
+            //     console.log(set);
 
-            })
+            // })
+            // const graphQL = require('graphql-client')
+            // const { tournamentQuery } = require("../constants/smashggQueries")
+            // const uuidv4 = require("uuid/v4")
+            // const smashGGQL = graphQL({
+            //   url: 'https://api.smash.gg/gql/alpha',
+            //   headers: {
+            //     Authorization: 'Bearer ' + '39def3ef8804cc6f8b86e441f1f4bda1'
+            //   }
+            // })
+            // this.archive.tournaments.forEach(async tournament => {
+            //     console.log(tournament.name);
+            //     let str = tournament.name;
+            //     str = str.replace("H","h");
+            //     str = str.replace(" ","-");
+            //     str = str.replace("M","m");
+            //     str = str.replace(" ","-");
+            //     str = str.replace("#","");
+            //     console.log(str);
+
+            //     try {
+            //         const {data,message} = await smashGGQL.query(
+            //             tournamentQuery,
+            //             {
+            //               "slug":str
+            //             }
+            //         )
+                    
+            //         if( !data ){
+            //             throw message
+            //         }
+
+            //         tournament.smashGGId = data.tournament.id
+
+            //     } catch( err ){
+            //         console.log("Something went wrong with smashGG - ")
+            //         throw err
+            //     }
+            //     console.log(tournament);
+            //     console.log("-----")
+            //})
+
         })
 
     }

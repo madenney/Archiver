@@ -46,14 +46,106 @@
                         width: 35px;
                         text-align: center;
                     }
+                    input.tag {
+                        width: 100px;
+                        text-align: left;
+                    }
                 }
             }
         }
+    }
+
+    #video-options-modal-container, #overlay-options-modal-container {
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(160, 160, 160, 0.5);
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 10;
+        .options-modal {
+            border: solid 2px @color1;
+            background-color: @color1;
+            border-radius: 3px;
+            width: 650px;
+            height: 500px;
+            margin: auto;
+            margin-top: 140px;
+            padding: 10px 30px;
+            .extra-video-option {
+                margin-top: 10px;
+                button {
+                    font-size: 20px;
+                    margin-right: 40px;
+                    border-radius: 3px;
+                }
+                .label {
+                    display: inline-block;
+                    font-size: 20px;
+                    margin-right: 5px;
+                    width: 150px;
+                }
+                input {
+                    font-size: 20px;
+                    padding: 5px;
+                    width: 300px;
+                    text-align: center;
+                }
+
+                #num-cpus, #overlay-margin, #logo-opacity, #textbox-opacity {
+                    width: 40px;
+                }
+
+                #output-path {
+                    margin-top: 10px;
+                }
+            }
+            #logo-path-option {
+                display: none;
+            }
+
+            #video-options-ok-button, #overlay-options-ok-button {
+                font-size: 20px;
+                background-color: @color3;
+                width: 100px;
+                height: 50px;
+                margin: 30px;
+                margin-left: 400px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+        }
+    }
     
+    .list-container {
+        display: inline-block;
+        max-width: 400px;
+        border: solid white 1px;
+        padding: 5px;
+        vertical-align: top;
+        margin: 5px 20px;
+
+        .info {
+            .row {
+                margin: 5px;
+                font-size: 20px;
+                .label {
+                    display: inline-block;
+                    width: 150px;
+                }
+                .data {
+                    display: inline-block;
+                    width: 50px;
+                }
+            }
+        }
         #video-buttons-container {
             min-width: 300px;
-            height: 115px;
-            border-left: solid white 2px;
+            
+            border-top: solid white 2px;
             padding: 20px;
             margin: 20px 0px;
             .video-option {
@@ -90,92 +182,26 @@
                 }
             }
         }
-    }
-
-    #video-options-modal-container, #overlay-options-modal-container {
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(160, 160, 160, 0.5);
-        display: none;
-        position: fixed;
-        top: 0px;
-        left: 0px;
-        z-index: 10;
-        .options-modal {
-            border: solid 2px @color1;
-            background-color: @color1;
-            border-radius: 3px;
-            width: 650px;
-            height: 400px;
-            margin: auto;
-            margin-top: 140px;
-            padding: 10px 30px;
-            .extra-video-option {
-                margin-top: 10px;
-                button {
-                    font-size: 20px;
-                    margin-right: 40px;
-                    border-radius: 3px;
-                }
-                .label {
-                    display: inline-block;
-                    font-size: 20px;
-                    margin-right: 5px;
-                    width: 150px;
-                }
-                input {
-                    font-size: 20px;
-                    padding: 5px;
-                    width: 300px;
-                    text-align: center;
-                }
-
-                #num-cpus, #overlay-margin, #logo-opacity, #textbox-opacity {
-                    width: 40px;
-                }
-
-                #output-path {
-                    margin-top: 10px;
-                }
-            }
-            #logo-path-option {
-                display: none;
-            }
+        #remove-selected {
+            margin: 5px;
+            width: 100px;
+            height: 50px;
+            font-size: 18px;
         }
-    }
-    
-    .list-container {
-        display: inline-block;
-        max-width: 400px;
-        border: solid white 1px;
-        padding: 5px;
-        vertical-align: top;
-        margin: 5px 20px;
-
-        .info {
-            .row {
-                margin: 5px;
-                font-size: 20px;
-                .label {
-                    display: inline-block;
-                    width: 65px;
-                }
-                .data {
-                    display: inline-block;
-                    width: 20px;
-                }
-            }
-        }
-
         .list {
             padding-left: 0px;
         }
-    }
-    #primary-list-container {
-
-    }
-    #secondary-list-container {
-
+        #generate-warning-message {
+            color: lightcoral;
+        }
+        #video-generate-message {
+            font-size: 20px;
+            margin: 10px 10px 0px;
+        }
+        #video-generate-count {
+            font-size: 20px;
+            margin: 5px 10px;
+        }
     }
 
     .combo {
@@ -225,7 +251,20 @@
                 }
             }
         }
-
+        .combo-meta {
+            display: inline-block;
+            width: auto;
+            vertical-align: top;
+            padding-left: 50px;
+            .combo-checkbox {
+                height: 50px;
+                width: 80px;
+            }
+            .combo-id {
+                font-size: 20px;
+                margin: 5px;
+            }
+        }
     }
 
     .pagination-container {

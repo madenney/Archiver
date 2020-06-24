@@ -4,7 +4,7 @@ const {
     getDeepInfoFromSlpFile,
     getGameStats
 } = require("../lib")
-
+const crypto = require("crypto");
 
 const slpParser = require("slp-parser-js")
 
@@ -20,6 +20,7 @@ class Game {
         this.winner = gameJSON.winner;
         this.stage = gameJSON.stage;
         this.startedAt = gameJSON.startedAt;
+        this.lastFrame = gameJSON.lastFrame;
         this.slpPath = gameJSON.slpPath;
         this.isValid = gameJSON.isValid;
         this.isFriendly = gameJSON.isFriendly;
@@ -96,7 +97,11 @@ class Game {
             console.log(x);
             const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
             // TODO: Come back to this
-            if( !gameComplete ){ throw "INCOMPLETE GAME???? " + this.slpPath }
+            if( !gameComplete ){ 
+                this.isValid = false;
+                this.info = "Incomplete game";
+                return resolve();
+            }
             if( overall.every( p => p.totalDamage < 100 )){ 
                 this.isValid = false;
                 this.info = "Damage < 100";
@@ -138,7 +143,7 @@ class Game {
 
             this.isValid = true;
             this.startedAt = metadata.startAt;
-            this.length = Math.floor( metadata.lastFrame / 60 );
+            this.lastFrame = metadata.lastFrame;
             this.stage = settings.stageId;
             this.winner = winnerIndex;
             this.players = [{
@@ -154,28 +159,49 @@ class Game {
                 characterColor: p2.characterColor,
                 nametag: p2.nametag
             }];
-            this.combos = combos;
+
+            //Filter Combos
+            this.combos = combos.filter(combo => {
+                // if( combo.moves.length < 4 ){
+                //     return false
+                // }
+                return true
+            });
+            this.combos.forEach(combo => {
+                combo.id = crypto.randomBytes(8).toString('hex')
+            })
 
             resolve()
         },1));
     }
 
-    getCombos({comboer,comboee,didKill,minMoves,minDamage,includesMove,endMove}){
+    getCombos(options){
+        const {
+            comboer,comboee,comboerTag,comboeeTag,didKill,
+            minMoves,maxMoves,minDamage,includesMove,endMove,
+            firstMove,secondToLastMove,thirdToLastMove
+        } = options
+        const _comboerTag = comboerTag.toLowerCase();
+        const _comboeeTag = comboeeTag.toLowerCase();
         return this.combos.filter(c => {
             if( minMoves && !(c.moves.length >= minMoves) ) return false;
-            const comboerCharId = this.players.find(p => {
-                return p.playerIndex === c.playerIndex;
-            }).characterId;
+            if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
+            const comboerPlayer = this.players.find(p => p.playerIndex === c.playerIndex);
+            const comboeePlayer = this.players.find(p => p.playerIndex === c.opponentIndex)
+
+            const comboerCharId = comboerPlayer.characterId;
             //fuck ice climbers
             if( comboerCharId === 14 ) return false;
-            const comboeeCharId = this.players.find(p => {
-                return p.playerIndex === c.opponentIndex;
-            }).characterId;
             if(comboer && !(comboerCharId == comboer) ) return false;
-            if(comboee && !(comboeeCharId == comboee) ) return false;
+            if(comboee && !(comboeePlayer.characterId == comboee) ) return false;
+            if(comboerTag && !(comboerPlayer.tag.toLowerCase() == _comboerTag)) return false;
+            if(comboeeTag && !(comboeePlayer.tag.toLowerCase() == _comboeeTag)) return false;
             if( didKill && !c.didKill ) return false;
             if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
             if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
+            if( firstMove && !(c.moves[0].moveId == firstMove) ) return false;
+            if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
+            if( thirdToLastMove && !(c.moves[c.moves.length-3].moveId == thirdToLastMove) ) return false;
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
         })
@@ -189,7 +215,7 @@ class Game {
             winner: this.winner,
             stage: this.stage,
             startedAt: this.startedAt,
-            length: this.length,
+            lastFrame: this.lastFrame,
             slpPath: this.slpPath,
             isValid: this.isValid,
             isFriendly: this.isFriendly,
@@ -197,6 +223,13 @@ class Game {
             isProcessed: this.isProcessed,
             info: this.info
         }
+    }
+
+    updateLength(){
+        const game = new slpParser.default( this.slpPath )
+        const metadata = game.getMetadata()
+        this.lastFrame = metadata.lastFrame
+        console.log(this.lastFrame)
     }
 
     // 4/3
