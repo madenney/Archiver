@@ -3,7 +3,6 @@ const fs = require("fs");
 const rimraf = require("rimraf");
 const path = require("path");
 const { PythonShell} = require("python-shell");
-const config = require("../config.json");
 const crypto = require("crypto");
 const os = require("os");
 const { characters } = require("../constants/characters");

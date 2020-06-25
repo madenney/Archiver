@@ -1,15 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const arrayMove = require('array-move');
-const {characters} = require("../constants/characters");
-const {legalStages} = require("../constants/stages");
-const {moves} = require("../constants/moves");
 
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
-const { comboDefaults } = require("../constants/defaults/comboFilterDefaults");
-const { videoDefaults } = require("../constants/defaults/videoDefaults");
-const { overlayDefaults } = require("../constants/defaults/overlayDefaults");
 
 const ls = require("../lib/localStorage");
 
@@ -49,6 +43,10 @@ class ComboCreator {
         this.primaryListNextButton = $("#primary-list-next");
 
         this.generateVideoButton.click(() => this.generateVideo() );
+        
+        $("#generate-sources-button").click(() => {
+            this.generateSourcesFile();
+        })
 
         $("#primary-list").sortable({
             stop: (event, ui) => {
@@ -363,6 +361,79 @@ class ComboCreator {
             this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Sadness");
             console.log(err);
         });
+    }
+
+    generateSourcesFile(){
+        console.log("generating sources file")
+        const Table = require('easy-table')
+
+        const options = ls.getOptions('video');
+
+        if(!options.outputPath){
+            alert("Please specify outputPath");
+            return;
+        }
+
+        let outputFileName = "sources.txt";
+        let count = 1;
+        while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
+            outputFileName = `sources${count++}.txt`
+        }
+        const outputPath = path.resolve(`${options.outputPath}/${outputFileName}`)
+        
+        let title = "Sources\n"
+        //const data = []
+        const totals = {}
+
+        this.combos.forEach((combo,index) => {
+            const source = combo.slpPath;
+            let str = source.split("/")
+            const srcDir = str[str.indexOf("Slippi Database")+1]
+            console.log(srcDir);
+            if(totals[srcDir]){
+                totals[srcDir]++;
+            } else {
+                totals[srcDir] = 1;
+            }
+        })
+        console.log(totals)
+        const data = []
+        Object.keys(totals).forEach(key => {
+            data.push({
+                name: key,
+                clips: totals[key],
+                perc: (totals[key]/this.combos.length)*100
+            })
+        })
+        console.log(data)
+        
+        const t = new Table
+        data.sort((a,b)=> b.clips - a.clips )
+        data.forEach(function(item) {
+            t.cell('Source', item.name)
+            t.cell('# Clips', ` ${item.clips}`, 2)
+            t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
+            t.newRow()
+        })
+
+        const output = Table.print(data,{
+            name: {
+                name: "Source"
+            },
+            clips: {
+                name: "#Clips",
+                printer: Table.number(0)
+            },
+            perc: {
+                name: "% Contribution",
+                printer: (val,width) => {
+                    return Table.padLeft(`${val.toFixed(1)}%`, width)
+                }
+            }
+        })
+        
+        fs.writeFileSync(outputPath, output)
+        console.log("DONE")
     }
 }
 
