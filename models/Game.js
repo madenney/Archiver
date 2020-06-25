@@ -143,11 +143,11 @@ class Game {
 
 
             // Specific Character Check
-            if(!(p1.characterId === 12 || p2.characterId === 12) ){
-                this.isValid = false;
-                this.info = "No peach"
-                return resolve();
-            }
+            // if(!(p1.characterId === 12 || p2.characterId === 12) ){
+            //     this.isValid = false;
+            //     this.info = "No peach"
+            //     return resolve();
+            // }
 
 
             this.isValid = true;
