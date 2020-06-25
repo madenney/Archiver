@@ -34,9 +34,11 @@ class ComboList {
             console.log("Options:",options);
             console.log("Combos:",this.combos);
             
-            const tmpDir = path.join(os.tmpdir(),
+            const overlayTmpDir = path.join(os.tmpdir(),
                           `tmp-${crypto.randomBytes(12).toString('hex')}`);
-            fs.mkdirSync(tmpDir);
+            const slpTmpDir = path.join(os.tmpdir(),
+                          `tmp-${crypto.randomBytes(12).toString('hex')}`);
+            fs.mkdirSync(overlayTmpDir);
             let outputFileName = "output.avi";
             let count = 1;
             while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
@@ -67,7 +69,7 @@ class ComboList {
                 //     startFrame: hitFrame - 25 ,
                 //     endFrame: hitFrame + 50
                 // }
-                
+
                 // Normal
                 const replayJSON = {
                     replay: combo.slpPath,
@@ -88,7 +90,7 @@ class ComboList {
                 } 
 
                 if(options.showOverlay || options.devMode){
-                    const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
+                    const overlayPath = path.join(overlayTmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
                     overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
                 }
@@ -104,28 +106,29 @@ class ComboList {
             }
             await Promise.all(overlayPromises);
 
-            fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
+            //fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
 
             const slpToVideoConfig = {
-                INPUT_FILE: path.join(tmpDir,`replays.json`),
-                DOLPHIN_PATH,
-                SSBM_ISO_PATH: options.isoPath,
-                NUM_PROCESSES: options.numCPUs,
-                EVENT_TRACKER: eventEmitter,
-                GAME_MUSIC_ON: options.gameMusic,
-                HIDE_HUD: options.hideHud,
-                WIDESCREEN_OFF: options.widescreenOff,
-                BITRATE_KBPS: 15000
-            }
+                tmpdir: slpTmpDir,
+                numProcesses: options.numCPUs,
+                dolphinPath: DOLPHIN_PATH,
+                ssbmIsoPath: options.isoPath,
+                gameMusicOn: options.gameMusic,
+                hideHud: options.hideHud,
+                widescreenOff: options.widescreenOff,
+                bitrateKbps: 15000,
+                resolution: "2x"
+              }
 
             try {
-                await slpToVideo(slpToVideoConfig);
+                console.log(json)
+                await slpToVideo(json,slpToVideoConfig);
                 resolve();
             } catch(err){
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            rimraf(tmpDir, () => {
+            rimraf(slpTmpDir, () => {
                 console.log("removed tmpdir")
             });
         });

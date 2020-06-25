@@ -322,11 +322,13 @@ class ComboCreator {
 
     generateVideo(){
         this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
-        const _combos = this.combos.filter(c => {
-            return c.moves[c.moves.length-1].damage > 40
-        });
 
-        const comboList = new ComboList(_combos);
+        // Peach Blender filter
+        // const _combos = this.combos.filter(c => {
+        //     return c.moves[c.moves.length-1].damage > 40
+        // });
+
+        const comboList = new ComboList(this.combos);
         const options = {
             ...ls.getOptions('video'),
             ...ls.getOptions('overlay')
@@ -335,8 +337,8 @@ class ComboCreator {
         const vgCount = $("#video-generate-count");
         const em = new events.EventEmitter();
 
-        //const totalVideos = this.combos.length;
-        const totalVideos = _combos.length;
+        const totalVideos = this.combos.length;
+        //const totalVideos = _combos.length;
 
         em.on('primaryEventMsg',msg => {
             vgMessage.html(msg);
