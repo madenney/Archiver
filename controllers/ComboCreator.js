@@ -1,15 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const arrayMove = require('array-move');
-const {characters} = require("../constants/characters");
-const {legalStages} = require("../constants/stages");
-const {moves} = require("../constants/moves");
 
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
-const { comboDefaults } = require("../constants/defaults/comboFilterDefaults");
-const { videoDefaults } = require("../constants/defaults/videoDefaults");
-const { overlayDefaults } = require("../constants/defaults/overlayDefaults");
 
 const ls = require("../lib/localStorage");
 
@@ -49,6 +43,10 @@ class ComboCreator {
         this.primaryListNextButton = $("#primary-list-next");
 
         this.generateVideoButton.click(() => this.generateVideo() );
+        
+        $("#generate-sources-button").click(() => {
+            this.generateSourcesFile();
+        })
 
         $("#primary-list").sortable({
             stop: (event, ui) => {
@@ -353,6 +351,48 @@ class ComboCreator {
             this.generateVideoButton.removeClass("disabled").css("pointer-events", "auto").html("Sadness");
             console.log(err);
         });
+    }
+
+    generateSourcesFile(){
+        console.log("generating sources file")
+        const Table = require('easy-table')
+
+        const options = ls.getOptions('video');
+        let outputFileName = "sources.txt";
+        let count = 1;
+        while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
+            outputFileName = `sources${count++}.txt`
+        }
+        const outputPath = path.resolve(`${options.outputPath}/${outputFileName}`)
+        
+        let str = "Sources\n"
+        str += ""
+        //const data = []
+        const totals = {}
+
+        this.combos.forEach((combo,index) => {
+            const source = combo.slpPath;
+            console.log(source);
+        })
+
+        const data = [
+            { id: 123123, desc: 'Something awesome', price: 1000.00 },
+            { id: 245452, desc: 'Very interesting book', price: 11.45},
+            { id: 232323, desc: 'Yet another product', price: 555.55 }
+        ]
+        
+        const t = new Table
+        
+        data.forEach(function(product) {
+            t.cell('Product Id', product.id)
+            t.cell('Description', product.desc)
+            t.cell('Price, USD', product.price, Table.number(2))
+            t.newRow()
+        })
+        
+        console.log(t.toString())
+        fs.writeFileSync(outputPath, t.toString())
+        console.log("DONE")
     }
 }
 
