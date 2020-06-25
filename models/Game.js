@@ -9,7 +9,7 @@ const crypto = require("crypto");
 const slpParser = require("slp-parser-js")
 
 const validStageIds = [2,3,8,28,31,32]
-
+const {lowTiers, characters} = require("../constants/characters")
 
 class Game {
 
@@ -141,6 +141,15 @@ class Game {
 
             if( typeof winnerIndex === "undefined" ){ throw "Error: Somehow didn't determine a winner." } 
 
+
+            // Specific Character Check
+            if(!(p1.characterId === 12 || p2.characterId === 12) ){
+                this.isValid = false;
+                this.info = "No peach"
+                return resolve();
+            }
+
+
             this.isValid = true;
             this.startedAt = metadata.startAt;
             this.lastFrame = metadata.lastFrame;
@@ -184,6 +193,7 @@ class Game {
         const _comboerTag = comboerTag.toLowerCase();
         const _comboeeTag = comboeeTag.toLowerCase();
         return this.combos.filter(c => {
+
             if( minMoves && !(c.moves.length >= minMoves) ) return false;
             if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
             const comboerPlayer = this.players.find(p => p.playerIndex === c.playerIndex);
@@ -192,6 +202,8 @@ class Game {
             const comboerCharId = comboerPlayer.characterId;
             //fuck ice climbers
             if( comboerCharId === 14 ) return false;
+            //if( lowTiers.indexOf(comboerCharId) === -1) return false
+
             if(comboer && !(comboerCharId == comboer) ) return false;
             if(comboee && !(comboeePlayer.characterId == comboee) ) return false;
             if(comboerTag && !(comboerPlayer.tag.toLowerCase() == _comboerTag)) return false;
@@ -203,8 +215,8 @@ class Game {
             if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
             //if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
             if( testMove ){
-                const firstIndex = c.moves.indexOf(c => c.moveId == testMove );
-                if(!(c.moves.slice(firstIndex).every(m=>m.moveId == testMove) )) return false;
+                // const firstIndex = c.moves.indexOf(c => c.moveId == testMove );
+                // if(!(c.moves.slice(firstIndex).every(m=>m.moveId == testMove) )) return false;
             } 
 
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;

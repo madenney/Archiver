@@ -56,7 +56,8 @@ class ComboCreator {
                 const originalIndex = this.combos.indexOf(combo);
                 arrayMove.mutate(this.combos,originalIndex,ui.item.index())
             },
-            scroll: true
+            scroll: true,
+            scrollSpeed:50
         });
 
         this.primaryListPrevButton.click(()=> {
@@ -321,7 +322,11 @@ class ComboCreator {
 
     generateVideo(){
         this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
-        const comboList = new ComboList(this.combos);
+        const _combos = this.combos.filter(c => {
+            return c.moves[c.moves.length-1].damage > 40
+        });
+
+        const comboList = new ComboList(_combos);
         const options = {
             ...ls.getOptions('video'),
             ...ls.getOptions('overlay')
@@ -329,11 +334,14 @@ class ComboCreator {
         const vgMessage = $("#video-generate-message");
         const vgCount = $("#video-generate-count");
         const em = new events.EventEmitter();
+
+        //const totalVideos = this.combos.length;
+        const totalVideos = _combos.length;
+
         em.on('primaryEventMsg',msg => {
             vgMessage.html(msg);
             vgCount.html(`0/${totalVideos}`);
         });
-        const totalVideos = this.combos.length;
         em.on('count', count => {
             vgCount.html(`${count+1}/${totalVideos}`);
         });

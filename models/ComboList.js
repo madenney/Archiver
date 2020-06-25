@@ -45,24 +45,47 @@ class ComboList {
             const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
             this.combos.forEach((combo,index) => {
-                
+
+                // Marth dtilt
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: combo.endFrame - 150,
+                //     endFrame: combo.endFrame - 20
+                // }
+
+                // Sheik ftilt->fair
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: combo.moves[combo.moves.length -2].frame - 10,
+                //     endFrame: combo.endFrame - 20
+                // }
+
+                // Peach Blender
+                const hitFrame = combo.moves[combo.moves.length -1].frame;
                 const replayJSON = {
                     replay: combo.slpPath,
-                    startFrame: combo.startFrame,
-                    endFrame: combo.endFrame
+                    startFrame: hitFrame - 25 ,
+                    endFrame: hitFrame + 50
                 }
-                if(combo.moves.length < 3 ){
-                    replayJSON.startFrame -= 20
-                } else {
-                    replayJSON.startFrame -= 10
-                }
-                if(combo.didKill){
-                    if(combo.endFrame < combo.gameEndFrame - 37 ){
-                        replayJSON.endFrame += 36
-                    } else if (combo.endFrame < combo.gameEndFrame - 21){
-                        replayJSON.endFrame += 20
-                    }
-                } 
+                // Normal
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: combo.startFrame,
+                //     endFrame: combo.endFrame
+                // }
+                // if(combo.moves.length < 3 ){
+                //     replayJSON.startFrame -= 20
+                // } else {
+                //     replayJSON.startFrame -= 10
+                // }
+                // if(combo.didKill){
+                //     if(combo.endFrame < combo.gameEndFrame - 37 ){
+                //         replayJSON.endFrame += 36
+                //     } else if (combo.endFrame < combo.gameEndFrame - 21){
+                //         replayJSON.endFrame += 20
+                //     }
+                // } 
+
                 if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(tmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
