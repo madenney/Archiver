@@ -358,6 +358,12 @@ class ComboCreator {
         const Table = require('easy-table')
 
         const options = ls.getOptions('video');
+
+        if(!options.outputPath){
+            alert("Please specify outputPath");
+            return;
+        }
+
         let outputFileName = "sources.txt";
         let count = 1;
         while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
@@ -365,33 +371,58 @@ class ComboCreator {
         }
         const outputPath = path.resolve(`${options.outputPath}/${outputFileName}`)
         
-        let str = "Sources\n"
-        str += ""
+        let title = "Sources\n"
         //const data = []
         const totals = {}
 
         this.combos.forEach((combo,index) => {
             const source = combo.slpPath;
-            console.log(source);
+            let str = source.split("/")
+            const srcDir = str[str.indexOf("Slippi Database")+1]
+            console.log(srcDir);
+            if(totals[srcDir]){
+                totals[srcDir]++;
+            } else {
+                totals[srcDir] = 1;
+            }
         })
-
-        const data = [
-            { id: 123123, desc: 'Something awesome', price: 1000.00 },
-            { id: 245452, desc: 'Very interesting book', price: 11.45},
-            { id: 232323, desc: 'Yet another product', price: 555.55 }
-        ]
+        console.log(totals)
+        const data = []
+        Object.keys(totals).forEach(key => {
+            data.push({
+                name: key,
+                clips: totals[key],
+                perc: (totals[key]/this.combos.length)*100
+            })
+        })
+        console.log(data)
         
         const t = new Table
-        
-        data.forEach(function(product) {
-            t.cell('Product Id', product.id)
-            t.cell('Description', product.desc)
-            t.cell('Price, USD', product.price, Table.number(2))
+        data.sort((a,b)=> b.clips - a.clips )
+        data.forEach(function(item) {
+            t.cell('Source', item.name)
+            t.cell('# Clips', ` ${item.clips}`, 2)
+            t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
             t.newRow()
         })
+
+        const output = Table.print(data,{
+            name: {
+                name: "Source"
+            },
+            clips: {
+                name: "#Clips",
+                printer: Table.number(0)
+            },
+            perc: {
+                name: "% Contribution",
+                printer: (val,width) => {
+                    return Table.padLeft(`${val.toFixed(1)}%`, width)
+                }
+            }
+        })
         
-        console.log(t.toString())
-        fs.writeFileSync(outputPath, t.toString())
+        fs.writeFileSync(outputPath, output)
         console.log("DONE")
     }
 }
