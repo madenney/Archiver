@@ -12,8 +12,6 @@ class Data {
     }
 
     render(){
-        console.log("Rendering Data Tab");
-
         this.assignClickListeners();
 
         const a = this.archive;
@@ -265,25 +263,34 @@ class Data {
         });
 
         $("#special-half-moon-button").click(() => {
-            const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
-            console.log(sets.length)
-            const k = sets.filter(set => {
-                if(set.winnerTag.toLowerCase()  == "sudo") return true
-                if(set.loserTag.toLowerCase()  == "sudo") return true
+            const games = this.archive.getGames();
+            console.log(games.length)
+            let missingSLPGames = games.filter(g => !fs.existsSync(g.slpPath))
+            console.log(missingSLPGames.length)
+            for(var i = 0; i < missingSLPGames.length; i+=1000){
+                console.log(i)
+                console.log(missingSLPGames[i])
+            }
 
-            })
-            console.log(k.length);
-            console.log(k)
-            k.forEach(set => {
-                if(set.winnerTag  == "Sudo") set.winnerTag = "sudo"
-                if(set.loserTag  == "Sudo") set.loserTag = "sudo"
-                set.games.forEach(g => {
-                    g.players.forEach(p => {
-                        if(p.tag == "Sudo") p.tag = "sudo"
-                    })
-                })
-            })
-            console.log(k)
+            // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
+            // console.log(sets.length)
+            // const k = sets.filter(set => {
+            //     if(set.winnerTag.toLowerCase()  == "sudo") return true
+            //     if(set.loserTag.toLowerCase()  == "sudo") return true
+
+            // })
+            // console.log(k.length);
+            // console.log(k)
+            // k.forEach(set => {
+            //     if(set.winnerTag  == "Sudo") set.winnerTag = "sudo"
+            //     if(set.loserTag  == "Sudo") set.loserTag = "sudo"
+            //     set.games.forEach(g => {
+            //         g.players.forEach(p => {
+            //             if(p.tag == "Sudo") p.tag = "sudo"
+            //         })
+            //     })
+            // })
+            // console.log(k)
             // sus.isLinked = false;
             // sus.games = []
             // console.log(sus)

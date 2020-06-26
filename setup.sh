@@ -1,5 +1,5 @@
 
 cd ./node_modules/slp-to-video/
-./setup.sh
+./build-dolphin.sh
 
 cd ../..

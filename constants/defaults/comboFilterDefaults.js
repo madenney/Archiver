@@ -1,4 +1,4 @@
-const defaults = {
+const comboDefaults = {
     comboer: "",
     comboee: "",
     comboerChar: "",
@@ -14,4 +14,4 @@ const defaults = {
     didKill: false
 }
 
-module.exports = { defaults };
+module.exports = { comboDefaults };

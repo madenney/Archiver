@@ -1,15 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const arrayMove = require('array-move');
-const {characters} = require("../constants/characters");
-const {legalStages} = require("../constants/stages");
-const {moves} = require("../constants/moves");
 
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
-const { defaults } = require("../constants/comboFilterDefaults");
-const { videoOptions } = require("../constants/videoOptions");
-const { overlayOptions } = require("../constants/overlayOptions");
+
+const ls = require("../lib/localStorage");
 
 var { remote: { dialog } } = require('electron');
 const events = require("events");
@@ -27,18 +23,11 @@ class ComboCreator {
     }
 
     render(){
-        console.log("Rendering Combo Tab");
-
         this.primaryList = $("#primary-list-container .list");
         this.secondaryList = $("#secondary-list-container .list");
         
         this.renderGenerateVideoButton();
-
-        this.renderFilterOptions();
-        this.renderFilterValues();
-        
-        this.renderVideoOptions();
-        this.renderOverlayOptions();
+        ls.render();
         
         this.loadCombos();
         this.assignClickListeners();
@@ -46,10 +35,6 @@ class ComboCreator {
     }
 
     assignClickListeners(){
-        const filterButton = $("#filter-button");
-        const resetFilterButton = $("#filter-reset-button")
-        const videoOptionsButton = $("#video-options-button");
-        const overlayOptionsButton = $("#overlay-options-button");
         const videoOptionsContainer = $("#video-options-modal-container")
         const overlayOptionsContainer = $("#overlay-options-modal-container")
         const optionsModal = $(".options-modal");
@@ -58,6 +43,10 @@ class ComboCreator {
         this.primaryListNextButton = $("#primary-list-next");
 
         this.generateVideoButton.click(() => this.generateVideo() );
+        
+        $("#generate-sources-button").click(() => {
+            this.generateSourcesFile();
+        })
 
         $("#primary-list").sortable({
             stop: (event, ui) => {
@@ -65,7 +54,8 @@ class ComboCreator {
                 const originalIndex = this.combos.indexOf(combo);
                 arrayMove.mutate(this.combos,originalIndex,ui.item.index())
             },
-            scroll: true
+            scroll: true,
+            scrollSpeed:50
         });
 
         this.primaryListPrevButton.click(()=> {
@@ -75,15 +65,15 @@ class ComboCreator {
             this.renderPrimaryList(this.primaryListCurrentPage+1);
         })
         
-        filterButton.click(() => {
+        $("#filter-button").click(() => {
             this.loadCombos();
             this.renderPrimaryList(0)
         });
-        resetFilterButton.click(() => {
-            this.resetFiltersToDefaults()
+        $("#filter-reset-button").click(() => {
+            ls.resetToDefaults('combo')
         })
         
-        videoOptionsButton.click(() => {
+        $("#video-options-button").click(() => {
             videoOptionsContainer.show();
         })
         optionsModal.click((e) => e.stopPropagation());
@@ -93,8 +83,15 @@ class ComboCreator {
         $("#video-options-ok-button").click(() => {
             videoOptionsContainer.hide()
         })
-        overlayOptionsButton.click(() => {
+        $("#video-options-reset-button").click(() => {
+            ls.resetToDefaults('video')
+        })
+        $("#overlay-options-button").click(() => {
             overlayOptionsContainer.show();
+            console.log(localStorage.showLogo)
+            if(localStorage.showLogo === "true"){
+                $("#logo-path-option").show();
+            }
         })
         optionsModal.click((e) => e.stopPropagation());
         overlayOptionsContainer.click(() => {
@@ -102,6 +99,10 @@ class ComboCreator {
         })
         $("#overlay-options-ok-button").click(() => {
             overlayOptionsContainer.hide()
+        })
+        $("#overlay-options-reset-button").click(() => {
+            ls.resetToDefaults('overlay')
+            $("#logo-path-option").hide();
         })
         
         $("#show-logo").click(() => {
@@ -177,50 +178,25 @@ class ComboCreator {
     }
 
     loadCombos(){
-        const char1 = $("#char-1-select").val();
-        const char2 = $("#char-2-select").val();
-        const stage = $("#stage-select").val();
-        console.log("Getting games...");
+        const filterOptions = ls.getOptions('combo')
         this.games = this.archive.getGames({
-            char1,
-            char2,
-            stage,
+            char1: filterOptions.comboerChar,
+            char2: filterOptions.comboeeChar,
+            stage: filterOptions.stage,
         });
 
-        console.log("Getting combos...")
-        const minMoves = $("#min-moves").val();
-        const maxMoves = $("#max-moves").val();
-        const minDamage = $("#min-damage").val();
-        const comboerTag = $("#comboer-tag").val();
-        const comboeeTag = $("#comboee-tag").val();
-        const firstMove = $("#first-move").val();
-        const secondToLastMove = $("#second-to-last-move").val();
-        const thirdToLastMove = $("#third-to-last-move").val();
-        const endMove = $("#end-move").val();
-        const didKill = $("#did-kill").is(":checked");
-        console.log(this.games.length);
-        console.log(this.games[0])
         this.combos = this.games.reduce((n,game) => {
             const combos = game.getCombos({
-                comboer: char1,
-                comboee: char2,
-                comboerTag,
-                comboeeTag,
-                didKill,
-                minMoves,
-                maxMoves,
-                minDamage,
-                //includesMove,
-                secondToLastMove,
-                thirdToLastMove,
-                firstMove,
-                endMove
+                ...filterOptions,
+                comboer: filterOptions.comboerChar,
+                comboee: filterOptions.comboeeChar
             });
+
 
             // Need to combine combo object and game object
             const returnArr = [];
             combos.forEach(combo => {
-                returnArr.push({
+                const newCombo = {
                     ...combo,
                     players: game.players,
                     stage: game.stage,
@@ -230,14 +206,31 @@ class ComboCreator {
                     gameEndFrame: game.lastFrame,
                     gameId: game.id,
                     tournamentName: game.tournament ? game.tournament.name : "N/A"
-                })
+                }
+                if( !n.filter(a => {
+                    if( a.startFrame == newCombo.startFrame
+                        && a.endFrame == newCombo.endFrame
+                    ) return true
+                }).length ){
+                    returnArr.push(newCombo)
+                }
+                // returnArr.push({
+                //     ...combo,
+                //     players: game.players,
+                //     stage: game.stage,
+                //     slpPath: game.slpPath,
+                //     startAt: game.tournament ? 
+                //         game.tournament.startAt : game.startAt,
+                //     gameEndFrame: game.lastFrame,
+                //     gameId: game.id,
+                //     tournamentName: game.tournament ? game.tournament.name : "N/A"
+                // })
             });
             return n.concat( returnArr )
         },[])
     }
 
     renderPrimaryList(page){
-        console.log("Rendering Primary List Page: ", page);
         this.primaryListCurrentPage = page;
         this.primaryList.empty();
         $("#primary-total").html(`${this.combos.length}`);
@@ -261,7 +254,7 @@ class ComboCreator {
         combosToDisplay.forEach(c => {
             this.primaryList.append( new ComboController(c).html());
         });
-        console.log(combosToDisplay)
+        console.log("Displaying Combos:",combosToDisplay)
         //pagination
         if(combosToDisplay.length < this.combos.length){
             $("#primary-list-pagination-container").show();
@@ -327,16 +320,28 @@ class ComboCreator {
 
     generateVideo(){
         this.generateVideoButton.addClass("disabled").css("pointer-events", "none").html("Generating...");
+
+        // Peach Blender filter
+        // const _combos = this.combos.filter(c => {
+        //     return c.moves[c.moves.length-1].damage > 40
+        // });
+
         const comboList = new ComboList(this.combos);
-        const options = this.getOptions();
+        const options = {
+            ...ls.getOptions('video'),
+            ...ls.getOptions('overlay')
+        };
         const vgMessage = $("#video-generate-message");
         const vgCount = $("#video-generate-count");
         const em = new events.EventEmitter();
+
+        const totalVideos = this.combos.length;
+        //const totalVideos = _combos.length;
+
         em.on('primaryEventMsg',msg => {
             vgMessage.html(msg);
             vgCount.html(`0/${totalVideos}`);
         });
-        const totalVideos = this.combos.length;
         em.on('count', count => {
             vgCount.html(`${count+1}/${totalVideos}`);
         });
@@ -358,243 +363,78 @@ class ComboCreator {
         });
     }
 
-    renderFilterOptions(){
-        const char1Select = $("#char-1-select");
-        const char2Select = $("#char-2-select");
-        const stageSelect = $("#stage-select");
-        const endMoveSelect = $("#end-move");
-        const firstMoveSelect = $("#first-move");
-        const secondToLastMoveSelect = $("#second-to-last-move");
-        const thirdToLastMoveSelect = $("#third-to-last-move");
-        characters.forEach(c => {
-            const option = $(`<option value="${c.id}">${c.shortName}</option>`);
-            char1Select.append(option);
-        });
-        characters.forEach(c => {
-            const option = $(`<option value="${c.id}">${c.shortName}</option>`);
-            char2Select.append(option);
-        });
-        legalStages.forEach(s => {
-            const option = $(`<option value="${s.id}">${s.shortName}</option>`)
-            stageSelect.append(option);
-        });
-        moves.forEach(m => {
-            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
-            endMoveSelect.append(option);
-        })
-        moves.forEach(m => {
-            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
-            firstMoveSelect.append(option);
-        })
-        moves.forEach(m => {
-            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
-            secondToLastMoveSelect.append(option);
-        })
-        moves.forEach(m => {
-            const option = $(`<option value="${m.id}">${m.shortName}</option>`)
-            thirdToLastMoveSelect.append(option);
-        })
-    }
+    generateSourcesFile(){
+        console.log("generating sources file")
+        const Table = require('easy-table')
 
-    resetFiltersToDefaults(){
-        $("#char-1-select").val(defaults.comboerChar);
-        $("#char-2-select").val(defaults.comboeeChar);
-        $("#comboer-tag").val(defaults.comboer);
-        $("#comboee-tag").val(defaults.comboee);
-        $("#stage-select").val(defaults.stage);
-        $("#min-moves").val(defaults.minMoves);
-        $("#max-moves").val(defaults.maxMoves);
-        $("#min-damage").val(defaults.minDamage);
-        $("#end-move").val(defaults.endMove);
-        $("#first-move").val(defaults.firstMove);
-        $("#second-to-last-move").val(defaults.secondToLastMove);
-        $("#third-to-last-move").val(defaults.thirdToLastMove);
-        $("#did-kill").prop('checked', defaults.didKill);
-        delete localStorage.comboerChar
-        delete localStorage.comboeeChar
-        delete localStorage.comboerTag
-        delete localStorage.comboeeTag
-        delete localStorage.stage
-        delete localStorage.minMoves
-        delete localStorage.maxMoves
-        delete localStorage.minDamage
-        delete localStorage.firstMove
-        delete localStorage.secondToLastMove
-        delete localStorage.thirdToLastMove
-        delete localStorage.endMove
-        delete localStorage.didKill
-    }
+        const options = ls.getOptions('video');
 
-    renderFilterValues(){
-        $("#char-1-select").val(
-            typeof localStorage.comboerChar == "string" ? localStorage.comboerChar : defaults.comboerChar);
-        $("#char-1-select").change(function(){localStorage.comboerChar = $(this).val()})
-        $("#char-2-select").val(
-            typeof localStorage.comboeeChar == "string" ? localStorage.comboeeChar : defaults.comboeeChar);
-        $("#char-2-select").change(function(){localStorage.comboeeChar = $(this).val()})
-        $("#stage-select").val(
-            typeof localStorage.stage == "string" ? localStorage.stage : defaults.stage);
-        $("#stage-select").change(function(){localStorage.stage = $(this).val()})
-        $("#min-moves").val(
-            localStorage.minMoves ? localStorage.minMoves : defaults.minMoves);
-        $("#min-moves").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = defaults.minMoves;
-                return;
-            }
-            localStorage.minMoves = this.value 
-        })
-        $("#max-moves").val(
-            localStorage.maxMoves ? localStorage.maxMoves : defaults.maxMoves);
-        $("#max-moves").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = defaults.maxMoves;
-                return;
-            }
-            localStorage.maxMoves = this.value 
-        })
-        $("#min-damage").val(
-            localStorage.minDamage ? localStorage.minDamage : defaults.minDamage);
-        $("#min-damage").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = defaults.minDamage;
-                return;
-            }
-            localStorage.minDamage = this.value 
-        })
-        $("#end-move").val(
-            typeof localStorage.endMove == "string" ? localStorage.endMove : defaults.endMove);
-        $("#end-move").change(function(){localStorage.endMove = $(this).val()})
-        $("#first-move").val(
-            typeof localStorage.firstMove == "string" ? localStorage.firstMove : defaults.firstMove);
-        $("#first-move").change(function(){localStorage.endMove = $(this).val()})
-        $("#second-to-last-move").val(
-            typeof localStorage.secondToLastMove == "string" ? localStorage.secondToLastMove : defaults.secondToLastMove);
-        $("#second-to-last-move").change(function(){localStorage.secondToLastMove = $(this).val()})
-        $("#third-to-last-move").val(
-            typeof localStorage.thirdToLastMove == "string" ? localStorage.thirdToLastMove : defaults.thirdToLastMove);
-        $("#third-to-last-move").change(function(){localStorage.thirdToLastMove = $(this).val()})
-        $("#did-kill").prop('checked',
-            typeof localStorage.didKill == "string" ? localStorage.didKill == "true" : defaults.didKill);
-        $("#did-kill").change(function(){localStorage.didKill = this.checked})
-        $("#comboer-tag").val(
-            localStorage.comboerTag ? localStorage.comboerTag : defaults.comboerTag);
-        $("#comboer-tag").change(function(){localStorage.comboerTag = $(this).val()})
-        $("#comboee-tag").val(
-            localStorage.comboeeTag ? localStorage.comboeeTag : defaults.comboeeTag);
-        $("#comboee-tag").change(function(){localStorage.comboeeTag = $(this).val()})
-
-    }
-
-
-    renderVideoOptions(){
-        $("#dev-mode").prop('checked', 
-            typeof localStorage.devMode == "string" ? localStorage.devMode == "true" : videoOptions.devMode);
-        $("#dev-mode").change(function(){localStorage.devMode = this.checked})
-        $("#show-overlay").prop('checked',
-            typeof localStorage.showOverlay == "string" ? localStorage.showOverlay == "true" : videoOptions.showOverlay);
-        $("#show-overlay").change(function(){localStorage.showOverlay = this.checked})
-        $("#hide-hud").prop('checked',
-            typeof localStorage.hideHud == "string" ? localStorage.hideHud == "true" : videoOptions.hideHud);
-        $("#hide-hud").change(function(){localStorage.hideHud = this.checked})
-        $("#game-music").prop('checked',
-            typeof localStorage.gameMusic == "string" ? localStorage.gameMusic == "true" : videoOptions.gameMusic);
-        $("#game-music").change(function(){localStorage.gameMusic = this.checked})
-        $("#widescreen-off").prop('checked',
-            typeof localStorage.widescreenOff == "string" ? localStorage.widescreenOff == "true" : videoOptions.widescreenOff);
-        $("#widescreen-off").change(function(){localStorage.widescreenOff = this.checked})
-        $("#num-cpus").val(
-            localStorage.numCPUs ? localStorage.numCPUs : videoOptions.numCPUs);
-        $("#num-cpus").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = videoOptions.numCPUs;
-                return;
-            }
-            localStorage.numCPUs = this.value 
-        })
-        $("#iso-path").val(
-            localStorage.isoPath ? localStorage.isoPath : videoOptions.isoPath);
-        $("#output-path").val(
-            localStorage.outputPath ? localStorage.outputPath : videoOptions.outputPath);
-    }
-
-    renderOverlayOptions(){
-        $("#show-player-tags").prop('checked', 
-            typeof localStorage.showPlayerTags == "string" ? localStorage.showPlayerTags == "true" : overlayOptions.showPlayerTags);
-        $("#show-player-tags").change(function(){localStorage.showPlayerTags = this.checked})
-        $("#show-tournament").prop('checked',
-            typeof localStorage.showTournament == "string" ? localStorage.showTournament == "true" : overlayOptions.showTournament);
-        $("#show-tournament").change(function(){localStorage.showTournament = this.checked})
-        $("#show-logo").prop('checked',
-            typeof localStorage.showLogo == "string" ? localStorage.showLogo == "true" : overlayOptions.showLogo);
-        if($("#show-logo").is(":checked")) $("#logo-path-option").show();
-        $("#show-logo").change(function(){localStorage.showLogo = this.checked})
-        $("#logo-path").val(
-            localStorage.logoPath ? localStorage.logoPath : overlayOptions.logoPath);
-        $("#show-date").prop('checked',
-            typeof localStorage.showDate == "string" ? localStorage.showDate == "true" : overlayOptions.showDate);
-        $("#show-date").change(function(){localStorage.showDate = this.checked})
-        $("#overlay-margin").val(
-            typeof localStorage.overlayMargin == "string" ? localStorage.overlayMargin : overlayOptions.overlayMargin);
-        $("#overlay-margin").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = overlayOptions.overlayMargin;
-                return;
-            }
-            localStorage.overlayMargin = this.value 
-        })
-        $("#logo-opacity").val(
-            typeof localStorage.logoOpacity == "string" ? localStorage.logoOpacity : overlayOptions.logoOpacity);
-        $("#logo-opacity").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = overlayOptions.logoOpacity;
-                return;
-            }
-            localStorage.logoOpacity = this.value 
-        })
-        $("#textbox-opacity").val(
-            typeof localStorage.textboxOpacity == "string" ? localStorage.textboxOpacity : overlayOptions.textboxOpacity);
-        $("#textbox-opacity").change(function(){ 
-            if(!Number.isInteger(parseFloat(this.value))){
-                alert("Please enter a whole number");
-                this.value = overlayOptions.textboxOpacity;
-                return;
-            }
-            localStorage.textboxOpacity = this.value 
-        })
-        $("#iso-path").val(
-            localStorage.isoPath ? localStorage.isoPath : overlayOptions.isoPath);
-    }
-
-    getOptions(){
-        return {
-            devMode: $("#dev-mode").is(":checked"),
-            showOverlay: $("#show-overlay").is(":checked"),
-            hideHud: $("#hide-hud").is(":checked"),
-            gameMusic: $("#game-music").is(":checked"),
-            widescreenOff: $("#widescreen-off").is(":checked"),
-            numCPUs: $("#num-cpus").val(),
-            isoPath: $("#iso-path").val(),
-            outputPath: $("#output-path").val(),
-            showPlayerTags: $("#show-player-tags").is(":checked"),
-            showTournament: $("#show-tournament").is(":checked"),
-            showLogo: $("#show-logo").is(":checked"),
-            logoPath: $("#logo-path").val(),
-            showDate: $("#show-date").is(":checked"),
-            overlayMargin: $("#overlay-margin").val(),
-            logoOpacity: $("#logo-opacity").val(),
-            textboxOpacity: $("#textbox-opacity").val(),
-            fontPath: $("#font-path").val(),
+        if(!options.outputPath){
+            alert("Please specify outputPath");
+            return;
         }
+
+        let outputFileName = "sources.txt";
+        let count = 1;
+        while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
+            outputFileName = `sources${count++}.txt`
+        }
+        const outputPath = path.resolve(`${options.outputPath}/${outputFileName}`)
+        
+        let title = "Sources\n"
+        //const data = []
+        const totals = {}
+
+        this.combos.forEach((combo,index) => {
+            const source = combo.slpPath;
+            let str = source.split("/")
+            const srcDir = str[str.indexOf("Slippi Database")+1]
+            console.log(srcDir);
+            if(totals[srcDir]){
+                totals[srcDir]++;
+            } else {
+                totals[srcDir] = 1;
+            }
+        })
+        console.log(totals)
+        const data = []
+        Object.keys(totals).forEach(key => {
+            data.push({
+                name: key,
+                clips: totals[key],
+                perc: (totals[key]/this.combos.length)*100
+            })
+        })
+        console.log(data)
+        
+        const t = new Table
+        data.sort((a,b)=> b.clips - a.clips )
+        data.forEach(function(item) {
+            t.cell('Source', item.name)
+            t.cell('# Clips', ` ${item.clips}`, 2)
+            t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
+            t.newRow()
+        })
+
+        const output = Table.print(data,{
+            name: {
+                name: "Source"
+            },
+            clips: {
+                name: "#Clips",
+                printer: Table.number(0)
+            },
+            perc: {
+                name: "% Contribution",
+                printer: (val,width) => {
+                    return Table.padLeft(`${val.toFixed(1)}%`, width)
+                }
+            }
+        })
+        
+        fs.writeFileSync(outputPath, output)
+        console.log("DONE")
     }
-
-
 }
 
 module.exports = {ComboCreator}

@@ -12,12 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "array-move": "^2.2.2",
-    "canvas": "^2.6.1",
+    "easy-table": "^1.1.1",
     "graphql-client": "^2.0.1",
     "jquery-ui-dist": "^1.12.1",
     "node-dir": "^0.1.17",
     "slp-parser-js": "^4.1.0",
-    "slp-to-video": "https://github.com/madenney/slp-to-video",
+    "slp-to-video": "https://github.com/kevinsung/slp-to-video",
     "taskkill": "^3.0.0",
     "uuid": "^3.3.2"
   },
