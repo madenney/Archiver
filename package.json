@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "array-move": "^2.2.2",
+    "canvas": "^2.6.1",
     "graphql-client": "^2.0.1",
     "jquery-ui-dist": "^1.12.1",
     "node-dir": "^0.1.17",
