@@ -265,12 +265,11 @@ class Data {
         $("#special-half-moon-button").click(() => {
             const games = this.archive.getGames();
             console.log(games.length)
-            let missingSLPGames = games.filter(g => !fs.existsSync(g.slpPath))
-            console.log(missingSLPGames.length)
-            for(var i = 0; i < missingSLPGames.length; i+=1000){
-                console.log(i)
-                console.log(missingSLPGames[i])
-            }
+            const crypto = require("crypto");
+
+            games.forEach(game => {
+                game.id = crypto.randomBytes(8).toString('hex')
+            })
 
             // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
             // console.log(sets.length)

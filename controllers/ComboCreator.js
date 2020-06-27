@@ -48,6 +48,10 @@ class ComboCreator {
             this.generateSourcesFile();
         })
 
+        $("#generate-stats-button").click(() => {
+            this.generateStats();
+        })
+
         $("#primary-list").sortable({
             stop: (event, ui) => {
                 const combo = this.combos.find(c => c.id === ui.item.attr('id'))
@@ -434,6 +438,17 @@ class ComboCreator {
         
         fs.writeFileSync(outputPath, output)
         console.log("DONE")
+    }
+
+    generateStats() {
+        console.log("Generate Stats: ");
+        const games = {}
+        this.combos.forEach(combo => {
+            if(!game[combo.gameId]) game[combo.gameId] = combo.gameId
+        })
+
+        console.log("Number Of Games: ", Object.keys(games).length);
+        
     }
 }
 
