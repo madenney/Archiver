@@ -8,6 +8,8 @@ const videoDefaults = {
     numCPUs: 8,
 	ssbmIsoPath: "",
     outputPath: "",
+    shuffle: false,
+    slice: 0
 }
 
 module.exports = { videoDefaults };

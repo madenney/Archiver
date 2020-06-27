@@ -45,12 +45,9 @@ class ComboList {
             }
             const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
-            let x = 0;
-            let y = 0;
-            let counter = 0;
-            //this.combos = shuffle(this.combos);
-            this.combos.forEach((combo,index) => {
-            //shuffle(this.combos).slice(0,15).forEach((combo,index) => {
+
+            if(options.shuffle) this.combos = shuffle(this.combos)
+            this.combos.slice(0,options.slice).forEach((combo,index) => {
 
                 // Fox Juggler
                 // const firstMove = combo.moves.find(m=>m.moveId == 16)
@@ -66,7 +63,6 @@ class ComboList {
                 //     const lastMove = combo.moves[combo.moves.indexOf(breakerMove)-1]
                 //     replayJSON.endFrame = lastMove.frame + 23
                 // }
-
 
                 // Marth dtilt
                 // const replayJSON = {
