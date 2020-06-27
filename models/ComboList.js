@@ -6,7 +6,7 @@ const { PythonShell} = require("python-shell");
 const crypto = require("crypto");
 const os = require("os");
 const { characters } = require("../constants/characters");
-
+const { shuffle } = require('../lib');
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
 const VIDEO_WIDTH = 1920;
 const VIDEO_HEIGHT = 1080;
@@ -45,7 +45,8 @@ class ComboList {
             }
             const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
-            this.combos.forEach((combo,index) => {
+            if(options.shuffle) this.combos = shuffle(this.combos)
+            this.combos.slice(0,options.slice).forEach((combo,index) => {
 
                 // Marth dtilt
                 // const replayJSON = {

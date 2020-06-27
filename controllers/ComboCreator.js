@@ -218,17 +218,6 @@ class ComboCreator {
                 }).length ){
                     returnArr.push(newCombo)
                 }
-                // returnArr.push({
-                //     ...combo,
-                //     players: game.players,
-                //     stage: game.stage,
-                //     slpPath: game.slpPath,
-                //     startAt: game.tournament ? 
-                //         game.tournament.startAt : game.startAt,
-                //     gameEndFrame: game.lastFrame,
-                //     gameId: game.id,
-                //     tournamentName: game.tournament ? game.tournament.name : "N/A"
-                // })
             });
             return n.concat( returnArr )
         },[])
