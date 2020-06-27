@@ -156,6 +156,7 @@ const characters = [{
   img: "../images/character-icons/ganon/"
 }];
 
+const fastFallers = [0,2,20]
 const lowTiers = [1,3,4,5,6,8,10,11,18,21,22,23,24,25]
 
-module.exports = { characters,lowTiers }
+module.exports = { characters, fastFallers,lowTiers }

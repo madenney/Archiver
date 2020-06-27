@@ -6,7 +6,7 @@ const { PythonShell} = require("python-shell");
 const crypto = require("crypto");
 const os = require("os");
 const { characters } = require("../constants/characters");
-
+const { shuffle } = require("../lib");
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
 const VIDEO_WIDTH = 1920;
 const VIDEO_HEIGHT = 1080;
@@ -45,7 +45,28 @@ class ComboList {
             }
             const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
+            let x = 0;
+            let y = 0;
+            let counter = 0;
+            //this.combos = shuffle(this.combos);
             this.combos.forEach((combo,index) => {
+            //shuffle(this.combos).slice(0,15).forEach((combo,index) => {
+
+                // Fox Juggler
+                // const firstMove = combo.moves.find(m=>m.moveId == 16)
+                // const firstMoveIndex = combo.moves.indexOf(firstMove)
+                // let breakerMove = combo.moves.slice(firstMoveIndex).find(m=>m.moveId != 16)
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: firstMove.frame - 20
+                // }
+                // if(!breakerMove){
+                //     replayJSON.endFrame = breakerMove.frame + 40
+                // } else {
+                //     const lastMove = combo.moves[combo.moves.indexOf(breakerMove)-1]
+                //     replayJSON.endFrame = lastMove.frame + 23
+                // }
+
 
                 // Marth dtilt
                 // const replayJSON = {
@@ -55,19 +76,44 @@ class ComboList {
                 // }
 
                 // Sheik ftilt->fair
+                // const secondToLastHitFrame = combo.moves[combo.moves.length -2].frame;
+                // const lastHitFrame = combo.moves[combo.moves.length -1].frame;
                 // const replayJSON = {
                 //     replay: combo.slpPath,
-                //     startFrame: combo.moves[combo.moves.length -2].frame - 10,
-                //     endFrame: combo.endFrame - 20
+                //     startFrame: secondToLastHitFrame - 20,
+                //     endFrame: lastHitFrame + 40
+                // }
+                // if(replayJSON.endFrame > combo.gameEndFrame){
+                //     replayJSON.endFrame = combo.gameEndFrame - 1
                 // }
 
-                // Peach Blender
+                // Marth sideb->utilt
+                // const secondToLastHitFrame = combo.moves[combo.moves.length -2].frame;
+                // const lastHitFrame = combo.moves[combo.moves.length -1].frame;
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: secondToLastHitFrame - 60,
+                //     endFrame: lastHitFrame + 60
+                // }
+                // if(replayJSON.endFrame > combo.gameEndFrame){
+                //     replayJSON.endFrame = combo.gameEndFrame - 1
+                // }
+
+                // Stomp
                 // const hitFrame = combo.moves[combo.moves.length -1].frame;
                 // const replayJSON = {
                 //     replay: combo.slpPath,
-                //     startFrame: hitFrame - 25 ,
-                //     endFrame: hitFrame + 50
+                //     startFrame: hitFrame - 20 + y,
+                //     endFrame: hitFrame + 50 - y
                 // }
+                // x++
+                // if(x%3==0)y++
+
+                // if(replayJSON.startFrame === replayJSON.endFrame - 30 ) return;
+                // if(replayJSON.endFrame > combo.gameEndFrame){
+                //     replayJSON.endFrame = combo.gameEndFrame - 1
+                // }
+
 
                 // Normal
                 const replayJSON = {
@@ -127,7 +173,7 @@ class ComboList {
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            rimraf(slpTmpDir, () => {
+            rimraf(overlayTmpDir, () => {
                 console.log("removed tmpdir")
             });
         });
