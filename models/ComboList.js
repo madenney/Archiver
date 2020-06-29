@@ -46,19 +46,25 @@ class ComboList {
             const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
             const overlayPromises = [];
 
-            if(options.shuffle) this.combos = shuffle(this.combos)
-            this.combos.slice(0,options.slice).forEach((combo,index) => {
+            if(options.shuffle){
+                this.combos = shuffle(this.combos)
+            } 
+            if(options.slice != 0) {
+                this.combos = this.combos.slice(0,options.slice)
+            }
+
+            this.combos.forEach((combo,index) => {
 
                 // Fox Juggler
-                // const firstMove = combo.moves.find(m=>m.moveId == 16)
+                // const firstMove = combo.moves.find(m=>m.moveId == 17)
                 // const firstMoveIndex = combo.moves.indexOf(firstMove)
-                // let breakerMove = combo.moves.slice(firstMoveIndex).find(m=>m.moveId != 16)
+                // let breakerMove = combo.moves.slice(firstMoveIndex).find(m=>m.moveId != 17)
                 // const replayJSON = {
                 //     replay: combo.slpPath,
                 //     startFrame: firstMove.frame - 20
                 // }
                 // if(!breakerMove){
-                //     replayJSON.endFrame = breakerMove.frame + 40
+                //     replayJSON.endFrame = combo.moves[combo.moves.length-1].frame + 23
                 // } else {
                 //     const lastMove = combo.moves[combo.moves.indexOf(breakerMove)-1]
                 //     replayJSON.endFrame = lastMove.frame + 23
@@ -110,6 +116,13 @@ class ComboList {
                 //     replayJSON.endFrame = combo.gameEndFrame - 1
                 // }
 
+                // Peach Blender
+                // const replayJSON = {
+                //     replay: combo.slpPath,
+                //     startFrame: combo.startFrame,
+                //     endFrame: combo.startFrame + 45
+                // }
+
 
                 // Normal
                 const replayJSON = {
@@ -130,6 +143,7 @@ class ComboList {
                     }
                 } 
 
+                // Overlay
                 if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(overlayTmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath

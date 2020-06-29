@@ -392,6 +392,7 @@ class ComboCreator {
         console.log(totals)
         const data = []
         Object.keys(totals).forEach(key => {
+
             data.push({
                 name: key,
                 clips: totals[key],
@@ -399,30 +400,39 @@ class ComboCreator {
             })
         })
         console.log(data)
+
+        var file = fs.createWriteStream(outputPath);
+        file.on('error', function(err) { /* error handling */ });
+        Object.keys(totals).forEach(function(key) { file.write('- ' + key + '\n'); });
+        file.end();
+        return;
         
         const t = new Table
         data.sort((a,b)=> b.clips - a.clips )
         data.forEach(function(item) {
             t.cell('Source', item.name)
-            t.cell('# Clips', ` ${item.clips}`, 2)
-            t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
+            // t.cell('# Clips', ` ${item.clips}`, 2)
+            // t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
             t.newRow()
         })
 
         const output = Table.print(data,{
             name: {
-                name: "Source"
-            },
-            clips: {
-                name: "#Clips",
-                printer: Table.number(0)
-            },
-            perc: {
-                name: "% Contribution",
+                name: "Source",
                 printer: (val,width) => {
-                    return Table.padLeft(`${val.toFixed(1)}%`, width)
+                    return Table.cell(`- ${val}`, width)
                 }
-            }
+            },
+            // clips: {
+            //     name: "#Clips",
+            //     printer: Table.number(0)
+            // },
+            // perc: {
+            //     name: "% Contribution",
+            //     printer: (val,width) => {
+            //         return Table.padLeft(`${val.toFixed(1)}%`, width)
+            //     }
+            // }
         })
         
         fs.writeFileSync(outputPath, output)

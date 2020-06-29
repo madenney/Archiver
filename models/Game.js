@@ -143,11 +143,11 @@ class Game {
 
 
             //Specific Character Check
-            // if(!(p1.characterId === 19 || p2.characterId === 19) ){
-            //     this.isValid = false;
-            //     this.info = "incorrect character"
-            //     return resolve();
-            // }
+            if(!(p1.characterId === 20 || p2.characterId === 20) ){
+                this.isValid = false;
+                this.info = "incorrect character"
+                return resolve();
+            }
 
 
             this.isValid = true;
@@ -171,9 +171,9 @@ class Game {
 
             //Filter Combos
             this.combos = combos.filter(combo => {
-                if( combo.moves.length < 2 ){
-                    return false
-                }
+                // if( combo.moves.length < 2 ){
+                //     return false
+                // }
                 return true
             });
             this.combos.forEach(combo => {
@@ -217,32 +217,35 @@ class Game {
             if( secondToLastMove && !c.moves[c.moves.length-2] ) return false;
             if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
 
-            if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
-            // if( testMove ){
-            //     if(c.startPercent > 20 ) return false;
-            //     // check for a number in a row
-            //     let moveCount = 0;
-            //     const MIN = 3
-            //     const move = c.moves.find(m=>m.moveId == testMove)
-            //     const moveIndex = c.moves.indexOf(move)
-            //     if(moveIndex == -1 ) return false;
-            //     for(var i = moveIndex; i < c.moves.length; i++){
-            //         if(c.moves[i].moveId==testMove){
-            //             moveCount++
-            //         } else {
-            //             if(moveCount < MIN){
-            //                 return false
-            //             } else {
-            //                 return true
-            //             }
-            //         }
-            //     }
-            //     return false
-            //     // const firstIndex = c.moves.indexOf(c => c.moveId == testMove );
+            //if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
+            if( testMove ){
 
-            //     // if( c.moves.slice(firstIndex).length < 9 ) return false;
-            //     // if(!(c.moves.slice(firstIndex).every(m=>m.moveId == testMove) )) return false;
-            // } 
+                //if(c.startPercent > 20 ) return false;
+                // check for a number in a row
+                let moveCount = 0;
+                const MIN = 3
+                const move = c.moves.find(m=>m.moveId == testMove)
+                const moveIndex = c.moves.indexOf(move)
+                if(moveIndex == -1 ) return false;
+                for(var i = moveIndex; i < c.moves.length; i++){
+                    if(c.moves[i].moveId==testMove){
+                        moveCount++
+                    } else {
+                        if(moveCount < MIN){
+                            return false
+                        } else {
+                            const maxFramesInBetween = 30
+                            for(var j = moveIndex+1; j < moveIndex + moveCount - 1;j++){
+                                if(c.moves[j].frame - c.moves[j-1].frame > 40 ){
+                                    return false
+                                }
+                            }
+                            return true
+                        }
+                    }
+                }
+                return false
+            } 
 
             if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
             return true;
