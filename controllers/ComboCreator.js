@@ -4,7 +4,7 @@ const arrayMove = require('array-move');
 
 const { ComboController } = require("./components/Combo");
 const { ComboList } = require("../models/ComboList");
-
+const { characters, fastFallers } = require("../constants/characters")
 const ls = require("../lib/localStorage");
 
 var { remote: { dialog } } = require('electron');
@@ -392,6 +392,7 @@ class ComboCreator {
         console.log(totals)
         const data = []
         Object.keys(totals).forEach(key => {
+
             data.push({
                 name: key,
                 clips: totals[key],
@@ -399,30 +400,39 @@ class ComboCreator {
             })
         })
         console.log(data)
+
+        var file = fs.createWriteStream(outputPath);
+        file.on('error', function(err) { /* error handling */ });
+        Object.keys(totals).forEach(function(key) { file.write('- ' + key + '\n'); });
+        file.end();
+        return;
         
         const t = new Table
         data.sort((a,b)=> b.clips - a.clips )
         data.forEach(function(item) {
             t.cell('Source', item.name)
-            t.cell('# Clips', ` ${item.clips}`, 2)
-            t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
+            // t.cell('# Clips', ` ${item.clips}`, 2)
+            // t.cell('% contribution', ` ${item.perc.toFixed(1)}%`)
             t.newRow()
         })
 
         const output = Table.print(data,{
             name: {
-                name: "Source"
-            },
-            clips: {
-                name: "#Clips",
-                printer: Table.number(0)
-            },
-            perc: {
-                name: "% Contribution",
+                name: "Source",
                 printer: (val,width) => {
-                    return Table.padLeft(`${val.toFixed(1)}%`, width)
+                    return Table.cell(`- ${val}`, width)
                 }
-            }
+            },
+            // clips: {
+            //     name: "#Clips",
+            //     printer: Table.number(0)
+            // },
+            // perc: {
+            //     name: "% Contribution",
+            //     printer: (val,width) => {
+            //         return Table.padLeft(`${val.toFixed(1)}%`, width)
+            //     }
+            // }
         })
         
         fs.writeFileSync(outputPath, output)
@@ -432,12 +442,44 @@ class ComboCreator {
     generateStats() {
         console.log("Generate Stats: ");
         const games = {}
+        const chars = {}
+        let fastFallersCount = 0
         this.combos.forEach(combo => {
-            if(!game[combo.gameId]) game[combo.gameId] = combo.gameId
+            if(!games[combo.gameId]) games[combo.gameId] = combo.gameId
+            const comboee = combo.players.find(p=>p.playerIndex === combo.opponentIndex)
+            const char = characters.find(c => c.id === comboee.characterId)
+            if(chars[char.name]){
+                chars[char.name]++
+            } else {
+                chars[char.name] = 1
+            }
         })
+        console.log(chars)
 
         console.log("Number Of Games: ", Object.keys(games).length);
-        
+        const includedGames = Object.keys(games).map(id => {
+            return this.archive.nonTournamentGames.find(g => g.id == id)
+        })
+        console.log("YO: ", includedGames.length);
+
+        const outerChars = {}
+        includedGames.forEach(game => {
+            const opponent = game.players.find(p=>p.characterId != 19 )
+            if(!opponent) {
+                if(outerChars[characters.find(c => c.id == 19).name]){
+                    outerChars[characters.find(c => c.id == 19).name]++
+                } else {
+                    outerChars[characters.find(c => c.id == 19).name] = 1
+                }
+            } else {
+               if(outerChars[characters.find(c => c.id == opponent.characterId).name]){
+                    outerChars[characters.find(c => c.id == opponent.characterId).name]++
+                } else {
+                    outerChars[characters.find(c => c.id == opponent.characterId).name] = 1
+                }
+            }
+        })
+        console.log(outerChars)
     }
 }
 
