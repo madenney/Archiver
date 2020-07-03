@@ -1,0 +1,78 @@
+[
+    {
+        "type": "img",
+        "x": null,
+        "y": null,
+        "width": null,
+        "opacity": 0,
+        "filePath": null
+    },
+    {
+        "type" : "text",
+        "x": null,
+        "y": null,
+        "width": null,
+        "height": null,
+        "fillColor": null,
+        "borderColor": null,
+        "borderWidth": null,
+        "rounded": true,
+        "arcRadius": 10,
+        "lines": [
+            {
+            "text": null,
+            "font": null,
+            "alignment": null,
+            "marginLeft": null,
+            "marginRight": null,
+            "color": null,
+            "borderColor": null,
+            "borderWidth": null,
+            "maxSize": 32,
+            "minSize": 20,
+            "x": null,
+            "y": null
+            }
+        ],
+        "vertOffset": null
+    },
+    {
+        "type" : "hybrid",
+        "x": null,
+        "y": null,
+        "width": null,
+        "height": null,
+        "fillColor": null,
+        "borderColor": null,
+        "borderWidth": null,
+        "rounded": true,
+        "arcRadius": 10,
+        "lines": [
+            {
+            "text": null,
+            "font": null,
+            "alignment": null,
+            "marginLeft": null,
+            "marginRight": null,
+            "color": null,
+            "borderColor": null,
+            "borderWidth": null,
+            "maxSize": 32,
+            "minSize": 20,
+            "x": null,
+            "y": null
+            }
+        ],
+        "vertOffset": null,
+        "divide": null,
+        "icons": [
+            {
+                "path": null,
+                "width": null, 
+                "opacity": null,
+                "x": null,
+                "y": null
+            }
+        ]
+    }
+]

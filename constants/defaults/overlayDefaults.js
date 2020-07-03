@@ -1,14 +1,6 @@
-const overlayDefaults = {
-    showPlayerTags: false,
-    showTournament: false,
-    showRound: false,
-    showLogo: false,
-    showDate: false,
-    overlayMargin: 40,
-    logoOpacity: 85,
-    textboxOpacity: 100,
-    fontPath: "",
-	logoPath: ""
+const overlayOptions = {
+    VID_WIDTH: 1920,
+    VID_HEIGHT: 1080,
 }
 
-module.exports = { overlayDefaults };
+module.exports = { overlayOptions }
