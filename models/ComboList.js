@@ -6,10 +6,9 @@ const { PythonShell} = require("python-shell");
 const crypto = require("crypto");
 const os = require("os");
 const { characters } = require("../constants/characters");
-const { shuffle } = require('../lib');
+const { shuffle, generateOverlay } = require('../lib');
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
-const VIDEO_WIDTH = 1920;
-const VIDEO_HEIGHT = 1080;
+const { videoConstants } = require('../constants/video');
 
 class ComboList {
 
@@ -92,7 +91,7 @@ class ComboList {
                 if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(overlayTmpDir, crypto.randomBytes(12).toString('hex') + ".png");
                     replayJSON.overlayPath = overlayPath
-                    overlayPromises.push(this.generateOverlay(overlayPath,{...combo, index },options));
+                    overlayPromises.push(this.overlay(overlayPath,{...combo, index },options));
                 }
                 json[0].replays.push(replayJSON);
             });
@@ -134,7 +133,51 @@ class ComboList {
         });
     }
 
-    generateOverlay(outputPath, combo, options){ 
+    overlay(outputPath, combo, options){ 
+        //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
+        const { id, players, playerIndex, opponentIndex, startAt, tournamentName } = combo
+        const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
+            logoOpacity, textboxOpacity, logoPath, fontPath, devMode } = options
+        const devText = id;
+        if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
+    
+        const elements = [];
+        if(showOverlay){
+
+            const comboer = players.find(p=>p.playerIndex === playerIndex)
+            const comboee = players.find(p=>p.playerIndex === opponentIndex)
+
+            const icon1 = characters[comboer.characterId].img + 
+                            characters[comboer.characterId].colors[comboer.characterColor] + ".png"
+            const icon2 = characters[comboee.characterId].img + 
+                            characters[comboee.characterId].colors[comboee.characterColor] + ".png"
+
+
+        }
+        if(devMode){
+            let line, devTextArg = "";
+            for(line of [devText]){
+                devTextArg += (line + ";");
+            }
+            devTextArg = devTextArg.slice(0,-1);
+            args.push("--devText=" + devTextArg)
+        }
+        const pyShellOptions = {
+            mode: "text",
+            pythonPath: 'python3',
+            pythonOptions: ["-u"],
+            scriptPath: "./python",
+            args: args
+        };
+        return new Promise((resolve,reject) => {
+            PythonShell.run("overlay.py", pyShellOptions, (err, results) => {
+                if (err) throw err;
+                resolve()
+            });
+        })
+    }
+
+    oldOverlay(outputPath, combo, options){ 
         //{outputPath,char1Id,char2Id,name1,name2,tournament,date,logoPath,margin,fontPath,devText}
         const { id, players, playerIndex, opponentIndex, startAt, tournamentName } = combo
         const { showOverlay, showPlayerTags, showTournament, showLogo, showDate, overlayMargin, 
@@ -142,7 +185,7 @@ class ComboList {
         const devText = id;
         if(!outputPath ) throw "Combolist.generateOverlay missing required parameter"
         
-        const args = [outputPath, VIDEO_WIDTH, VIDEO_HEIGHT]
+        const args = [outputPath, videoConstants.width, videoConstants.height]
 
         if(showOverlay){
 

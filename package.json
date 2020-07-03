@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "array-move": "^2.2.2",
+    "canvas": "^2.6.1",
     "easy-table": "^1.1.1",
     "graphql-client": "^2.0.1",
     "jquery-ui-dist": "^1.12.1",
@@ -26,6 +27,7 @@
     "commander": "^2.20.0",
     "cross-env": "^7.0.2",
     "electron": "^8.2.0",
+    "electron-rebuild": "^1.11.0",
     "electron-reload": "^1.5.0",
     "ffmpeg": "0.0.4",
     "jquery": "^3.5.0",
