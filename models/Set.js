@@ -1,7 +1,8 @@
+const { Game } = require("./Game")
 
 class Set {
 
-    constructor(setJSON){
+    constructor(setJSON,tournament){
         this.id = setJSON.id;
         this.completedAt = setJSON.completedAt;
         this.fullRoundText = setJSON.fullRoundText;
@@ -12,12 +13,14 @@ class Set {
         this.loserScore = setJSON.loserScore;
         this.winnerMains = setJSON.winnerMains;
         this.loserMains = setJSON.loserMains;
+        this.winnerColors = setJSON.winnerColors;
+        this.loserColors = setJSON.loserColors;
         this.isLinked = setJSON.isLinked;
-        
+        this.tournament = tournament;
         if( setJSON.games ){
             this.games = [];
-            setJSON.games.forEach(game => {
-                this.games.push( new Game( game ));
+            setJSON.games.forEach(gameJSON => {
+                this.games.push( new Game(gameJSON,tournament));
             })
         }
     }
@@ -34,6 +37,8 @@ class Set {
             loserScore: this.loserScore,
             winnerMains: this.winnerMains,
             loserMains: this.loserMains,
+            winnerColors: this.winnerColors,
+            loserColors: this.loserColors,
             games: this.games.map(g=>g.generateJSON()),
             isLinked: this.isLinked
         }

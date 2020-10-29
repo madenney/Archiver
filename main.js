@@ -15,7 +15,7 @@ function createWindow () {
   
 
   if( process.env.DEVELOPMENT ){
-    win.webContents.openDevTools()
+    win.webContents.openDevTools({mode:'detaach'})
   }
 
 }
@@ -24,7 +24,8 @@ if( process.env.DEVELOPMENT ){
   const path = require('path')
    
   require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+    ignored: /node_modules|airlock|[\/\\]\./,
   });
   
   const chokidar = require('chokidar');

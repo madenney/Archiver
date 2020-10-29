@@ -4,7 +4,7 @@
     "winner": null,
     "stage": null,
     "startedAt": null,
-    "length": null,
+    "lastFrame": null,
     "slpPath": null,
     "isValid": null,
     "isFriendly": null,

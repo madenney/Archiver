@@ -25,6 +25,19 @@
 #save-button.green {
   color: darkgreen;
 }
+#close-archive-button {
+  position: fixed;
+  left: 100px;
+  top: 10px;
+  background-color: #FA824C;
+  color: #342E37;
+  font-size: 20px;
+  padding: 5px 15px;
+  border-radius: 4px;
+}
+#close-archive-button:hover {
+  cursor: pointer;
+}
 #startup {
   position: fixed;
   border: solid black 2px;
@@ -213,44 +226,146 @@
 #combo-body {
   color: #FAFFFD;
 }
-#combo-body #filters-container {
-  padding: 20px 40px;
+#combo-body #filters-and-options {
+  display: flex;
 }
-#combo-body #filters-container .filters-row {
+#combo-body #filters-and-options #filters-container {
+  min-width: 670px;
+  padding: 20px 0px 20px 40px;
+}
+#combo-body #filters-and-options #filters-container .filters-row {
   margin-top: 10px;
 }
-#combo-body #filters-container .filters-row select {
+#combo-body #filters-and-options #filters-container .filters-row select {
   margin: 10px;
   font-size: 20px;
 }
-#combo-body #filters-container .filters-row > span {
+#combo-body #filters-and-options #filters-container .filters-row > span {
   font-size: 25px;
 }
-#combo-body #filters-container .filters-row button {
-  font-size: 25px;
-  padding: 4px;
+#combo-body #filters-and-options #filters-container .filters-row button {
+  font-size: 18px;
+  padding: 8px;
   margin: 0px 20px;
   border-radius: 3px;
   width: 80px;
+  background-color: #3C91E6;
+  color: #FAFFFD;
 }
-#combo-body #filters-container .filters-row button:hover {
+#combo-body #filters-and-options #filters-container .filters-row button:hover {
   cursor: pointer;
-  background-color: lightgray;
+  background-color: #9FD356;
 }
-#combo-body #filters-container .filters-row .filter {
+#combo-body #filters-and-options #filters-container .filters-row .filter {
   display: inline-block;
   margin-right: 20px;
 }
-#combo-body #filters-container .filters-row .filter .label {
+#combo-body #filters-and-options #filters-container .filters-row .filter .label {
   display: inline-block;
   font-size: 20px;
   margin-right: 5px;
 }
-#combo-body #filters-container .filters-row .filter input {
+#combo-body #filters-and-options #filters-container .filters-row .filter input {
   font-size: 20px;
   padding: 5px;
   width: 35px;
   text-align: center;
+}
+#combo-body #filters-and-options #filters-container .filters-row .filter input.tag {
+  width: 100px;
+  text-align: left;
+}
+#combo-body #video-options-modal-container,
+#combo-body #overlay-options-modal-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(160, 160, 160, 0.5);
+  display: none;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+}
+#combo-body #video-options-modal-container .options-modal,
+#combo-body #overlay-options-modal-container .options-modal {
+  border: solid 2px #342E37;
+  background-color: #342E37;
+  border-radius: 3px;
+  width: 650px;
+  height: auto;
+  margin: auto;
+  margin-top: 140px;
+  padding: 10px 30px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option {
+  margin-top: 10px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option button,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option button {
+  font-size: 20px;
+  margin-right: 40px;
+  border-radius: 3px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option .label,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+  width: 150px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option input,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option input {
+  font-size: 20px;
+  padding: 5px;
+  width: 300px;
+  text-align: center;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option #last-combo-offset,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #last-combo-offset,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #num-cpus,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #num-cpus,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #overlay-margin,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #overlay-margin,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #logo-opacity,
+#combo-body #video-options-modal-container .options-modal .extra-video-option #textbox-opacity,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #textbox-opacity {
+  width: 40px;
+}
+#combo-body #video-options-modal-container .options-modal .extra-video-option #output-path,
+#combo-body #overlay-options-modal-container .options-modal .extra-video-option #output-path {
+  margin-top: 10px;
+}
+#combo-body #video-options-modal-container .options-modal #logo-path-option,
+#combo-body #overlay-options-modal-container .options-modal #logo-path-option {
+  display: none;
+}
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button,
+#combo-body #video-options-modal-container .options-modal #overlay-options-reset-button,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-reset-button,
+#combo-body #video-options-modal-container .options-modal #video-options-reset-button,
+#combo-body #overlay-options-modal-container .options-modal #video-options-reset-button {
+  display: inline-block;
+  font-size: 20px;
+  background-color: #3C91E6;
+  width: 100px;
+  height: 50px;
+  margin: 30px;
+  margin-left: 40px;
+}
+#combo-body #video-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #video-options-ok-button:hover,
+#combo-body #video-options-modal-container .options-modal #overlay-options-ok-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-ok-button:hover,
+#combo-body #video-options-modal-container .options-modal #overlay-options-reset-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #overlay-options-reset-button:hover,
+#combo-body #video-options-modal-container .options-modal #video-options-reset-button:hover,
+#combo-body #overlay-options-modal-container .options-modal #video-options-reset-button:hover {
+  cursor: pointer;
 }
 #combo-body .list-container {
   display: inline-block;
@@ -266,25 +381,70 @@
 }
 #combo-body .list-container .info .row .label {
   display: inline-block;
-  width: 65px;
+  width: 150px;
 }
 #combo-body .list-container .info .row .data {
   display: inline-block;
+  width: 50px;
+}
+#combo-body .list-container #video-buttons-container {
+  min-width: 300px;
+  border-top: solid white 2px;
+  padding: 20px;
+  margin: 20px 0px;
+}
+#combo-body .list-container #video-buttons-container .video-option {
+  margin-bottom: 4px;
+  display: inline-block;
+  width: 140px;
+}
+#combo-body .list-container #video-buttons-container .video-option .label {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 5px;
+}
+#combo-body .list-container #video-buttons-container .video-option input {
+  font-size: 20px;
+  padding: 5px;
   width: 20px;
+  text-align: center;
+}
+#combo-body .list-container #video-buttons-container button {
+  font-size: 18px;
+  padding: 8px;
+  width: 150px;
+  height: auto;
+  right: 10px;
+  background-color: #3C91E6;
+  margin: 10px 5px;
+}
+#combo-body .list-container #video-buttons-container button.disabled {
+  background-color: gray;
+  color: black;
+}
+#combo-body .list-container #video-buttons-container button:hover {
+  cursor: pointer;
+  background-color: #9FD356;
+}
+#combo-body .list-container #remove-selected {
+  margin: 5px;
+  width: 100px;
+  height: 50px;
+  font-size: 18px;
 }
 #combo-body .list-container .list {
   padding-left: 0px;
 }
-#combo-body #secondary-list-container #generate-video-button {
-  font-size: 18px;
-  padding: 20px;
-  width: 200px;
-  height: auto;
-  right: 10px;
+#combo-body .list-container #generate-warning-message {
+  color: lightcoral;
 }
-#combo-body #secondary-list-container #generate-video-button.disabled {
-  background-color: gray;
-  color: black;
+#combo-body .list-container #video-generate-message {
+  font-size: 20px;
+  margin: 10px 10px 0px;
+}
+#combo-body .list-container #video-generate-count {
+  font-size: 20px;
+  margin: 5px 10px;
 }
 #combo-body .combo {
   margin: 5px;
@@ -330,12 +490,25 @@
   display: inline-block;
   width: 20px;
 }
+#combo-body .combo .combo-meta {
+  display: inline-block;
+  width: auto;
+  vertical-align: top;
+  padding-left: 50px;
+}
+#combo-body .combo .combo-meta .combo-checkbox {
+  height: 50px;
+  width: 80px;
+}
+#combo-body .combo .combo-meta .combo-id {
+  font-size: 20px;
+  margin: 5px;
+}
 #combo-body .pagination-container {
-  border: solid blue 1px;
+  text-align: center;
 }
 #combo-body .pagination-container .pagination-button,
 #combo-body .pagination-container .pagination-element {
-  border: solid green 1px;
   display: inline-block;
   font-size: 20px;
 }

@@ -1,0 +1,16 @@
+{
+    "id": null,
+    "completedAt": "2020-06-01T09:26:16Z",
+    "fullRoundText": null,
+    "event": "Half Moon 69",
+    "winnerTag": "Nash",
+    "loserTag": "longer name test",
+    "winnerScore": 3,
+    "loserScore": 0,
+    "winnerMains": [9],
+    "loserMains": [9],
+    "winnerColors": ["white"],
+    "loserColors": ["blue"],
+    "games": [],
+    "isLinked": null
+}

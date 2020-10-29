@@ -3,6 +3,8 @@ const tournamentQuery = `query TournamentQuery($slug: String) {
 	tournament(slug: $slug){
 		id
 		name
+    startAt
+    endAt
 		events {
 			id
 			name

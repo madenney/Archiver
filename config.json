@@ -1,17 +1,3 @@
 {
-	"melee": "C:\\Users\\Matt\\Documents\\Melee\\Super Smash Bros. Melee v1.02 NTSC-U.iso",
-	"replays": "C:\\Users\\Matt\\Documents\\slippiUploader\\tempSlp",
-	"dolphin": "C:\\Users\\Matt\\AppData\\Roaming\\Slippi Desktop App\\dolphin\\Dolphin.exe",
-	"recursive": true,
-	"obs": {
-		"exe": "C:\\Program Files\\obs-studio\\bin\\64bit\\obs64.exe",
-		"port": "4444",
-		"password": "password",
-		"profile": "",
-		"scene": "SlippiDolphin",
-		"videos": "C:\\Users\\Matt\\Documents\\slippiUploader\\tempFLVOutput",
-		"rename": true,
-		"restructure": true,
-		"kill": true
-	}
+	"defaultTab": "combo"
 }
