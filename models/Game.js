@@ -95,7 +95,11 @@ class Game {
             console.log(x);
             const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
             // TODO: Come back to this
-            if( !gameComplete ){ throw "INCOMPLETE GAME???? " + this.slpPath }
+            if( !gameComplete ){ 
+                this.isValid = false;
+                this.info = "gameComplete = false";
+                return resolve();
+            }
             if( overall.every( p => p.totalDamage < 100 )){ 
                 this.isValid = false;
                 this.info = "Damage < 100";
