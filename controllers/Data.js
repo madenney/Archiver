@@ -2,6 +2,10 @@
 const fs = require('fs');
 const path = require('path')
 const { remote: { dialog } } = require('electron');
+const crypto = require("crypto");
+const os = require("os");
+const slpToVideo = require("slp-to-video");
+
 
 const { isURL, asyncForEach, readableDate } = require("../lib");
 const { Tournament } = require("../models/Tournament");
@@ -262,14 +266,182 @@ class Data {
 
         });
 
-        $("#special-half-moon-button").click(() => {
-            const games = this.archive.getGames();
-            console.log(games.length)
-            const crypto = require("crypto");
-
-            games.forEach(game => {
-                game.id = crypto.randomBytes(8).toString('hex')
+        $("#test-button").click( async () => {
+            console.log("test button clicked")
+            const unprocessedGames = this.archive.getAllSlpFiles().filter(f=>!f.isProcessed);
+            console.log("unprocessed files: ", unprocessedGames.length)
+            let count = 0;
+            let clips = []
+            const sample = unprocessedGames.slice(1000,1500)
+            await asyncForEach(unprocessedGames, async (game) => {
+                console.log(game)
+                $("#current-number-processed").html(count++);
+                const clip = await game.specialProcess();
+                if(clip){
+                    console.log("GOT ONE")
+                    clips.push(clip)
+                } 
+                //console.log("INFO: ", game.info)
             })
+            console.log(clips)
+
+
+            const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
+            const slpTmpDir = path.join(os.tmpdir(),
+                          `tmp-${crypto.randomBytes(12).toString('hex')}`);
+            const slpToVideoConfig = {
+                //fixedCamera: true,
+                screenShakeOff: true,
+                tmpdir: slpTmpDir,
+                numProcesses: 8,
+                dolphinPath: DOLPHIN_PATH,
+                ssbmIsoPath: "/home/matt/Documents/melee/melee.iso",
+                gameMusicOn: false,
+                hideHud: false,
+                widescreenOff: false,
+                bitrateKbps: 15000,
+                resolution: "2x"
+              }
+
+            let outputFileName = "output.avi";
+            let fileCount = 1;
+            while(fs.existsSync(path.resolve(`/home/matt/Projects/airlock/${outputFileName}`))){
+                outputFileName = `output${fileCount++}.avi`
+            }
+            const json = [{"outputPath": path.resolve(`/home/matt/Projects/airlock/${outputFileName}`),"queue": clips}]
+
+            console.log(json)
+            try {
+                console.log(slpToVideoConfig)
+                await slpToVideo(json,slpToVideoConfig);
+                
+            } catch(err){
+                console.log("Error occurred in slp-to-video");
+                console.log(err)
+            }
+
+        })
+
+        $("#special-half-moon-button").click(() => {
+
+            const games = this.archive.getGames();
+
+            const filterOptions = {
+                comboerChar: "2",
+                comboerTag: "mang",
+                comboeeTag: "",
+                didKill: true,
+                minMoves: 5
+            }
+
+            const combos = games.reduce((n,game) => {
+
+                const combos = game.getCombos({
+                    ...filterOptions,
+                    comboer: filterOptions.comboerChar,
+                    comboee: filterOptions.comboeeChar
+                });
+
+
+                // Need to combine combo object and game object
+                const returnArr = [];
+                combos.forEach(combo => {
+                    const newCombo = {
+                        ...combo,
+                        players: game.players,
+                        stage: game.stage,
+                        slpPath: game.slpPath,
+                        startAt: game.tournament ? 
+                            game.tournament.startAt : game.startAt,
+                        gameEndFrame: game.lastFrame,
+                        gameId: game.id,
+                        tournamentName: game.tournament ? game.tournament.name : "N/A"
+                    }
+                    if( !n.filter(a => {
+                        if( a.startFrame == newCombo.startFrame
+                            && a.endFrame == newCombo.endFrame
+                        ) return true
+                    }).length ){
+                        returnArr.push(newCombo)
+                    }
+                });
+                return n.concat( returnArr )
+            },[])
+
+            console.log("combos: ", combos.length);
+
+            const obj = {}
+
+            combos.forEach(c => {
+                if(obj[c.moves[c.moves.length-1].moveId] ){
+                    obj[c.moves[c.moves.length-1].moveId]++;
+                } else {
+                    obj[c.moves[c.moves.length-1].moveId] = 1
+                }
+
+            })
+
+            console.log(obj)
+
+            const combos1 = combos.filter( c => {
+                return c.moves[c.moves.length-1].moveId == 17
+            })
+            console.log(combos1.length)
+
+            const obj2 = {}
+            combos1.forEach(c => {
+                if(obj2[c.moves[c.moves.length-2].moveId] ){
+                    obj2[c.moves[c.moves.length-2].moveId]++;
+                } else {
+                    obj2[c.moves[c.moves.length-2].moveId] = 1
+                }
+
+            })
+
+            console.log(obj2)
+
+            const combos2 = combos.filter( c => {
+                return c.moves[c.moves.length-1].moveId == 17 && c.moves[c.moves.length-2].moveId == 15
+            })
+            console.log(combos2.length)
+
+            const obj3 = {}
+            combos2.forEach(c => {
+                if(obj3[c.moves[c.moves.length-3].moveId] ){
+                    obj3[c.moves[c.moves.length-3].moveId]++;
+                } else {
+                    obj3[c.moves[c.moves.length-3].moveId] = 1
+                }
+
+            })
+
+            console.log(obj3)
+
+            const combos3 = combos.filter( c => {
+                return c.moves[c.moves.length-1].moveId == 17 && c.moves[c.moves.length-2].moveId == 15 && c.moves[c.moves.length-3].moveId == 21
+            })
+            console.log(combos3.length)
+
+            const obj4 = {}
+            combos3.forEach(c => {
+                if(obj4[c.moves[c.moves.length-4].moveId] ){
+                    obj4[c.moves[c.moves.length-4].moveId]++;
+                } else {
+                    obj4[c.moves[c.moves.length-4].moveId] = 1
+                }
+
+            })
+
+            console.log(obj4)
+
+
+            // const games = this.archive.getGames();
+            // console.log(games.length)
+            // const crypto = require("crypto");
+
+            // games.forEach(game => {
+            //     game.id = crypto.randomBytes(8).toString('hex')
+            // })
 
             // const sets = this.archive.tournaments.reduce((n,t)=>n.concat(t.sets.filter(s=>s.isLinked)),[]);
             // console.log(sets.length)

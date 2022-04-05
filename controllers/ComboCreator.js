@@ -73,6 +73,10 @@ class ComboCreator {
             this.loadCombos();
             this.renderPrimaryList(0)
         });
+        $("#filter-sort-button").click(() => {
+            this.sortCombos();
+            this.renderPrimaryList(0)
+        });
         $("#filter-reset-button").click(() => {
             ls.resetToDefaults('combo')
         })
@@ -183,11 +187,18 @@ class ComboCreator {
 
     loadCombos(){
         const filterOptions = ls.getOptions('combo')
-        this.games = this.archive.getGames({
+        this.allGames = this.archive.getGames({
             char1: filterOptions.comboerChar,
             char2: filterOptions.comboeeChar,
             stage: filterOptions.stage,
         });
+
+        console.log("Total games: ", this.allGames.length);
+        this.games = []
+        this.allGames.forEach( game => {
+            if(game.stage < 33 ) this.games.push(game) 
+        })
+        console.log("Legit stage games", this.games.length)
 
         this.combos = this.games.reduce((n,game) => {
             const combos = game.getCombos({
@@ -221,6 +232,38 @@ class ComboCreator {
             });
             return n.concat( returnArr )
         },[])
+    }
+
+    sortCombos(){
+
+
+
+        this.combos.sort((a,b) => {
+
+            const firstMove = a.moves[0]
+            const lastMove = a.moves[a.moves.length-1]
+            const startPercent = a.startPercent
+            const endPercent = a.endPercent
+
+            const percDiff = endPercent - startPercent
+            const frameDiff = lastMove.frame - firstMove.frame 
+            const aVal = percDiff/frameDiff
+            console.log(aVal)
+
+            const _firstMove = b.moves[0]
+            const _lastMove = b.moves[b.moves.length-1]
+            const _startPercent = b.startPercent
+            const _endPercent = b.endPercent
+            const _percDiff = _endPercent - _startPercent
+            const _frameDiff = _lastMove.frame - _firstMove.frame 
+            const bVal = _percDiff/_frameDiff
+
+            return aVal - bVal 
+
+            console.log(a.stage,b.stage)
+            return a.stage - b.stage
+        })
+
     }
 
     renderPrimaryList(page){

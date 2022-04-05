@@ -12,9 +12,10 @@ const vodsDir = "./rawSlp50"
 
 let count = 0
 
+
 const getInfoFromSlpFile = function( file ){
 	const game = new slpParser.default( file )
-
+	console.log(game)
 	// check settings for indicators of invalid game
 	const settings = game.getSettings()
 	const p1 = settings.players[0]
@@ -27,6 +28,7 @@ const getInfoFromSlpFile = function( file ){
 	
 
 	// check stats for indicators of invalid game
+	console.log(game.getStats())
 	const { overall, stocks, gameComplete, conversions } = game.getStats()
 	
 	const p1Stocks = stocks.filter( stock => stock.playerIndex === p1.playerIndex )
@@ -78,15 +80,18 @@ const getInfoFromSlpFile = function( file ){
 
 }
 
-getDirectories( vodsDir ).forEach( directory => {
-    const dirname = directory.split("\\").pop()
-    getFiles( directory ).forEach( file => {
-        if( count > 0 ){ return }
-        console.log(`----${count++}----`)
-        console.log("FILE: ", file )
-        const absFilePath = path.resolve( directory, file )
-        const info = getInfoFromSlpFile( absFilePath )
-        console.log("INFO", info)
+// getDirectories( vodsDir ).forEach( directory => {
+//     const dirname = directory.split("\\").pop()
+//     getFiles( directory ).forEach( file => {
+//         if( count > 0 ){ return }
+//         console.log(`----${count++}----`)
+//         console.log("FILE: ", file )
+//         const absFilePath = path.resolve( directory, file )
+//         const info = getInfoFromSlpFile( absFilePath )
+//         console.log("INFO", info)
 
-    })
-})
+//     })
+// })
+
+
+getInfoFromSlpFile("/home/matt/Projects/mango_slippi/Slippi-20220118T011846Z-005/Slippi/Game_20210404T113938.slp");

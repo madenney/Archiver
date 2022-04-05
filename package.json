@@ -11,8 +11,9 @@
   "author": "Matt Denney",
   "license": "ISC",
   "dependencies": {
+    "@slippi/slippi-js": "^6.1.3",
     "array-move": "^2.2.2",
-    "canvas": "^2.6.1",
+    "canvas": "^2.8.0",
     "easy-table": "^1.1.1",
     "graphql-client": "^2.0.1",
     "jquery-ui-dist": "^1.12.1",

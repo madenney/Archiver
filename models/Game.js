@@ -7,9 +7,14 @@ const {
 const crypto = require("crypto");
 
 const slpParser = require("slp-parser-js")
+const { SlippiGame } = require("@slippi/slippi-js");
 
 const validStageIds = [2,3,8,28,31,32]
 const {lowTiers, characters, fastFallers} = require("../constants/characters")
+
+
+const fsmashStates = [58,59,60,61,62]
+const hitStates = [87,88,89,90,91]
 
 class Game {
 
@@ -32,7 +37,629 @@ class Game {
         this.combos = gameJSON.combos;
     }
 
+    specialProcess(){
+        return new Promise((resolve,reject)=> setTimeout(()=>{
+
+            this.isProcessed = true;
+
+            const game = new SlippiGame( this.slpPath )
+
+
+            // check settings for indicators of invalid game
+            const settings = game.getSettings()
+            if(!settings){
+                this.isValid = false;
+                this.info = "Bad settings";
+                return resolve();
+            }
+            if( settings.isTeams ){ 
+                this.isValid = false;
+                this.info = "teams";
+                return resolve();
+            }
+            if( settings.players.length !== 2 ){ 
+                this.isValid = false 
+                this.info = "!2 players"
+                return resolve();
+            }
+
+            if( validStageIds.indexOf( settings.stageId ) === -1 ){ 
+                this.isValid = false;
+                this.info = "Invalid stage";
+                return resolve();
+            }
+            const p1 = settings.players[0]
+            const p2 = settings.players[1]
+            if( p1.type === 1 || p2.type === 1 ){ 
+                this.isValid = false 
+                this.info = "Bot";
+                return resolve();
+            }
+
+
+            //Specific Character Check
+            if(!(p1.characterId === 20 || p2.characterId === 20) ){
+                this.isValid = false;
+                this.info = "incorrect character"
+                return resolve();
+            }
+
+            // check metadata for indicators of invalid game
+            const metadata = game.getMetadata()
+            if(!metadata){
+                this.isValid = false;
+                this.info = "Bad metadata";
+                return resolve();
+            }
+            const length = metadata.lastFrame / 60 
+            if( isNaN( length ) ){ 
+                this.isValid = false;
+                this.info = "No length";
+                return resolve();
+            }
+            if( length < 5 ){ 
+                this.isValid = false;
+                this.info = "Game Length < 5 seconds";
+                return resolve();
+            }
+
+            // check stats for indicators of invalid game
+            const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
+
+            // TODO: Come back to this
+            if( !gameComplete ){ 
+                this.isValid = false;
+                this.info = "Incomplete game";
+                return resolve();
+            }
+            if( overall.every( p => p.totalDamage < 50 )){ 
+                this.isValid = false;
+                this.info = "Damage < 50";
+                return resolve();
+            }
+            if( overall.some( p => p.inputCount < 50 )){ 
+                this.isValid = false;
+                this.info = "InputCount < 50";
+                return resolve();
+            }
+
+
+            this.isValid = true;
+            this.startedAt = metadata.startAt;
+            this.lastFrame = metadata.lastFrame;
+            this.stage = settings.stageId;
+            this.winner = undefined;
+            this.players = [{
+                playerIndex: p1.playerIndex,
+                port: p1.port,
+                characterId: p1.characterId,
+                characterColor: p1.characterColor,
+                nametag: p1.nametag,
+                displayName: p1.displayName
+            },{
+                playerIndex: p2.playerIndex,
+                port: p2.port,
+                characterId: p2.characterId,
+                characterColor: p2.characterColor,
+                nametag: p2.nametag,
+                displayName: p2.displayName
+            }];
+
+
+            // find the fadeback nair
+
+            const frames = game.getFrames();
+            //console.log("FRAMES:", frames )
+
+            const mango = this.players.find(p => p.displayName === "mang")
+            const notMango = this.players.find(p => p.displayName !== "mang")
+            if(!mango){
+                this.isvalid = false;
+                this.info = "no mango"
+                return resolve();
+            }
+            //console.log(mango)
+            //console.log(notMango)
+
+            for(var i = 0; i < metadata.lastFrame; i++){
+
+                const f = frames[i]
+                //console.log(f)
+                const mangoState = f.players[mango.playerIndex].pre.actionStateId
+                const notMangoState = f.players[notMango.playerIndex].pre.actionStateId
+
+                if(fsmashStates.indexOf(mangoState) > -1 ){
+
+                    for(var j = 12; j < 60; j++){
+                        if(frames[i+j] && frames[i+j].players && hitStates.indexOf(frames[i+j].players[notMango.playerIndex].pre.actionStateId) == -1 ) break
+                    }
+                    console.log(j)
+                    if(j == 60 ) return resolve() 
+
+                    for(var j = 1; j < 60; j++){
+                        if(frames[i-j].players[notMango.playerIndex].pre.actionStateId == 181){
+                            if(frames[i-j+3].players[notMango.playerIndex].pre.actionStateId == 212){
+                                console.log("AHAHAHAHAHAHA")
+                                break
+                            }
+                        }
+                    }
+                    if( j == 60 ) return resolve() 
+                    // if(frames[i+30].players && hitStates.indexOf(frames[i+30].players[notMango.playerIndex].pre.actionStateId) == -1 ){
+                    //     return resolve();
+                    // }
+
+                    return resolve({
+                        startFrame: i - 150,
+                        endFrame: i + 150 > metadata.lastFrame ? metadata.lastFrame : i + 150,
+                        path: this.slpPath 
+                    })
+
+                    for(var j = 1; j < 30; j++ ){
+
+                        if(frames[i-j].players[notMango.playerIndex].pre.actionStateId == 212){
+                            return resolve({
+                            startFrame: i - 150,
+                            endFrame: i + 150,
+                            path: this.slpPath
+                            })
+                        }
+
+                    }
+                    return resolve();
+                }
+            }
+
+            resolve()
+        },1));
+    }
+
     process(){
+        return new Promise((resolve,reject)=> setTimeout(()=>{
+            console.log(this.slpPath);
+            this.isProcessed = true;
+            //const game = new slpParser.default( this.slpPath )
+            const game = new SlippiGame( this.slpPath )
+
+
+            // check settings for indicators of invalid game
+            const settings = game.getSettings()
+            if(!settings){
+                this.isValid = false;
+                this.info = "Bad settings";
+                return resolve();
+            }
+            if( settings.isTeams ){ 
+                this.isValid = false;
+                this.info = "teams";
+                return resolve();
+            }
+            if( settings.players.length !== 2 ){ 
+                this.isValid = false 
+                this.info = "!2 players"
+                return resolve();
+            }
+            // if( validStageIds.indexOf( settings.stageId ) === -1 ){ 
+            //     this.isValid = false;
+            //     this.info = "Illegal stage";
+            //     return resolve();
+            // }
+
+            if( validStageIds.indexOf( settings.stageId ) === -1 ){ 
+                this.isValid = false;
+                this.info = "Invalid stage";
+                return resolve();
+            }
+            const p1 = settings.players[0]
+            const p2 = settings.players[1]
+            if( p1.type === 1 || p2.type === 1 ){ 
+                this.isValid = false 
+                this.info = "Bot";
+                return resolve();
+            }
+            // if( p1.startStocks != 4 || p2.startStocks != 4 ){ 
+            //     this.isValid = false;
+            //     this.info = "startStocks != 4";
+            //     return resolve();
+            // }
+
+            // check metadata for indicators of invalid game
+            const metadata = game.getMetadata()
+            if(!metadata){
+                this.isValid = false;
+                this.info = "Bad metadata";
+                return resolve();
+            }
+            const length = metadata.lastFrame / 60 
+            if( isNaN( length ) ){ 
+                this.isValid = false;
+                this.info = "No length";
+                return resolve();
+            }
+            if( length < 5 ){ 
+                this.isValid = false;
+                this.info = "Game Length < 5 seconds";
+                return resolve();
+            }
+
+            // check stats for indicators of invalid game
+            const { overall, stocks, gameComplete, conversions, combos } = game.getStats();
+            // TODO: Come back to this
+            if( !gameComplete ){ 
+                this.isValid = false;
+                this.info = "Incomplete game";
+                return resolve();
+            }
+            if( overall.every( p => p.totalDamage < 50 )){ 
+                this.isValid = false;
+                this.info = "Damage < 50";
+                return resolve();
+            }
+            if( overall.some( p => p.inputCount < 50 )){ 
+                this.isValid = false;
+                this.info = "InputCount < 50";
+                return resolve();
+            }
+            // const p1Stocks = stocks.filter( stock => stock.playerIndex === p1.playerIndex )
+            // const p2Stocks = stocks.filter( stock => stock.playerIndex === p2.playerIndex )
+            // if( p1Stocks.length < 4 && p2Stocks.length < 4 ){
+            //     this.isValid = false;
+            //     this.info = "Neither player used 4 stocks";
+            //     return resolve();
+            // }
+
+
+            // Get Winner
+            // let winnerIndex
+            // if( p1Stocks.length < 4 ){ winnerIndex = p1Stocks[0].playerIndex }
+            // if( p2Stocks.length < 4 ){ winnerIndex = p2Stocks[0].playerIndex }
+            // if( typeof winnerIndex === "undefined" ){
+            //     // if both last stocks ended on null, game must have ended with pause
+            //     if( !p1Stocks[3].endFrame && !p2Stocks[3].endFrame){
+            //         // assume winnerIndex was last player to win a conversion
+            //         winnerIndex = conversions[conversions.length-1].playerIndex
+            //     } else {
+            //         if( !p1Stocks[3].endFrame ){ 
+            //             winnerIndex = p1Stocks[0].playerIndex 
+            //         } else {
+            //             winnerIndex = p2Stocks[0].playerIndex
+            //         }
+            //     }
+            // }
+
+            //if( typeof winnerIndex === "undefined" ){ throw "Error: Somehow didn't determine a winner." } 
+
+
+            //Specific Character Check
+            // if(!(p1.characterId === 20 || p2.characterId === 20) ){
+            //     this.isValid = false;
+            //     this.info = "incorrect character"
+            //     return resolve();
+            // }
+
+
+            this.isValid = true;
+            this.startedAt = metadata.startAt;
+            this.lastFrame = metadata.lastFrame;
+            this.stage = settings.stageId;
+            this.winner = undefined;
+            this.players = [{
+                playerIndex: p1.playerIndex,
+                port: p1.port,
+                characterId: p1.characterId,
+                characterColor: p1.characterColor,
+                nametag: p1.nametag,
+                displayName: p1.displayName
+            },{
+                playerIndex: p2.playerIndex,
+                port: p2.port,
+                characterId: p2.characterId,
+                characterColor: p2.characterColor,
+                nametag: p2.nametag,
+                displayName: p2.displayName
+            }];
+
+            //Filter Combos
+            this.combos = combos
+            this.combos = combos.filter(combo => {
+                if( combo.moves.length < 2 ){
+                    return false
+                }
+                return true
+            });
+            this.combos.forEach(combo => {
+                combo.id = crypto.randomBytes(8).toString('hex')
+                combo.playerIndex = combo.moves[0].playerIndex
+                // wtf am i writing
+                combo.opponentIndex = this.players.filter(p => { return p.playerIndex !== combo.playerIndex })[0].playerIndex
+            })
+
+            resolve()
+        },1));
+    }
+
+    getCombos(options){
+        const {
+            comboer,comboee,comboerTag,comboeeTag,didKill,
+            minMoves,maxMoves,minDamage,includesMove,endMove,
+            firstMove,secondToLastMove,testMove,testVal
+        } = options
+        const _comboerTag = comboerTag.toLowerCase();
+        const _comboeeTag = comboeeTag.toLowerCase();
+        return this.combos.filter(c => {
+            if( minMoves && !(c.moves.length >= minMoves) ) return false;
+            if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
+            const comboerPlayer = this.players.find(p => p.playerIndex === c.playerIndex);
+            const comboeePlayer = this.players.find(p => p.playerIndex === c.opponentIndex)
+
+            const comboerCharId = comboerPlayer.characterId;
+            //fuck ice climbers
+            if( comboerCharId === 14 ) return false;
+
+
+            //if( lowTiers.indexOf(comboerCharId) === -1) return false
+            // if(fastFallers.indexOf(comboeePlayer.characterId) !== -1 ) return false
+            // if(comboeePlayer.characterId === 9 ) { return false } // marth
+
+            // FOR NULL 
+            // const n = comboeePlayer.displayName.toLowerCase()
+            // if(!(n == "null" || n == "null4summit :)")) return false;
+
+            // FOR Mango 
+            // const n = comboerPlayer.displayName.toLowerCase()
+            // if(n !== "null" && n !== "null4summit :)" && n !== "kodorin") return false;
+
+            // For spacies
+            // const feet = [0,2,20]
+            // if(feet.indexOf(comboeePlayer.characterId) == -1 ){ return false }
+
+            if(comboer && !(comboerCharId == comboer) ) return false;
+            if(comboee && !(comboeePlayer.characterId == comboee) ) return false;
+            if(comboerTag && !(comboerPlayer.displayName.toLowerCase() == _comboerTag)) return false;
+            if(comboeeTag && !(comboeePlayer.displayName.toLowerCase() == _comboeeTag)) return false;
+            if( didKill && !c.didKill ) return false;
+            if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
+            if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
+            if( firstMove && !(c.moves[0].moveId == firstMove) ) return false;
+            if( secondToLastMove && !c.moves[c.moves.length-2] ) return false;
+            if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
+
+            //if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
+            if( testMove ){
+
+                //if(c.startPercent > 20 ) return false;
+                // check for a number in a row
+                let moveCount = 0;
+                const MIN = 3
+                const move = c.moves.find(m=>m.moveId == testMove)
+                const moveIndex = c.moves.indexOf(move)
+                if(moveIndex == -1 ) return false;
+                for(var i = moveIndex; i < c.moves.length; i++){
+                    if(c.moves[i].moveId==testMove){
+                        moveCount++
+                    } else {
+                        if(moveCount < MIN){
+                            return false
+                        } else {
+                            const maxFramesInBetween = 30
+                            for(var j = moveIndex+1; j < moveIndex + moveCount - 1;j++){
+                                if(c.moves[j].frame - c.moves[j-1].frame > 40 ){
+                                    return false
+                                }
+                            }
+                            return true
+                        }
+                    }
+                }
+                return false
+            } 
+
+            if( testVal > 0 ){
+
+                const forbiddenMoves = [13,14,15,16,17,18]
+                for(var i = 0; i < c.moves.length; i++){
+                    if(forbiddenMoves.indexOf(c.moves[i].moveId) !== -1){ return false }
+                }
+
+
+                //if(!(c.moves[c.moves.length-1].moveId == 17 && c.moves[c.moves.length-2].moveId == 15 && c.moves[c.moves.length-3].moveId == 21 && c.moves[c.moves.length-4].moveId == 21)){ return false }
+
+                // // End Moves:
+                // const endMoves = [11,16]
+                // const lastMove = c.moves[c.moves.length-1]
+                // if(endMoves.indexOf(lastMove.moveId) === -1 ){
+                //     return false
+                // }
+
+                // const firstMove = c.moves[0]
+                // const lastMove = c.moves[c.moves.length-1]
+                // const startPercent = c.startPercent
+                // const endPercent = c.endPercent
+
+                // const percDiff = endPercent - startPercent
+                // const frameDiff = lastMove.frame - firstMove.frame 
+                
+
+                //if(c.startPercent > 0 ) { return false }
+
+                // const firstFrame = c.moves[0].frame
+                // const lastFrame = c.moves[c.moves.length-1].frame
+                // if( lastFrame - firstFrame > testVal ){ return false }
+
+
+                // const lastMove = c.moves[c.moves.length-1]
+                // const secondToLastMove = c.moves[c.moves.length-2]
+                // if (lastMove.frame - secondToLastMove.frame > testVal) return false
+
+                // make sure second to last is an aerial
+                // const aerials = [13,14,15,16,17]
+                // if(aerials.indexOf(secondToLastMove.moveId) == -1 ){ return false }
+
+                //if(lastMove.frame - secondToLastMove.frame > testVal ){ return false }
+                // shine dair
+
+                // const shine = 21
+                // const dair = 17
+                // let m = c.moves[0].moveId
+                // if(m !== shine && m !== dair ){ return false }
+                // let count = 0
+                // for(var i = 1; i < c.moves.length-2;i++){
+                //     if((c.moves[i].moveId === shine && m === dair) || (c.moves[i].moveId === dair && m === shine ) ){
+                //         m = c.moves[i].moveId
+                //         count++
+                //     }
+                // }
+                // if(count < testVal){ return false}
+
+                // const firstMove = c.moves[0]
+                // const lastMove = c.moves[c.moves.length-1]
+                // const totalFrames = lastMove.frame - firstMove.frame
+                // let d = 0
+                // c.moves.forEach(move => d += move.damage )
+                // console.log(d/totalFrames);
+                // if(d/totalFrames < testVal){ return false }
+                // for(var i = 0; i < c.moves.length - 2; i++){
+                //     if(c.moves[i+1].frame - c.moves[i].frame > testVal ){ return false }
+                // }
+
+                // let highDPSmoves = [c.moves[0]]
+                // let shineCount = 0
+                // for(var i = 0; i < c.moves.length - 2; i++ ){
+                //     if(c.moves[i+1].frame - c.moves[i].frame > testVal){
+                //         if(highDPSmoves.length < 5){ 
+                //             highDPSmoves = [c.moves[i+1]] 
+                //         } else {
+                //             i+=100
+                //         }
+                //     } else {
+                //         highDPSmoves.push(c.moves[i+1])
+                //     }
+                // }
+                // if(highDPSmoves.length < 5 ) return false
+                // for(var i = 0; i < highDPSmoves.length; i++){ if(highDPSmoves[i].moveId === 21 ){shineCount++}}
+                // if(shineCount > 1 ){ return false}
+                // let uptiltCount = 0
+                // for(var i = 0; i < highDPSmoves.length; i++){ if(highDPSmoves[i].moveId === 8 ){uptiltCount++}}
+                // if(uptiltCount > 0 ){ return false}
+                // console.log(highDPSmoves)
+                // let damage = 0
+                // highDPSmoves.forEach(move => damage += move.damage)
+                // console.log(damage/highDPSmoves.length)
+                // if(damage/highDPSmoves.length < 10){ return false }
+
+                // Mango Allegro (120bmp)
+                // const shineId = 21
+                // let shineIndex = -1
+                // for(var i = 0; i < c.moves.length; i++ ){
+                //     if(c.moves[i].moveId == shineId ){
+                //         shineIndex = i 
+                //         break
+                //     }
+                // }
+                // if(shineIndex === -1 ){ return false }
+                // if(c.moves.length - shineIndex < 4 ){ return false }
+
+                // if(c.moves[shineIndex+1].moveId !== 17 ){ return false }
+                // if(c.moves[shineIndex+2].moveId !== shineId ){ return false }
+                // if(c.moves[shineIndex+3].moveId !== 17 ){ return false }
+
+                // const bMoves = c.moves.slice(shineIndex,shineIndex + 4)
+                // // for(var i = 1; i < bMoves.length; i++){
+                // //     if(bMoves[i].moveId === shineId ){ return false }
+                // // }
+
+                // const tol = 14
+                // const val = parseInt(testVal)
+                // for(var i = 1; i < 4; i++ ){
+                //     const frameDiff = bMoves[i].frame - bMoves[i-1].frame
+                //     if( frameDiff >= val + tol ) { return false }
+                //     if( frameDiff <= val - tol ) {return false } 
+                // }
+
+                // for(var i = 0; i < c.moves.length - shineIndex; i++ )
+
+                // const frames = 30
+                // const tol = 1
+                // const aerials = [13,14,15,16,17]
+                // const bannedMoves = [1,2,3,4,5,7,8,9,18,19,20,21,53,54,55,56]
+                // if(bannedMoves.indexOf(c.moves[0].moveId) > -1 ){return false}
+                // let onBeatMoves = [c.moves[0]]
+                // for(var i = 1; i < c.moves.length; i++){ 
+                //     if(bannedMoves.indexOf(c.moves[i].moveId) > -1 ){return false}
+
+                //     const frameDiff = c.moves[i].frame - onBeatMoves[onBeatMoves.length-1].frame 
+                //     if( frameDiff >= frames-tol && frameDiff <= frames+tol ){
+                //         onBeatMoves.push(c.moves[i])
+                //     } else {
+                //         if(onBeatMoves.length < testVal ){
+                //             onBeatMoves = [c.moves[i]]
+                //         } else {
+                //             break
+                //         }
+                //     }
+                // }
+                // if(onBeatMoves.length < testVal ){ return false }
+
+            }
+
+            if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
+            return true;
+        })
+    }
+
+
+    generateJSON(){
+        return {
+            id: this.id,
+            players: this.players,
+            winner: this.winner,
+            stage: this.stage,
+            startedAt: this.startedAt,
+            lastFrame: this.lastFrame,
+            slpPath: this.slpPath,
+            isValid: this.isValid,
+            isFriendly: this.isFriendly,
+            combos: this.combos,
+            isProcessed: this.isProcessed,
+            info: this.info
+        }
+    }
+
+    updateLength(){
+        const game = new slpParser.default( this.slpPath )
+        const metadata = game.getMetadata()
+        this.lastFrame = metadata.lastFrame
+        console.log(this.lastFrame)
+    }
+
+    // 4/3
+    oldConstructor( props ) {
+    	
+    	if( props.slpFileName ){
+    		if( !props.slpFileName.indexOf( "_vs_" ) ){
+    			throw new Error(`Invalid slpFileName in Game constructor: ${props.slpFileName}`)
+        	}
+            try {
+                const fileNameInfo = getInfoFromFileName( props.slpFileName )
+                this.player1 = fileNameInfo.player1
+                this.player2 = fileNameInfo.player2
+                this.unlinkedSetNumber = fileNameInfo.setNumber
+            } catch ( error ){
+                if( error.message === "Friendly" ){
+                    throw error
+                }
+            }
+        	
+        }
+
+        
+        this.slpFileName = props.slpFileName
+        this.slpFilePath = props.slpFilePath
+    }
+
+    // TODO: Come back to this
+    // changed on jan 18th, 2022, 
+    oldProcess(){
         return new Promise((resolve,reject)=> setTimeout(()=>{
             console.log(this.slpPath);
             this.isProcessed = true;
@@ -143,11 +770,11 @@ class Game {
 
 
             //Specific Character Check
-            if(!(p1.characterId === 20 || p2.characterId === 20) ){
-                this.isValid = false;
-                this.info = "incorrect character"
-                return resolve();
-            }
+            // if(!(p1.characterId === 20 || p2.characterId === 20) ){
+            //     this.isValid = false;
+            //     this.info = "incorrect character"
+            //     return resolve();
+            // }
 
 
             this.isValid = true;
@@ -182,124 +809,6 @@ class Game {
 
             resolve()
         },1));
-    }
-
-    getCombos(options){
-        const {
-            comboer,comboee,comboerTag,comboeeTag,didKill,
-            minMoves,maxMoves,minDamage,includesMove,endMove,
-            firstMove,secondToLastMove,testMove
-        } = options
-        const _comboerTag = comboerTag.toLowerCase();
-        const _comboeeTag = comboeeTag.toLowerCase();
-        return this.combos.filter(c => {
-
-            if( minMoves && !(c.moves.length >= minMoves) ) return false;
-            if( maxMoves && !(c.moves.length <= maxMoves) ) return false;
-            const comboerPlayer = this.players.find(p => p.playerIndex === c.playerIndex);
-            const comboeePlayer = this.players.find(p => p.playerIndex === c.opponentIndex)
-
-            const comboerCharId = comboerPlayer.characterId;
-            //fuck ice climbers
-            if( comboerCharId === 14 ) return false;
-
-            //if( lowTiers.indexOf(comboerCharId) === -1) return false
-            //if(fastFallers.indexOf(comboeePlayer.characterId) === -1 ) return false
-
-            if(comboer && !(comboerCharId == comboer) ) return false;
-            if(comboee && !(comboeePlayer.characterId == comboee) ) return false;
-            if(comboerTag && !(comboerPlayer.tag.toLowerCase() == _comboerTag)) return false;
-            if(comboeeTag && !(comboeePlayer.tag.toLowerCase() == _comboeeTag)) return false;
-            if( didKill && !c.didKill ) return false;
-            if( minDamage && !(c.moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
-            if( includesMove && !(c.moves.find(m => m.moveId == includesMove ))) return false;
-            if( firstMove && !(c.moves[0].moveId == firstMove) ) return false;
-            if( secondToLastMove && !c.moves[c.moves.length-2] ) return false;
-            if( secondToLastMove && !(c.moves[c.moves.length-2].moveId == secondToLastMove) ) return false;
-
-            //if( testMove && !(c.moves[c.moves.length-3].moveId == testMove) ) return false;
-            if( testMove ){
-
-                //if(c.startPercent > 20 ) return false;
-                // check for a number in a row
-                let moveCount = 0;
-                const MIN = 3
-                const move = c.moves.find(m=>m.moveId == testMove)
-                const moveIndex = c.moves.indexOf(move)
-                if(moveIndex == -1 ) return false;
-                for(var i = moveIndex; i < c.moves.length; i++){
-                    if(c.moves[i].moveId==testMove){
-                        moveCount++
-                    } else {
-                        if(moveCount < MIN){
-                            return false
-                        } else {
-                            const maxFramesInBetween = 30
-                            for(var j = moveIndex+1; j < moveIndex + moveCount - 1;j++){
-                                if(c.moves[j].frame - c.moves[j-1].frame > 40 ){
-                                    return false
-                                }
-                            }
-                            return true
-                        }
-                    }
-                }
-                return false
-            } 
-
-            if( endMove && !(c.moves[c.moves.length-1].moveId == endMove) ) return false;
-            return true;
-        })
-    }
-
-
-    generateJSON(){
-        return {
-            id: this.id,
-            players: this.players,
-            winner: this.winner,
-            stage: this.stage,
-            startedAt: this.startedAt,
-            lastFrame: this.lastFrame,
-            slpPath: this.slpPath,
-            isValid: this.isValid,
-            isFriendly: this.isFriendly,
-            combos: this.combos,
-            isProcessed: this.isProcessed,
-            info: this.info
-        }
-    }
-
-    updateLength(){
-        const game = new slpParser.default( this.slpPath )
-        const metadata = game.getMetadata()
-        this.lastFrame = metadata.lastFrame
-        console.log(this.lastFrame)
-    }
-
-    // 4/3
-    oldConstructor( props ) {
-    	
-    	if( props.slpFileName ){
-    		if( !props.slpFileName.indexOf( "_vs_" ) ){
-    			throw new Error(`Invalid slpFileName in Game constructor: ${props.slpFileName}`)
-        	}
-            try {
-                const fileNameInfo = getInfoFromFileName( props.slpFileName )
-                this.player1 = fileNameInfo.player1
-                this.player2 = fileNameInfo.player2
-                this.unlinkedSetNumber = fileNameInfo.setNumber
-            } catch ( error ){
-                if( error.message === "Friendly" ){
-                    throw error
-                }
-            }
-        	
-        }
-
-        
-        this.slpFileName = props.slpFileName
-        this.slpFilePath = props.slpFilePath
     }
 
     getGameStats(){

@@ -6,6 +6,8 @@ const { PythonShell} = require("python-shell");
 const crypto = require("crypto");
 const os = require("os");
 const { characters } = require("../constants/characters");
+const { legalStages } = require("../constants/stages");
+
 const { shuffle, generateOverlay } = require('../lib');
 const DOLPHIN_PATH = path.resolve("./node_modules/slp-to-video/Ishiiruka/build/Binaries/dolphin-emu");
 const { videoConstants } = require('../constants/video');
@@ -26,6 +28,82 @@ class ComboList {
 
     }
 
+    async generateVideoPerStage(options){
+
+        const legalStages = [2,3,8,28,31,32]
+
+        const json = [{
+            outputPath: "/home/matt/Projects/airlock/fountain.avi",
+            queue: []
+        },{
+            outputPath: "/home/matt/Projects/airlock/pokemon.avi",
+            queue: []
+        },{
+            outputPath: "/home/matt/Projects/airlock/yoshis.avi",
+            queue: []
+        },{
+            outputPath: "/home/matt/Projects/airlock/dreamland.avi",
+            queue: []
+        },{
+            outputPath: "/home/matt/Projects/airlock/battlefield.avi",
+            queue: []
+        },{
+            outputPath: "/home/matt/Projects/airlock/finalD.avi",
+            queue: []
+        }]
+
+        this.combos.forEach(combo => {
+
+            // Normal
+            const replayJSON = {
+                path: combo.slpPath,
+                startFrame: combo.startFrame - 45,
+                endFrame: combo.endFrame + 15
+            }
+        
+            if(combo.didKill){
+                if(combo.endFrame < combo.gameEndFrame - 37 ){
+                    replayJSON.endFrame += 36
+                } else if (combo.endFrame < combo.gameEndFrame - 21){
+                    replayJSON.endFrame += 20
+                }
+            } 
+
+            json[legalStages.indexOf(combo.stage)].queue.push(replayJSON)
+
+
+        })
+
+        const slpTmpDir = path.join(os.tmpdir(),
+                          `tmp-${crypto.randomBytes(12).toString('hex')}`);
+
+        const slpToVideoConfig = {
+            fixedCamera: false,
+            screenShakeOff: true,
+            tmpdir: slpTmpDir,
+            numProcesses: options.numCPUs,
+            dolphinPath: DOLPHIN_PATH,
+            ssbmIsoPath: options.isoPath,
+            gameMusicOn: options.gameMusic,
+            hideHud: options.hideHud,
+            widescreenOff: options.widescreenOff,
+            bitrateKbps: 30000,
+            resolution: "6x"
+        }
+
+        try {
+            console.log(json)
+            console.log(slpToVideoConfig)
+            await slpToVideo(json,slpToVideoConfig);
+            resolve();
+        } catch(err){
+            console.log("Error occurred in slp-to-video");
+            reject(err);
+        }
+
+
+    }
+
     generateVideo(options,eventEmitter){
         return new Promise( async (resolve,reject) => {
   
@@ -42,7 +120,7 @@ class ComboList {
             while(fs.existsSync(path.resolve(`${options.outputPath}/${outputFileName}`))){
                 outputFileName = `output${count++}.avi`
             }
-            const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"replays": []}]
+            const json = [{"outputPath": path.resolve(`${options.outputPath}/${outputFileName}`),"queue": []}]
             const overlayPromises = [];
 
             if(options.shuffle){
@@ -122,18 +200,97 @@ class ComboList {
                 //     endFrame: combo.startFrame + 45
                 // }
 
+                // DPS TEST
+                // let highDPSmoves = [combo.moves[0]]
+                // for(var i = 0; i < combo.moves.length - 2; i++ ){
+                //     if(combo.moves[i+1].frame - combo.moves[i].frame > 45){
+                //         if(highDPSmoves.length < 5){ 
+                //             highDPSmoves = [combo.moves[i+1]] 
+                //         } else {
+                //             i+=100
+                //         }
+                //     } else {
+                //         highDPSmoves.push(combo.moves[i+1])
+                //     }
+                // }
 
-                // Normal
+                // Mango Allegro (120bmp)
+                // const frames = 37
+                // const tol = 7
+                // const aerials = [13,14,15,16,17]
+                // let onBeatMoves = [combo.moves[0]]
+                // for(var i = 1; i < combo.moves.length; i++){ 
+                //     const frameDiff = combo.moves[i].frame - onBeatMoves[onBeatMoves.length-1].frame 
+                //     if( frameDiff >= frames-tol && frameDiff <= frames+tol ){
+                //         onBeatMoves.push(combo.moves[i])
+                //     } else {
+                //         onBeatMoves = [combo.moves[i]]
+                //     }
+                // }
+
+                // const frameDiff = onBeatMoves[onBeatMoves.length-1].frame - onBeatMoves[0].frame 
+                // const beats = frameDiff / 30
+
+                // const replayJSON = {
+                //     path: combo.slpPath,
+                //     startFrame: onBeatMoves[0].frame - 15,
+                //     endFrame: onBeatMoves[0].frame + ( (Math.ceil(beats)+1) * 30 )
+                // }
+
+                // Off the top
+                // const replayJSON = {
+                //     path: combo.slpPath,
+                //     startFrame: combo.startFrame - 30,
+                //     endFrame: combo.endFrame - 30
+                // }
+                // if(combo.didKill){
+                //     if(combo.endFrame < combo.gameEndFrame - 37 ){
+                //         replayJSON.endFrame += 36
+                //     } else if (combo.endFrame < combo.gameEndFrame - 21){
+                //         replayJSON.endFrame += 20
+                //     }
+                // } 
+
+                // Mango Allegro (120bmp)
+
+                // const shineId = 21
+                // let shineIndex = -1
+                // for(var i = 0; i < combo.moves.length; i++ ){
+                //     if(combo.moves[i].moveId == shineId ){
+                //         shineIndex = i 
+                //         break
+                //     }
+                // }
+
+                // const replayJSON = {
+                //     path: combo.slpPath,
+                //     startFrame: combo.moves[shineIndex].frame - 12,
+                //     endFrame: combo.moves[shineIndex].frame + 128
+
+                // }
+
+                // off the top
+                // const replayJSON = {
+                //     path: combo.slpPath,
+                //     startFrame: combo.startFrame - 30,
+                //     endFrame: combo.endFrame - 120
+                // }
+            
+                // if(combo.didKill){
+                //     if(combo.endFrame < combo.gameEndFrame - 37 ){
+                //         replayJSON.endFrame += 36
+                //     } else if (combo.endFrame < combo.gameEndFrame - 21){
+                //         replayJSON.endFrame += 20
+                //     }
+                // } 
+            
+                // //Normal
                 const replayJSON = {
-                    replay: combo.slpPath,
-                    startFrame: combo.startFrame,
-                    endFrame: combo.endFrame
+                    path: combo.slpPath,
+                    startFrame: combo.startFrame - 30,
+                    endFrame: combo.endFrame + 15
                 }
-                if(combo.moves.length < 3 ){
-                    replayJSON.startFrame -= 20
-                } else {
-                    replayJSON.startFrame -= 10
-                }
+            
                 if(combo.didKill){
                     if(combo.endFrame < combo.gameEndFrame - 37 ){
                         replayJSON.endFrame += 36
@@ -145,24 +302,31 @@ class ComboList {
                 // Overlay
                 if(options.showOverlay || options.devMode){
                     const overlayPath = path.join(overlayTmpDir, crypto.randomBytes(12).toString('hex') + ".png");
-                    replayJSON.overlayPath = overlayPath
-                    overlayPromises.push(this.overlay(overlayPath,{...combo, index },options));
+                    replayJSON.overlayPath = overlayPath     
+                    overlayPromises.push(this.oldOverlay(overlayPath,{...combo, index },options));
+                    //overlayPromises.push(this.overlay(overlayPath,{...combo, index },options));
                 }
-                json[0].replays.push(replayJSON);
+
+                json[0].queue.push(replayJSON);
             });
+
             if(options.lastComboOffset){
-                const replays = json[0].replays
-                replays[replays.length-1].endFrame += parseInt(options.lastComboOffset)
-                if( replays[replays.length-1].endFrame >
+                const queue = json[0].queue
+                queue[queue.length-1].endFrame += parseInt(options.lastComboOffset)
+                if( queue[queue.length-1].endFrame >
                 this.combos[this.combos.length-1].gameEndFrame ){
-                    replays[replays.length-1].endFrame = this.combos[this.combos.length-1].gameEndFrame - 1
+                    queue[queue.length-1].endFrame = this.combos[this.combos.length-1].gameEndFrame - 1
                 }
             }
             await Promise.all(overlayPromises);
 
-            //fs.writeFileSync(path.join(tmpDir,`replays.json`),JSON.stringify(json));
+
+
+            //fs.writeFileSync(path.join(tmpDir,`queue.json`),JSON.stringify(json));
 
             const slpToVideoConfig = {
+                //fixedCamera: true,
+                screenShakeOff: true,
                 tmpdir: slpTmpDir,
                 numProcesses: options.numCPUs,
                 dolphinPath: DOLPHIN_PATH,
@@ -170,21 +334,24 @@ class ComboList {
                 gameMusicOn: options.gameMusic,
                 hideHud: options.hideHud,
                 widescreenOff: options.widescreenOff,
-                bitrateKbps: 15000,
-                resolution: "2x"
+                bitrateKbps: 30000,
+                resolution: "6x"
               }
 
             try {
                 console.log(json)
+                console.log(slpToVideoConfig)
                 await slpToVideo(json,slpToVideoConfig);
                 resolve();
             } catch(err){
                 console.log("Error occurred in slp-to-video");
                 reject(err);
             }
-            rimraf(overlayTmpDir, () => {
-                console.log("removed tmpdir")
+            if( options.showOverlay ){
+                rimraf(overlayTmpDir, () => {
+                console.log("removed overlay tmpdir")
             });
+            }
         });
     }
 

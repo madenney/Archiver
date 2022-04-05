@@ -11,6 +11,8 @@ const comboDefaults = {
     firstMove: "",
     secondToLastMove: "",
     thirdToLastMove: "",
+    testMove: "",
+    testVal: 0,
     didKill: false
 }
 
