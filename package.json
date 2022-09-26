@@ -1,25 +1,24 @@
 {
-  "name": "autouploader",
+  "name": "Archiver",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env DEVELOPMENT=true npm start",
-    "start": "lessc styles/index.less dist/styles.css && electron main.js"
+    "start": "lessc views/styles/index.less dist/views/styles.css && electron main.js"
   },
   "author": "Matt Denney",
   "license": "ISC",
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "@slippi/slippi-js": "^6.1.3",
     "array-move": "^2.2.2",
-    "canvas": "^2.8.0",
     "easy-table": "^1.1.1",
-    "graphql-client": "^2.0.1",
+    "electron-context-menu": "^3.5.0",
     "jquery-ui-dist": "^1.12.1",
     "node-dir": "^0.1.17",
     "slp-parser-js": "^4.1.0",
-    "slp-to-video": "https://github.com/kevinsung/slp-to-video",
     "taskkill": "^3.0.0",
     "uuid": "^3.3.2"
   },
@@ -27,7 +26,7 @@
     "chokidar": "^3.3.1",
     "commander": "^2.20.0",
     "cross-env": "^7.0.2",
-    "electron": "^8.2.0",
+    "electron": "^20.2.0",
     "electron-rebuild": "^1.11.0",
     "electron-reload": "^1.5.0",
     "ffmpeg": "0.0.4",

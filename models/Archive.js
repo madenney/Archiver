@@ -1,20 +1,18 @@
 
 const path = require("path")
 const fs = require("fs");
-const { Tournament } = require("./Tournament")
-const { Game } = require("./Game");
-const  gameTemplate = JSON.parse( fs.readFileSync(path.resolve("models/jsonTemplates/gameTemplate.json")));
-const { 
-    getDirectories,
-    getSlpFilePaths,
-    getFiles,
-    asyncForEach
-} = require("../lib")
+const { File } = require("./File");
+const { Pattern } = require("./Pattern")
+const  fileTemplate = JSON.parse( fs.readFileSync(path.resolve("constants/jsonTemplates/fileTemplate.json")));
+
+const { getSlpFilePaths } = require("../lib")
 
 class Archive {
     
     constructor( archivePath ) {
         this.path = archivePath
+        this.files = []
+        this.patterns = []
         // validate given json
         try {
             const archiveJSON = JSON.parse(fs.readFileSync(archivePath));
@@ -23,18 +21,14 @@ class Archive {
             this.createdAt = archiveJSON.createdAt ? archiveJSON.createdAt : new Date().getTime().toString();
             this.updatedAt = archiveJSON.updatedAt;
 
-            if( archiveJSON.nonTournamentGames ){
-                this.nonTournamentGames = [];
-                archiveJSON.nonTournamentGames.forEach(gameJSON => {
-                    this.nonTournamentGames.push( new Game(gameJSON));
-                })
+            if(archiveJSON.files && archiveJSON.files.length > 0 ){
+                archiveJSON.files.forEach( file => this.files.push( new File(file) ))
             }
-            if( archiveJSON.tournaments ){
-                this.tournaments = [];
-                archiveJSON.tournaments.forEach(tournamentJSON => {
-                    this.tournaments.push( new Tournament(tournamentJSON));
-                })
+
+            if(archiveJSON.patterns && archiveJSON.patterns.length > 0){
+                archiveJSON.patterns.forEach( pattern => this.patterns.push( new Pattern(pattern)))
             }
+
         } catch(err){
             console.log("An error occured in Archive constructor");
             console.log(err);
@@ -42,41 +36,47 @@ class Archive {
         }
     }
 
-    addNonTournamentSlpFiles(paths){
-        const slpFilesPaths = getSlpFilePaths(paths);
-        slpFilesPaths.forEach( slpPath => {
-            this.nonTournamentGames.push( new Game({
-                ...gameTemplate,
-                slpPath: slpPath,
-                isFriendly: true
-            }))
+    addFiles(_paths){
+        const paths = Array.isArray(_paths) ? _paths : [_paths]
+        const filePaths = getSlpFilePaths(paths);
+        let count = 0
+        filePaths.forEach( path => {
+            count++
+            this.files.push( new File({ ...fileTemplate, path}))
         })
+        return count
     }
 
-    /*
-        params - type Object
-        Only returns confirmed Valid Games
-        characters,stage,isLabelled,isTournament
-        characters is char1, char2, each arrays of char Ids. Defaults to *
-    */
-    getGames({isLabelled,stage,char1,char2} = {}){
-        let games = this.getAllSlpFiles().filter(f => f.isValid );
-        if(isLabelled){
-            games = games.filter(g=>g.isLabelled);
-        }
+    async processFiles(){
+        const promises = []
+        this.files.forEach(file => { promises.push(file.process()) })
+        await Promise.all(promises)
+    }
+
+    addPatterns(_patterns){
+        const patterns = Array.isArray(_patterns) ? _patterns : [_patterns]
+        patterns.forEach(p => this.patterns.push( new Pattern(pattern)))
+    }
+
+    getFiles(params){
+        return this.files.filter(f => f.is(params) )
+    }
+    getFiles({stage,char1,char2,player1,player2} = {}){
+        let files = this.files.filter(f => f.isValid );
+
         if(stage){
             let s = stage;
             if(!Array.isArray(s)) s = [stage];
-            games = games.filter(g=>s.indexOf(g.stage.toString()) !== -1)
+            files = files.filter(f=>s.indexOf(f.stage.toString()) !== -1)
         }
         if(char1 || char2){
             let c1 = char1
             let c2 = char2
             if(char1 && !Array.isArray(char1)) c1 = [char1]
             if(char2 && !Array.isArray(char2)) c2 = [char2]
-            games = games.filter(g => {
-                const p1 = g.players[0].characterId.toString();
-                const p2 = g.players[1].characterId.toString();
+            files = files.filter(f => {
+                const p1 = f.players[0].characterId.toString();
+                const p2 = f.players[1].characterId.toString();
                 if(c1 && c2){
                     return (
                         (c1.indexOf(p1) !== -1 && c2.indexOf(p2) !== -1) ||
@@ -89,15 +89,26 @@ class Archive {
                 }
             })
         }
-        return games;
-    }
-
-    getAllSlpFiles(){
-        const files = [];
-        this.nonTournamentGames.forEach(g=>files.push(g));
-        this.tournaments.forEach(tournament=>{
-            tournament.getAllSlpFiles().forEach(game=>files.push(game));
-        })
+        if(player1 || player2){
+            let p1 = player1
+            let p2 = player2
+            if(p1 && !Array.isArray(p1)) p1 = [p1]
+            if(p2 && !Array.isArray(p2)) p2 = [p2]
+            files = files.filter(f => {
+                const _p1 = f.players[0].displayName.toLowerCase();
+                const _p2 = f.players[1].displayName.toLowerCase();
+                if(p1 && p2){
+                    return (
+                        (p1.indexOf(_p1) !== -1 && p2.indexOf(_p2) !== -1) ||
+                        (p1.indexOf(_p2) !== -1 && p2.indexOf(_p1) !== -1)
+                    )
+                } else if(p1 && !p2 ){
+                    return p1.indexOf(_p1) !== -1 || p1.indexOf(_p2) !== -1
+                } else if(p2 && !p1 ){
+                    return p2.indexOf(_p1) !== -1 || p2.indexOf(_p2) !== -1
+                }
+            })
+        }
         return files;
     }
 
@@ -106,8 +117,8 @@ class Archive {
             name: this.name,
             createdAt: this.createdAt,
             updatedAt: new Date().getTime().toString(),
-            tournaments: this.tournaments.map(t=>t.generateJSON()),
-            nonTournamentGames: this.nonTournamentGames.map(g=>g.generateJSON()),
+            files: this.files.map(f=>f.generateJSON()),
+            patterns: this.patterns.map(p=>p.generateJSON()),
             outputDir: this.outputDir
         }
         fs.writeFileSync(this.path, JSON.stringify(jsonToSave));
@@ -118,50 +129,10 @@ class Archive {
             name: this.name,
             createdAt: this.createdAt,
             updatedAt: new Date().getTime().toString(),
-            tournaments: this.tournaments.map(t=>t.generateJSON()),
-            nonTournamentGames: this.nonTournamentGames.map(g=>g.generateJSON()),
-            outputDir: this.outputDir
+            files: this.files.map(f=>f.generateJSON()),
+            patterns: this.files.map(p=>p.generateJSON())
         } 
     }
-
-
-
-    // load(){
-    //     getDirectories( this.archivePath ).forEach( directory => {
-    //         const jsonPath = path.resolve( directory, "raw", "tournament.json" )
-    //         const tournament = new Tournament()
-    //         tournament.loadJSON( jsonPath )
-    //         this.tournaments.push( tournament )
-    //     })
-    // }
-
-    // getAllSets(){
-    //     const allSets = []
-    //     this.tournaments.forEach( tournament => {
-    //         const sets = tournament.getAllSets()
-    //         sets.forEach( set => allSets.push( set ))
-    //     })
-    //     return allSets
-    // }
-
-    // getAllConnectedSets(){
-    //     const allConnectedSets = []
-    //     this.tournaments.forEach( tournament => {
-    //         const sets = tournament.getAllConnectedSets()
-    //         sets.forEach( set => allConnectedSets.push({
-    //             ...set,
-    //             tournament: tournament.name
-    //         }))
-    //     })
-    //     return allConnectedSets
-    // }
-
-    // getAllConnectedSlpFiles(){
-    //     const allFiles = this.getAllSlpFiles()
-    //     const connectedFiles = files.filter( file => file.linkedSet )
-    // }
-
-
 }
 
 module.exports = { Archive }

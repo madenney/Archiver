@@ -1,6 +1,4 @@
 const { Archive } = require("../models/Archive")
-const { Tournament } = require("../models/Tournament")
-const { Set } = require("../models/Set")
-const { Game } = require("../models/Game")
+const { File } = require("../models/File")
 
-module.exports = { Archive, Tournament, Set, Game }
+module.exports = { Archive, File }

@@ -1,4 +1,6 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const contextMenu = require('electron-context-menu');
+contextMenu();
 
 function createWindow () {
   
@@ -6,13 +8,20 @@ function createWindow () {
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     },
     title: "Archiver"
   })
 
   win.loadFile('views/index.html')
   
+
+
+  ipcMain.handle('showDialog', async (event, args) => {
+    return dialog.showOpenDialogSync({ properties: args });
+  })
 
   if( process.env.DEVELOPMENT ){
     win.webContents.openDevTools({mode:'detaach'})
@@ -39,4 +48,6 @@ if( process.env.DEVELOPMENT ){
 }
 
 app.whenReady().then(createWindow)
+
+
 

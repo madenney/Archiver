@@ -1,0 +1,172 @@
+
+@import "files.less";
+@import "patterns.less";
+
+@color1: #342E37;
+@color2: #FAFFFD;
+@color3: #3C91E6;
+@color4: #9FD356;
+@color5: #FA824C;
+
+body {
+    position: relative;
+    background-color: @color1;
+    color: @color2;
+}
+
+#main-content {
+
+    #header {
+        height: 50px;
+        padding: 10px;
+        font-size: 20px;
+    }
+
+    .section {
+        margin: 5px;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #282828;
+
+        .title {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .section-content {
+            padding: 10px;
+            .row {
+                font-size: 22px;
+                margin: 5px 20px;
+                .label {
+                    display: inline-block;
+                    width: 170px;
+                }
+                .value {
+                    display: inline-block;
+                    margin-left: 20px;
+                    font-size: 21px;
+                }
+            }
+        }
+
+        #files-list {
+            border: solid @color2 1px;
+            max-height: 250px;
+            overflow: hidden;
+            overflow-y: scroll;
+        }
+        #processing-files-message {
+            height: 15px;
+            font-size: 14px;
+        }
+    }
+}
+
+#new-archive {
+    text-align: center;
+    border-radius: 5px;
+    display: none;
+    margin: 150px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 20px;
+
+    
+    #new-archive-form {
+        
+        .form-row {
+            margin: 15px;
+            text-align: left;
+        }
+        label {
+            width: 150px;
+            display: inline-block;
+            font-size: 20px;
+            color: @color2;
+        }
+        
+        input {
+            display: inline-block;
+            font-size: 20px;
+            padding: 5px;
+            margin-left: 10px;
+        }
+
+        #archive-directory-button {
+            width: 82px;
+            height: 30px;
+            border-radius: 4px;
+            font-size: 15px;
+            margin-left: 10px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        #new-directory-path {
+            height: 25px;
+            font-size: 18px;
+            color: @color4;
+        }
+
+    }
+}
+
+
+.normal-button {
+    border: solid 2px #686868;
+    border-radius: 5px;
+    background-color: #383838;
+    color: @color2;
+    font-size: 20px;
+    padding: 5px;
+    width: 250px;
+    height: 50px;
+    margin: 10px;
+    
+    &:hover {
+        cursor: pointer;
+        background-color: #000066;
+    }
+}
+
+#save-archive-button {
+    position: fixed;
+    right: 100px;
+    top: 10px;
+    background-color: @color3;
+    color: @color1;
+    font-size: 20px;
+    padding: 5px 15px;
+    border-radius: 4px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: lightblue;
+    }
+
+    &:disabled {
+        background-color: gray;
+    }
+
+    &.green {
+        color: darkgreen;
+    }
+}
+
+#close-archive-button {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    background-color: @color5;
+    color: @color1;
+    font-size: 20px;
+    padding: 5px 15px;
+    border-radius: 4px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
