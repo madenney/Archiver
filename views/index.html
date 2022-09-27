@@ -81,7 +81,9 @@
       <div class="section">
         <div id="patterns-title" class="title">Patterns<span class="section-carat">&#9650;</span></div>
         <div hidden id="patterns" class="section-content">
-          <div>CONTENT</div>
+          <button id="add-patterns-button" class="normal-button">Add Pattern</button>
+          <button id="run-patterns-button" class="normal-button">Run</button>
+          <div id="patterns-list"></div>
         </div>
       </div>
       <div class="section">
@@ -295,6 +297,83 @@
         <div id="video-generate-message"></div>
         <div id="video-generate-count"></div>
       </div> -->
+      <div id="edit-pattern-modal" class="modal-container" hidden>
+        <div class="modal">
+          <div class="section">
+            <div class="section-content">
+              <div class="row">
+                <div class="label">Type</div>
+                <select value="slpParser" id="pattern-method-type-select">
+                  <option selected value="slpParser">slp.getCombos</option>
+                  <option value="combo">Combo Parser</option>
+                  <option value="edgeguard">Edgeguard</option>
+                  <option value="single">Single Interaction</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="slpParser-edit-pattern" class="section">
+            <div class="section-content">
+              <div class="row">
+                <div id="slpParser-edit-pattern-direction-selector">Player 1 <span id="slpParser-edit-pattern-combo-direction"><></span> Player 2</div>
+              </div>
+              <div class="row">
+                <div class="label">Min Hits</div>
+                <input id="slpParse-edit-pattern-min-hits" placeholder="">
+              </div>
+              <div class="row">
+                <div class="label">Max Hits</div>
+                <input id="slpParse-edit-pattern-max-hits" placeholder="">
+              </div>
+              <div class="row">
+                <div class="label">Min Damage</div>
+                <input id="slpParse-edit-pattern-min-damage" placeholder="">
+              </div>
+              <div class="row">
+                <div class="label">Max Damage</div>
+                <input id="slpParse-edit-pattern-max-damage" placeholder="">
+              </div>
+            </div>
+          </div>
+          <div id="combo-edit-pattern" class="section" hidden>
+            <div class="section-content">
+              <div class="row">
+                <div id="slpParser-edit-pattern-direction-selector">Player 1 <span id="slpParser-edit-pattern-combo-direction"><></span> Player 2</div>
+              </div>
+            </div>
+          </div>
+          <div id="edgeguard-edit-pattern" class="section" hidden>
+            <div class="section-content">
+              <div class="row">
+                <div id="slpParser-edit-pattern-direction-selector">Player 1 <span id="slpParser-edit-pattern-combo-direction"><></span> Player 2</div>
+              </div>
+            </div>
+          </div>
+          <div id="single-edit-pattern" class="section" hidden>
+            <div class="section-content">
+              <div class="row">
+                <div id="slpParser-edit-pattern-direction-selector">Player 1 <span id="slpParser-edit-pattern-combo-direction"><></span> Player 2</div>
+              </div>
+            </div>
+          </div>
+          <div id="custom-edit-pattern" class="section" hidden>
+            <div class="section-content">
+              <div class="row">
+                <div id="slpParser-edit-pattern-direction-selector">Player 1 <span id="slpParser-edit-pattern-combo-direction"><></span> Player 2</div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-content">
+              <div class="row">
+                <button id="edit-pattern-back-button" class="normal-button">Back</button>
+                <button id="edit-pattern-save-button" class="normal-button">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="new-archive" hidden>
       <button class="normal-button" id="new-archive-button">New Archive</button>

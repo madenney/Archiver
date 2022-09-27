@@ -130,7 +130,7 @@ class Archive {
             createdAt: this.createdAt,
             updatedAt: new Date().getTime().toString(),
             files: this.files.map(f=>f.generateJSON()),
-            patterns: this.files.map(p=>p.generateJSON())
+            patterns: this.patterns.map(p=>p.generateJSON())
         } 
     }
 }
