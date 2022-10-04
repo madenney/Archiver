@@ -8,7 +8,6 @@ const { getSlpFilePaths } = require("../lib").default;
 const  fileTemplate = JSON.parse( fs.readFileSync(path.resolve("src/constants/jsonTemplates/fileTemplate.json")));
 const  patternTemplate = JSON.parse( fs.readFileSync(path.resolve("src/constants/jsonTemplates/patternTemplate.json")));
 
-console.log("ILE TMEP", File)
 class Archive {
     
     constructor( archivePath ) {

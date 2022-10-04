@@ -189,3 +189,99 @@ export const patternsConfig = [
         ]
     }
 ]
+
+const keys = ["hideHud", "gameMusic", "numCPUs", "isoPath", "ishiirukaPath", "shuffle","slice",
+"lastComboOffset", "screenShake"]
+
+export const videoConfig = [
+    {
+        label: "Hide Hud",
+        default: false,
+        id: "hideHud",  
+        type: "checkbox"
+    },
+    {
+        label: "Game Music",
+        default: false,
+        id: "gameMusic",
+        type: "checkbox"
+    },
+    {
+        label: "No Screen Shake",
+        default: false,
+        id: "screenShake",
+        type: "checkbox"
+    },
+    {
+        label: "Hide Tags",
+        default: false,
+        id: "hideTags",
+        type: "checkbox"
+    },
+    {
+        label: "Fixed Camera",
+        default: false,
+        id: "fixedCamera",
+        type: "checkbox"
+    },
+    {
+        label: "Concatenate",
+        default: false,
+        id: "concatenate",
+        type: "checkbox"
+    },
+    {
+        label: "Shuffle",
+        default: false,
+        id: "shuffle",
+        type: "checkbox"
+    },
+    {
+        label: "Add Start Frames",
+        default: 0,
+        id: "addStartFrames",
+        type: "int"
+    },
+    {
+        label: "Add End Frames",
+        default: 0,
+        id: "addEndFrames",
+        type: "int"
+    },
+    {
+        label: "Last Clip Offset",
+        default: 0,
+        id: "lastComboOffset",
+        type: "int"
+    },
+    {
+        label: "Num CPUs",
+        default: 1,
+        id: "numCPUs",
+        type: "int"
+    },
+    {
+        label: "ISO Path",
+        default: "",
+        id: "isoPath",
+        type: "textInput"
+    },
+    {
+        label: "Ishiiruka Path",
+        default: "",
+        id: "ishiirukaPath",
+        type: "textInput"
+    },
+    {
+        label: "Output Directory",
+        default: "",
+        id: "outputPath",
+        type: "textInput"
+    },
+    {
+        label: "Slice",
+        default: 0,
+        id: "slice",
+        type: "int"
+    },
+]

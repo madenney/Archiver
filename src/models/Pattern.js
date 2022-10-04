@@ -14,7 +14,8 @@ class Pattern {
     }
 
     run(prev, eventEmitter){
-
+        console.log("Pattern: ", this.type)
+        console.log("PREV: ", prev)
         let count = 0;
         let resultsLength = prev.results.length
         switch(this.type){
@@ -76,28 +77,30 @@ class Pattern {
                     eventEmitter({msg: `${count++}/${resultsLength}`})
 
                     const { minHits, maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = this.method
-                    if(maxFiles && count++ > maxFiles ) return 
+                    if(maxFiles && count > maxFiles ) return 
                     const { path, players, stage } = file
                     const game = new SlippiGame( path )
                     const { combos } = game.getStats()
-                    this.results.push(combos.filter( combo => {
-                        if(!combo.moves.length >= minHits ) return false
+                    const filteredCombos = []
+                    combos.forEach( combo => {
+                        if(minHits && combo.moves.length < minHits ) return false
                         const comboer = players[combo.playerIndex]
-                        const comboee = players.find(p => p.playerIndex != playerIndex )
+                        const comboee = players.find(p => p.playerIndex != combo.playerIndex )
                         if( comboerChar && comboerChar != comboer.characterId) return false
                         if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
                         if( comboeeChar && comboeeChar != comboee.characterId) return false
                         if( comboeeTag && comboeeTag != comboee.displayName.toLowerCase()) return false
                         if( didKill && !combo.didKill ) return false
 
-                        return {
+                        filteredCombos.push({
                             comboer,
                             comboee,
                             path,
                             stage,
                             ...combo
-                        }
-                    }))
+                        })
+                    })
+                    filteredCombos.forEach(c => this.results.push(c))
                 })
                 return this.results
 
@@ -105,9 +108,9 @@ class Pattern {
                 this.results = prev.results.filter( combo => {
                     eventEmitter({msg: `${count++}/${resultsLength}`})
                     const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill, nthMoves } = this.method
-                    const { moves, comboer, comboee } = combo
-                    if(!moves.length >= minHits ) return false
-                    if(!moves.length <= maxHits ) return false
+                    const { moves, comboer, comboee, path, stage } = combo
+                    if(minHits && moves.length < minHits ) return false
+                    if(maxHits && moves.length > maxHits ) return false
                     if( minDamage && !(moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
                     if( comboerChar && comboerChar != comboer.characterId) return false
                     if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false

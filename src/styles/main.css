@@ -297,3 +297,130 @@ body {
     color: red;
     cursor: pointer;
 }
+
+.results-list{}
+
+.results-stats{
+    padding: 10px;
+    font-size: 20px;
+}
+.results-label {
+    display: inline-block;
+    width: 60px;
+}
+.results-data {
+    display: inline-block;
+    width: 30px;
+}
+.pagination {
+    font-size: 20px;
+    padding: 10px;
+}
+
+.prev {
+    display: inline-block;
+    width: 50px;
+}
+.prev:hover {
+    cursor: pointer;
+    color: 	#585858;
+}
+.current-page {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+}
+.next {
+    display: inline-block;
+    width: 50px;
+}
+.next:hover {
+    cursor: pointer;
+    color: 	#585858;
+}
+
+.disabled {
+    color: gray;
+}
+.disabled:hover {
+    cursor: default;
+    color: gray;
+}
+
+.result {
+    position: relative;
+    display: inline-block;
+    width: 350px;
+    padding: 10px;
+    margin: 5px;
+    background-color: #383838
+}
+
+.result-image-container {
+    width: 150px;
+    display: inline-block;
+}
+
+.characters-container {
+    position: absolute;
+    padding: 10px;
+    margin: auto;
+}
+
+.char1-image, .char2-image, .arrow-image {
+    display: inline-block;
+    width: 33px;
+    margin: 4px;
+}
+.stage-image {
+    width: 150px;
+}
+
+.result-info-container {
+    display: inline-block;
+    width: 170px;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.result-info-row {
+    padding: 5px;
+    font-size: 20px;
+}
+.result-info-label {
+    display: inline-block;
+    width: 80px;
+} 
+
+.result-info-data {
+    display: inline-block;
+    width: 50px;
+}
+
+.video-config-options {
+    padding: 10px;
+}
+
+.video-row {
+    font-size: 20px;
+    margin: 5px;
+    width: 350px;
+    display: inline-block;
+}
+
+.video-row-label {
+    font-size: 20px;
+    width: 200px;
+    display: inline-block;
+}
+
+.video-row-input {
+    font-size: 20px;
+    width: 100px;
+}
+
+.video-row-checkbox {
+    transform: scale(1.7);
+    width: 40px;
+    cursor: pointer;
+}

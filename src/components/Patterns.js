@@ -1,4 +1,6 @@
 import React from 'react'
+import Results from "./Results"
+import Video from "./Video"
 import { patternsConfig } from "../constants/config.js"
 
 class Patterns extends React.Component {
@@ -7,14 +9,30 @@ class Patterns extends React.Component {
 		super(props);
 		this.state = {
 			isOpen: false,
+			isResultsOpen: false,
 			patterns: props.archive.patterns,
 			showEditPatternModal: false,
-			currentPattern: null
+			currentPattern: null,
+			selectedResults: [],
+			isResultsOpen: false,
+			isVideoOpen: false
 		};
 	}
 
 	runPattern(pattern){
-		console.log("RUN: ", pattern)
+		console.log("Running Pattern: ", pattern)
+		const { archive } = this.props
+		const patternIndex = archive.patterns.indexOf(pattern)
+		if( patternIndex == 0 ){
+			pattern.run({results: archive.files}, e => {
+				console.log(e.msg)
+			})
+		} else {
+			pattern.run(archive.patterns[patternIndex-1], e => {
+				console.log(e.msg)
+			})
+		}
+		this.forceUpdate();
 	}
 
 	addNewPattern(e){
@@ -102,11 +120,6 @@ class Patterns extends React.Component {
 		return patterns.map( (pattern, index) => {
 			return (
 				<div key={index} className="pattern-row">
-					<input 
-						className="pattern-checkbox" type="checkbox"
-						checked={pattern.isActive}
-						onChange={(e) => { pattern.isActive = e.target.checked; this.forceUpdate()}}
-					/>
 					<div onClick={() => console.log(pattern)} className="pattern-title">{pattern.type}</div>
 					<button className="pattern-button" 
 						onClick={() => this.setState({
@@ -115,6 +128,9 @@ class Patterns extends React.Component {
 						})}
 					>Edit</button>
 					<button className="pattern-button" onClick={() => this.runPattern(pattern)}>Run</button>
+					<button className="pattern-button" 
+						onClick={() => this.setState({selectedResults: pattern.results, isResultsOpen: true})}
+					>Show</button>
 					<div className="pattern-results">{pattern.results.length}</div>
 					<div 
 						className="pattern-delete"
@@ -123,6 +139,10 @@ class Patterns extends React.Component {
 				</div>
 			)
 		})
+	}
+
+	renderResult(pattern){
+
 	}
 
 	renderSection(){
@@ -139,15 +159,28 @@ class Patterns extends React.Component {
 	}
 
 	render(){
-		const { isOpen, showEditPatternModal } = this.state
-
+		const { archive } = this.props
+		const { isOpen, isResultsOpen, isVideoOpen, showEditPatternModal, selectedResults } = this.state
+		console.log("SELECTED RESULTS", selectedResults)
 		return (
-			<div className="section">
-				<div className="title" onClick={() => this.setState({isOpen: !isOpen})}>Patterns
-					<span>{isOpen ? "▼" : "▲" }</span>
+			<div>
+				<div className="section">
+					<div className="title" onClick={() => this.setState({isOpen: !isOpen})}>Parser
+						<span>{isOpen ? "▼" : "▲" }</span>
+					</div>
+					{ isOpen ? this.renderSection() : "" }
+					{ showEditPatternModal ? this.renderEditPatternModal() : "" }
 				</div>
-				{ isOpen ? this.renderSection() : "" }
-				{ showEditPatternModal ? this.renderEditPatternModal() : "" }
+				<div className="section">
+					<div className="title" onClick={() => this.setState({isResultsOpen: !isResultsOpen})} 
+				>Results<span>{isResultsOpen ? "▼" : "▲" }</span></div>
+					{ isResultsOpen ? <Results className="section-content" archive={archive} selectedResults={selectedResults}/> : "" }
+				</div>
+				<div className="section">
+					<div className="title" onClick={() => this.setState({isVideoOpen: !isVideoOpen})} 
+				>Video<span>{isVideoOpen ? "▼" : "▲" }</span></div>
+					{ isVideoOpen ? <Video className="section-content" archive={archive} selectedResults={selectedResults}/> : "" }
+				</div>
 			</div>
 		)
 	}

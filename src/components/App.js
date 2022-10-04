@@ -2,8 +2,6 @@ import React from 'react'
 import Header from "./Header"
 import Files from "./Files"
 import Patterns from "./Patterns"
-import Results from "./Results"
-import Video from "./Video"
 import fs from "fs";
 import Archive from '../models/Archive';
 import NoArchive from './NoArchive'
@@ -28,6 +26,7 @@ class App extends React.Component {
 	closeArchive() {
 		this.setState({ archive: null })
 	}
+	
 
 	render(){
 		const { archive } = this.state
@@ -38,8 +37,6 @@ class App extends React.Component {
 					<Header archive={archive} closeArchive={this.closeArchive.bind(this)}/>
 					<Files archive={archive}/>
 					<Patterns archive={archive}/>
-					<Results archive={archive}/>
-					<Video archive={archive}/>
 				</div>
 			)
 		} else {
