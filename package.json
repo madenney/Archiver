@@ -1,13 +1,17 @@
 {
-  "name": "Lunar Melee Archiver",
+  "name": "simple-electron-react",
+  "productName": "React Electron App",
   "version": "1.0.0",
-  "description": "",
-  "license": "",
+  "description": "Simple boilerplate for building Electron apps with React",
+  "license": "MIT",
   "engines": {
     "node": ">=9.0.0",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
+  "browserslist": [
+    "last 4 versions"
+  ],
   "main": "main.js",
   "scripts": {
     "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
