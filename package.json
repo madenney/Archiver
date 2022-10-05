@@ -1,9 +1,8 @@
 {
-  "name": "simple-electron-react",
-  "productName": "React Electron App",
+  "name": "Lunar Melee Archiver",
   "version": "1.0.0",
-  "description": "Simple boilerplate for building Electron apps with React",
-  "license": "MIT",
+  "description": "",
+  "license": "",
   "engines": {
     "node": ">=9.0.0",
     "npm": ">=5.0.0",
