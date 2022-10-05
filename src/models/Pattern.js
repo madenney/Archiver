@@ -105,6 +105,7 @@ class Pattern {
                 return this.results
 
             case "comboFilter":
+                let testCount = 0;
                 this.results = prev.results.filter( combo => {
                     eventEmitter({msg: `${count++}/${resultsLength}`})
                     const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill, nthMoves } = this.method
@@ -112,6 +113,7 @@ class Pattern {
                     if(minHits && moves.length < minHits ) return false
                     if(maxHits && moves.length > maxHits ) return false
                     if( minDamage && !(moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
+                    if(!combo.comboer || !combo.comboee ) { console.log("???: ", combo); testCount++;return false }
                     if( comboerChar && comboerChar != comboer.characterId) return false
                     if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
                     if( comboeeChar && comboeeChar != comboee.characterId) return false
@@ -135,6 +137,7 @@ class Pattern {
                         ...combo
                     }
                 })
+                console.log("Not Good: ", testCount)
                 return this.results
 
             case "edgeguard":
@@ -166,9 +169,9 @@ class Pattern {
                     if(!stocks.length) return false
                 
                     // Get Blast Zones and Edges
-                    const rightBlastZone = rectangles[settings.stageId].bz
+                    const rightBlastZone = rectangles[stage].bz
                     const leftBlastZone = { ...rightBlastZone, xMin: rightBlastZone.xMin*-1, xMax: rightBlastZone.xMax*-1 }
-                    const rightEdge = rectangles[settings.stageId].edge
+                    const rightEdge = rectangles[stage].edge
                     const leftEdge = {  ...rightEdge, xMin: rightEdge.xMin*-1, xMax: rightEdge.xMax*-1 }
                 
 

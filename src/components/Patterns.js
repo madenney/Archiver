@@ -13,7 +13,8 @@ class Patterns extends React.Component {
 			patterns: props.archive.patterns,
 			showEditPatternModal: false,
 			currentPattern: null,
-			selectedResults: [],
+			selectedResults: props.archive.patterns.length > 0 ? 
+				props.archive.patterns[props.archive.patterns.length-1].results : [],
 			isResultsOpen: false,
 			isVideoOpen: false
 		};

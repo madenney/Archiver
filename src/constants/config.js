@@ -207,6 +207,12 @@ export const videoConfig = [
         type: "checkbox"
     },
     {
+        label: "Enable Chants",
+        default: false,
+        id: "enableChants",
+        type: "checkbox"
+    },
+    {
         label: "No Screen Shake",
         default: false,
         id: "screenShake",
@@ -216,6 +222,12 @@ export const videoConfig = [
         label: "Hide Tags",
         default: false,
         id: "hideTags",
+        type: "checkbox"
+    },
+    {
+        label: "Hide Names",
+        default: false,
+        id: "hideNames",
         type: "checkbox"
     },
     {
@@ -235,6 +247,18 @@ export const videoConfig = [
         default: false,
         id: "shuffle",
         type: "checkbox"
+    },
+    {
+        label: "Resolution (1x-6x)",
+        default: "1x",
+        id: "resolution",
+        type: "textInput"
+    },
+    {
+        label: "Bitrate",
+        default: 6000,
+        id: "bitrateKbps",
+        type: "textInput",
     },
     {
         label: "Add Start Frames",
@@ -263,20 +287,20 @@ export const videoConfig = [
     {
         label: "ISO Path",
         default: "",
-        id: "isoPath",
-        type: "textInput"
+        id: "ssbmIsoPath",
+        type: "openFile"
     },
     {
-        label: "Ishiiruka Path",
+        label: "Dolphin Path",
         default: "",
-        id: "ishiirukaPath",
-        type: "textInput"
+        id: "dolphinPath",
+        type: "openFile"
     },
     {
         label: "Output Directory",
         default: "",
         id: "outputPath",
-        type: "textInput"
+        type: "openDirectory"
     },
     {
         label: "Slice",

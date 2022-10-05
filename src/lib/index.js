@@ -23,7 +23,7 @@ function objectsMatch(obj1,obj2){
   return match
 }
 
-function shuffle(_array) {
+function shuffleArray(_array) {
   const array = _array.slice(0)
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -71,6 +71,6 @@ export default {
   asyncForEach,
   readableDate,
   objectsMatch,
-  shuffle,
+  shuffleArray,
   importAll
 }
