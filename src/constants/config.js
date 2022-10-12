@@ -137,6 +137,13 @@ export const patternsConfig = [
                 default: ""
             },
             {
+                name: "Stage",
+                id: "comboStage",
+                type: "dropdown",
+                options: legalStages,
+                default: ""
+            },
+            {
                 name: "Did Kill",
                 id: "didKill",
                 type: "checkbox",
@@ -154,6 +161,48 @@ export const patternsConfig = [
     },{
         type: "edgeguard",
         options: [
+            {
+                name: "Max Files",
+                id: "maxFiles",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Char",
+                id: "comboerChar",
+                type: "dropdown",
+                options: sortedCharacters,
+                default: ""
+            },
+            {
+                name: "Comboee Char",
+                id: "comboeeChar",
+                type: "dropdown",
+                options: sortedCharacters,
+                default: ""
+            },
+            {
+                name: "Comboer Tag",
+                id: "comboerTag",
+                type: "textInput",
+                default: ""
+            },
+            {
+                name: "Comboee Tag",
+                id: "comboeeTag",
+                type: "textInput",
+                default: ""
+            }
+        ]
+    },{
+        type: "shine-spiked",
+        options: [
+            {
+                name: "Max Frames",
+                id: "maxFrames",
+                type: "int",
+                default: "120"
+            },
             {
                 name: "Max Files",
                 id: "maxFiles",
@@ -215,7 +264,7 @@ export const videoConfig = [
     {
         label: "No Screen Shake",
         default: false,
-        id: "screenShake",
+        id: "disableScreenShake",
         type: "checkbox"
     },
     {
@@ -275,7 +324,7 @@ export const videoConfig = [
     {
         label: "Last Clip Offset",
         default: 0,
-        id: "lastComboOffset",
+        id: "lastClipOffset",
         type: "int"
     },
     {
@@ -306,6 +355,12 @@ export const videoConfig = [
         label: "Slice",
         default: 0,
         id: "slice",
+        type: "int"
+    },
+    {
+        label: "Dolphin Cutoff",
+        default: 300,
+        id: "dolphinCutoff",
         type: "int"
     },
 ]

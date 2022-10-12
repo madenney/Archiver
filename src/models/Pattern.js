@@ -1,6 +1,9 @@
 
-const { SlippiGame } = require("@slippi/slippi-js");
+const { SlippiGame, ConsoleCommunication } = require("@slippi/slippi-js");
 const rectangles = require("../constants/rectangles")
+const { getDistance } = require("../lib").default
+const damageStates = [0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x5B]
+const shineStates = [360,361,362,363,364,365,366,367,368]
 
 class Pattern {
 
@@ -77,15 +80,20 @@ class Pattern {
                     eventEmitter({msg: `${count++}/${resultsLength}`})
 
                     const { minHits, maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = this.method
-                    if(maxFiles && count > maxFiles ) return 
+                    if(parseInt(maxFiles) && count > parseInt(maxFiles) ) return 
                     const { path, players, stage } = file
                     const game = new SlippiGame( path )
-                    const { combos } = game.getStats()
+                    let combos
+                    try {
+                        combos = game.getStats().combos 
+                    } catch(e){
+                        return console.log("Broken file:", file)
+                    }
                     const filteredCombos = []
                     combos.forEach( combo => {
                         if(minHits && combo.moves.length < minHits ) return false
-                        const comboer = players[combo.playerIndex]
-                        const comboee = players.find(p => p.playerIndex != combo.playerIndex )
+                        const comboer = players.find(p => p.playerIndex == combo.moves[0].playerIndex)
+                        const comboee = players.find(p => p.playerIndex == combo.playerIndex )
                         if( comboerChar && comboerChar != comboer.characterId) return false
                         if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
                         if( comboeeChar && comboeeChar != comboee.characterId) return false
@@ -108,7 +116,7 @@ class Pattern {
                 let testCount = 0;
                 this.results = prev.results.filter( combo => {
                     eventEmitter({msg: `${count++}/${resultsLength}`})
-                    const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill, nthMoves } = this.method
+                    const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, comboStage, didKill, nthMoves } = this.method
                     const { moves, comboer, comboee, path, stage } = combo
                     if(minHits && moves.length < minHits ) return false
                     if(maxHits && moves.length > maxHits ) return false
@@ -118,10 +126,12 @@ class Pattern {
                     if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
                     if( comboeeChar && comboeeChar != comboee.characterId) return false
                     if( comboeeTag && comboeeTag != comboee.displayName.toLowerCase()) return false
+                    if( comboStage && comboStage != stage ) return false
                     if( didKill && !combo.didKill ) return false
                     if( nthMoves && nthMoves.length > 0 ){
                         if(!nthMoves.every( nthMove => {
-                            if( nthMove.n >= 0 ){
+                            const n = parseInt(nthMove.n)
+                            if( n >= 0 ){
                                 return moves[n].moveId == nthMove.moveId
                             } else {
                                 return moves[moves.length+n].moveId == nthMove.moveId
@@ -139,6 +149,8 @@ class Pattern {
                 })
                 console.log("Not Good: ", testCount)
                 return this.results
+            
+        
 
             case "edgeguard":
                 this.results = []
@@ -147,23 +159,29 @@ class Pattern {
 
                     const { path, players, stage } = file
                     const { maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag } = this.method
-                    if(count > maxFiles ) return false
+                    if(count > parseInt(maxFiles) ) return false
 
-                    const game = new SlippiGame( path )
-
-                    const stats = game.getStats();
-                    const stocks = stats.stocks.filter( stock => {
+                    let game, stats
+                    try {
+                        game = new SlippiGame( path )
+                        stats = game.getStats();
+                    } catch(e){
+                        console.log("Error - ", file.path )
+                        return console.log("Skipping file")
+                    }
+                    const stocks = []
+                    stats.stocks.forEach( stock => {
                         const comboer = players.find(p => p.playerIndex != stock.playerIndex )
                         const comboee = players.find(p => p.playerIndex == stock.playerIndex )
                         if( comboerChar && comboerChar != comboer.characterId) return false
                         if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
                         if( comboeeChar && comboeeChar != comboee.characterId) return false
                         if( comboeeTag && comboeeTag != comboee.displayName.toLowerCase()) return false
-                        return {
+                        stocks.push({
                             ...stock,
                             comboer,
                             comboee
-                        }
+                        })
                     })
 
                     if(!stocks.length) return false
@@ -234,6 +252,7 @@ class Pattern {
                     })
                 
                     // make clips
+                    const clips = []
                     rightEdgeGuardStocks.forEach(s => {
                         // find last spot hit inside of box
                         let currentFrame = s.endFrame -1
@@ -244,7 +263,8 @@ class Pattern {
                             ){
                                 clips.push({
                                     startFrame: currentFrame,
-                                    endFrame: s.endFrame
+                                    endFrame: s.endFrame,
+                                    ...s
                                 })
                                 break
                             }
@@ -262,14 +282,15 @@ class Pattern {
                             ){
                                 clips.push({
                                     startFrame: currentFrame,
-                                    endFrame: s.endFrame
+                                    endFrame: s.endFrame,
+                                    ...s
                                 })
                                 break
                             }
                             currentFrame--
                         }
                     })
-                    this.results.push({...clip,...file})
+                    clips.forEach( clip => this.results.push({...clip,...file}))
                 })
             
                 return this.results
@@ -293,3 +314,18 @@ class Pattern {
 }
 
 export default Pattern
+
+
+function areCoordsInRectangle(coords,rectangle){
+    return (
+        coords.x > rectangle.xMin && coords.x < rectangle.xMax && 
+        coords.y > rectangle.yMin && coords.y < rectangle.yMax
+    )
+}
+
+function _areCoordsInRectangle(coords,rectangle){
+    return (
+        coords.x < rectangle.xMin && coords.x > rectangle.xMax && 
+        coords.y > rectangle.yMin && coords.y < rectangle.yMax
+    )
+}

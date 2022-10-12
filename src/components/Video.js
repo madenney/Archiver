@@ -36,10 +36,10 @@ class Video extends React.Component {
 	async generateVideo(){
 		console.log("GENERATING VIDEO")
 		const { selectedResults } = this.props
-		console.log(selectedResults)
 		const { numCPUs, dolphinPath, ssbmIsoPath, gameMusic, hideHud, hideTags,
 			hideNames, fixedCamera, enableChants, bitrateKbps, resolution, concatenate,
-			outputPath, addStartFrames, addEndFrames, slice, shuffle } = this.state
+			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
+			dolphinCutoff, disableScreenShake } = this.state
 		const slpTmpDir = path.join(os.tmpdir(),
                           `tmp-${crypto.randomBytes(12).toString('hex')}`);
 		const config = {
@@ -51,11 +51,13 @@ class Video extends React.Component {
 			hideHud: hideHud,
 			hideTags: hideTags,
 			hideNames: hideNames,
+			disableScreenShake: disableScreenShake,
 			disableChants: !enableChants,
 			fixedCamera: fixedCamera,
 			bitrateKbps: bitrateKbps,
 			resolution: resolution,
-			concatenate: concatenate
+			concatenate: concatenate,
+			dolphinCutoff: dolphinCutoff
 		}
 
 		let outputDirectoryName = "output";
@@ -67,18 +69,20 @@ class Video extends React.Component {
 
 		let finalResults = selectedResults;
 		if( shuffle ) finalResults = shuffleArray(finalResults)
-		if( slice ) finalResults = finalResults.slice(0,slice)
+		if( parseInt(slice) ) finalResults = finalResults.slice(0,parseInt(slice))
 		const inputJSON = []
 		finalResults.forEach((result, index) => {
 			inputJSON.push({
 				"outputPath": path.resolve(`${fullOutputDirectoryPath}/${index}.avi`),
 				"queue": [{
 					path: result.path,
-					startFrame: result.startFrame - addStartFrames,
-					endFrame: result.endFrame + addEndFrames
+					startFrame: result.startFrame - parseInt(addStartFrames),
+					endFrame: result.endFrame + parseInt(addEndFrames)
 				}]
 			})
 		})
+
+		if( parseInt(lastClipOffset) ) inputJSON[inputJSON.length-1].queue[0].endFrame += parseInt(lastClipOffset)
 		console.log(fullOutputDirectoryPath)
 		fs.mkdirSync(path.resolve(fullOutputDirectoryPath))
 
@@ -98,8 +102,9 @@ class Video extends React.Component {
 
 	async handleGetPath(c){
 		const path = await ipcRenderer.invoke("showDialog", [c.type])
-		this.setState({[c.id]: path})
-		localStorage[c.id] = path
+
+		this.setState({[c.id]: path[0]})
+		localStorage[c.id] = path[0]
 	}
 
 	renderInput(c){

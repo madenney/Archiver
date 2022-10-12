@@ -105,7 +105,8 @@ const executeCommandsInQueue = async (
   argsArray,
   numWorkers,
   options,
-  onSpawn
+  onSpawn,
+  dolphinCutoff
 ) => {
   const numTasks = argsArray.length
   let count = 0
@@ -115,6 +116,13 @@ const executeCommandsInQueue = async (
     while ((args = argsArray.pop()) !== undefined) {
       const process_ = spawn(command, args, options)
       const exitPromise = exit(process_)
+      if( dolphinCutoff ){
+        console.log("setting dolphin cuttoff")
+        setTimeout(() => {
+          console.log("TOO SLOW")
+          process.kill()
+        }, parseInt(dolphinCutoff)*1000)
+      }
       if (onSpawn) {
         await onSpawn(process_, args)
       }
@@ -222,7 +230,8 @@ const processReplayConfigs = async (files, config) => {
     dolphinArgsArray,
     config.numProcesses,
     {},
-    killDolphinOnEndFrame
+    killDolphinOnEndFrame,
+    config.dolphinCutoff
   )
 
   // Merge video and audio files
@@ -244,7 +253,6 @@ const processReplayConfigs = async (files, config) => {
 }
 
 const getMinimumDuration = async (videoFile) => {
-  console.log("Getting Min Duration: ", videoFile)
   const audioArgs = [
     "-select_streams",
     "a:0",
@@ -276,11 +284,8 @@ const getMinimumDuration = async (videoFile) => {
     const match = regex.exec(data)
     videoDuration = match[1]
   })
-  console.log("here", videoFile)
   await audioClose
-  console.log("here2", videoFile)
   await videoClose
-  console.log("there: ", audioDuration, videoDuration)
   return Math.min(audioDuration, videoDuration)
 }
 
@@ -388,6 +393,7 @@ const configureDolphin = async (config) => {
     newSettings.push("$Optional: Prevent Character Crowd Chants")
   if (config.fixedCamera) newSettings.push("$Optional: Fixed Camera Always")
   if (!config.widescreenOff) newSettings.push("$Optional: Widescreen 16:9")
+  if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
 
   newSettings.push("[Gecko_Disabled]")
   if (config.hideNames) newSettings.push("$Optional: Show Player Names")
@@ -395,12 +401,11 @@ const configureDolphin = async (config) => {
   await fsPromises.writeFile(gameSettingsFilename, newSettings.join("\n"))
 
   // Graphics settings
-  console.log(graphicsSettingsFilename)
   const rl = readline.createInterface({
     input: fs.createReadStream(graphicsSettingsFilename),
     crlfDelay: Infinity,
   })
-  console.log("BUTTHOLT", rl)
+  
   newSettings = []
   const aspectRatioSetting = config.widescreenOff ? 5 : 6
   for await (const line of rl) {

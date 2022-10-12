@@ -68,9 +68,9 @@ class File {
             this.info = "No length";
             return
         }
-        if( length < 5 ){ 
+        if( length < 20 ){ 
             this.isValid = false;
-            this.info = "Game Length < 5 seconds";
+            this.info = "Game Length < 20 seconds";
             return
         }
 

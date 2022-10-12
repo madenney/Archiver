@@ -30,7 +30,7 @@ class Files extends React.Component {
 		const { archive } = this.props
 		this.setState({processingFiles: true})
 		archive.processFiles((e) => {
-			this.setState({processMsg: e.msg })
+			console.log(e.msg)
 		})
 		this.setState({processingFiles: false})
 		this.forceUpdate()
@@ -71,7 +71,7 @@ class Files extends React.Component {
 				<div className="row">
 					<button className="normal-button" onClick={this.addFiles.bind(this)}>Add files</button>
 					<button className="normal-button" onClick={this.process.bind(this)}>Process</button>
-					<button hidden className="normal-button">Test</button>
+					<button className="normal-button" onClick={this.countNames.bind(this)}>Names</button>
 					<div></div>
 				</div>
 				<div className={"row " + (archive.files.length ? "" : "hidden")} >
@@ -80,6 +80,22 @@ class Files extends React.Component {
 			</div>
 		)
 	}
+
+	countNames(){
+        const { archive } = this.props
+        const names = {}
+        archive.files.filter(f=>f.isValid).forEach( file => {
+            file.players.forEach( player => {
+                const name = player.displayName.toLowerCase();
+                if(names[name]){
+                    names[name]++
+                } else {
+                    names[name] = 1
+                }
+            })
+        })
+        console.log(names)
+    }
 
 	render(){
 		const { isOpen } = this.state
