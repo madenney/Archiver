@@ -82,6 +82,7 @@ class Pattern {
                     const { minHits, maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = this.method
                     if(parseInt(maxFiles) && count > parseInt(maxFiles) ) return 
                     const { path, players, stage } = file
+                    if(stage == "32") return false
                     const game = new SlippiGame( path )
                     let combos
                     try {

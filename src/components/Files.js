@@ -27,6 +27,7 @@ class Files extends React.Component {
 	}
 
 	process(){
+		console.log("WHY")
 		const { archive } = this.props
 		this.setState({processingFiles: true})
 		archive.processFiles((e) => {
