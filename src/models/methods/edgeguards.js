@@ -18,7 +18,8 @@ function _areCoordsInRectangle(coords,rectangle){
 
 export default (prev, params, eventEmitter) => {
     const results = []
-    prev.results.slice(0,params.maxFiles).forEach( ( file, index ) => {
+    const { maxFiles } = params
+    prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( file, index ) => {
         const { maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag } = params
         if( index % 100 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 

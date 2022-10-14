@@ -2,8 +2,9 @@ const { SlippiGame } = require("@slippi/slippi-js");
 
 export default (prev, params, eventEmitter) => {
     const results = []
-    prev.results.slice(0,params.maxFiles).forEach( (file, index) => {
-        const { minHits, maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = params
+    const { maxFiles } = params
+    prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( (file, index) => {
+        const { minHits, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = params
         if(index % 100 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
         const { path, players, stage } = file
