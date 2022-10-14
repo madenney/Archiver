@@ -5,7 +5,8 @@ import { moves } from "./moves"
 
 export const patternsConfig = [
     {
-        type: "file",
+        id: "files",
+        label: "Files",
         options: [
             {
                 name: "Stage",
@@ -42,7 +43,8 @@ export const patternsConfig = [
             },
         ]
     },{
-        type: "slpParser",
+        id: "slpParser",
+        label: "Combo Parser",
         options: [
             {
                 name: "Min Hits",
@@ -90,7 +92,8 @@ export const patternsConfig = [
             }
         ]
     },{
-        type: "comboFilter",
+        id: "comboFilter",
+        label: "Combo Filter",
         options: [
             {
                 name: "Min Hits",
@@ -159,7 +162,8 @@ export const patternsConfig = [
             }
         ]
     },{
-        type: "edgeguard",
+        id: "edgeguards",
+        label: "Edgeguards",
         options: [
             {
                 name: "Max Files",
@@ -195,18 +199,25 @@ export const patternsConfig = [
             }
         ]
     },{
-        type: "shine-spiked",
+        id: "single-actionstate",
+        label: "Action State",
         options: [
-            {
-                name: "Max Frames",
-                id: "maxFrames",
-                type: "int",
-                default: "120"
-            },
             {
                 name: "Max Files",
                 id: "maxFiles",
                 type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Action State",
+                id: "comboerActionState",
+                int: "dropdown",
+                default: ""
+            },
+            {
+                name: "Comboee Action State",
+                id: "comboeeActionState",
+                int: "dropdown",
                 default: ""
             },
             {
@@ -239,8 +250,6 @@ export const patternsConfig = [
     }
 ]
 
-const keys = ["hideHud", "gameMusic", "numCPUs", "isoPath", "ishiirukaPath", "shuffle","slice",
-"lastComboOffset", "screenShake"]
 
 export const videoConfig = [
     {

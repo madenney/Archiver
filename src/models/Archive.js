@@ -39,14 +39,17 @@ class Archive {
     }
 
     addNewPattern(type){
-        const template = patternsConfig.find(p=>p.type==type)
+        const template = patternsConfig.find(p=>p.id==type)
         if(!template){
             throw `Error: Invalid Pattern Type ${type}`
         }
-        console.log("FOUND TEMPLATE: ", template)
-        const newPattern = {type,method:{}}
+        const newPattern = {
+            type: template.id,
+            label: template.label,
+            params: {}
+        }
         template.options.forEach( option => {
-            newPattern.method[option.id] = option.default
+            newPattern.params[option.id] = option.default
         })
         this.patterns.push( new Pattern(newPattern) )
     }

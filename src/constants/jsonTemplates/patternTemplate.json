@@ -2,6 +2,8 @@
 	"name": null,
 	"isActive": false,
 	"isProcessed": false,
-	"method": null,
+	"type": null,
+	"label": null,
+	"params": null,
     "results": null
 }

@@ -1,13 +1,11 @@
 
 import React from 'react'
-import path from "path"
 const { characters } = require("../constants/characters")
 const { stages } = require("../constants/stages")
 const { importAll } = require('../lib').default
 
 const images = importAll(require.context('../images', true, /\.(png|jpe?g|svg)$/));
 
-console.log(images)
 class Results extends React.Component {
 
 	constructor(props){

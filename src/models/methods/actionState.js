@@ -1,10 +1,14 @@
-ls 
-case "shine-spiked":
+const { SlippiGame } = require("@slippi/slippi-js");
+const damageStates = [0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x5B]
+const shineStates = [360,361,362,363,364,365,366,367,368]
+
+export default (prev, params, eventEmitter) => {
+
     this.results = []
     let badCount = 0
     prev.results.forEach( file => {
 
-        const { maxFiles, maxFrames, comboerChar, comboerTag, comboeeChar, comboeeTag } = this.method
+        const { maxFiles, maxFrames, comboerChar, comboerTag, comboeeChar, comboeeTag } = params
         if(parseInt(maxFiles) && count > parseInt(maxFiles) ) return 
         eventEmitter({msg: `${count++}/${resultsLength}`})
         const { path, players, stage } = file
@@ -62,3 +66,4 @@ case "shine-spiked":
     })
     console.log("Bad Count: ", badCount)
     return this.results
+}

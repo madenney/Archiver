@@ -21,7 +21,6 @@ class Patterns extends React.Component {
 	}
 
 	runPattern(pattern){
-		console.log("Running Pattern: ", pattern)
 		const { archive } = this.props
 		const patternIndex = archive.patterns.indexOf(pattern)
 		if( patternIndex == 0 ){
@@ -39,13 +38,12 @@ class Patterns extends React.Component {
 	addNewPattern(e){
 		const { archive } = this.props
 		const type = e.target.value
-		console.log(type)
 		archive.addNewPattern(type)
 		this.forceUpdate();
 	}
 
 	renderEditOptions(pattern){
-		const config = patternsConfig.find(p => p.type == pattern.type)
+		const config = patternsConfig.find(p => p.id == pattern.type)
 		return config.options.map( option => {
 			
 			let input = "";
@@ -53,13 +51,13 @@ class Patterns extends React.Component {
 				case "textInput":
 				case "int":
 					input = <input className="modal-row-input"
-						onChange={e => {pattern.method[option.id] = e.target.value; this.forceUpdate()}}
-						value={pattern.method[option.id]}
+						onChange={e => {pattern.params[option.id] = e.target.value; this.forceUpdate()}}
+						value={pattern.params[option.id]}
 					/>
 					break;
 				case "dropdown":
-					input = <select value={pattern.method[option.id]} className="modal-row-input" 
-						onChange={e => {pattern.method[option.id] = e.target.value; this.forceUpdate()}}>
+					input = <select value={pattern.params[option.id]} className="modal-row-input" 
+						onChange={e => {pattern.params[option.id] = e.target.value; this.forceUpdate()}}>
 						<option value="">Any</option>
 						{option.options.map(o => <option key={o.id} value={o.id}>{o.shortName}</option> )}
 					</select>
@@ -67,16 +65,16 @@ class Patterns extends React.Component {
 				case "checkbox":
 					input = <input 
 						className="modal-row-input modal-row-checkbox" type="checkbox"
-						checked={pattern.method[option.id]}
-						onChange={(e) => { pattern.method[option.id] = e.target.checked; this.forceUpdate()}}
+						checked={pattern.params[option.id]}
+						onChange={(e) => { pattern.params[option.id] = e.target.checked; this.forceUpdate()}}
 					/>
 					break;
 				case "nthMoves":
 					input = <div className="nth-moves">
 						<button className="add-nth-move-button" 
-							onClick={() => {pattern.method[option.id].push({moveId: "", n: ""}); this.forceUpdate()}}
+							onClick={() => {pattern.params[option.id].push({moveId: "", n: ""}); this.forceUpdate()}}
 						>Add Move</button>
-						{ pattern.method[option.id].map((move,index) => {
+						{ pattern.params[option.id].map((move,index) => {
 							return <div key={index} className="nth-move">
 								<div className="nth-move-label">N</div>
 								<input className="nth-move-input" value={move.n} 
@@ -88,7 +86,7 @@ class Patterns extends React.Component {
 								>{option.options.map(o => <option key={o.id} value={o.id}>{o.shortName}</option> )}
 								</select>
 								<div className="nth-move-delete"
-									onClick={() => {pattern.method[option.id].splice(index,1); this.forceUpdate()}}>
+									onClick={() => {pattern.params[option.id].splice(index,1); this.forceUpdate()}}>
 								✕</div>
 							</div>
 						})}
@@ -106,7 +104,6 @@ class Patterns extends React.Component {
 
 	renderEditPatternModal(){
 		const { currentPattern } = this.state
-		console.log("EDITNG: ", currentPattern)
 		return (
 			<div className="modal-container" onClick={() => this.setState({ showEditPatternModal: false})}>
 				<div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -121,7 +118,7 @@ class Patterns extends React.Component {
 		return patterns.map( (pattern, index) => {
 			return (
 				<div key={index} className="pattern-row">
-					<div onClick={() => console.log(pattern)} className="pattern-title">{pattern.type}</div>
+					<div onClick={() => console.log(pattern)} className="pattern-title">{pattern.label}</div>
 					<button className="pattern-button" 
 						onClick={() => this.setState({
 							showEditPatternModal: true,
@@ -142,17 +139,13 @@ class Patterns extends React.Component {
 		})
 	}
 
-	renderResult(pattern){
-
-	}
-
 	renderSection(){
 		return (
 			<div className="section-content">
 					<div className="add-pattern-label">Add - </div>
 					<select value="default" className="add-pattern-dropdown" onChange={this.addNewPattern.bind(this)}>
-						<option value="default" disabled>Select Pattern</option>
-						{patternsConfig.map(p => <option key={p.type}>{p.type}</option> )}
+						<option key="default" value="default" disabled>Select Pattern</option>
+						{patternsConfig.map(p => <option key={p.id} value={p.id}>{p.label}</option> )}
 					</select> 
 				<div id="patterns-list">{this.renderPatterns()}</div>
 			</div>
@@ -162,7 +155,6 @@ class Patterns extends React.Component {
 	render(){
 		const { archive } = this.props
 		const { isOpen, isResultsOpen, isVideoOpen, showEditPatternModal, selectedResults } = this.state
-		console.log("SELECTED RESULTS", selectedResults)
 		return (
 			<div>
 				<div className="section">
