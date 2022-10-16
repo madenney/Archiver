@@ -226,7 +226,7 @@ body {
     border: solid 4px #282828;
     background-color: #342E37;
     border-radius: 6px;
-    width: 650px;
+    width: 750px;
     min-height: 400px;
     max-height: 500px;
     margin: auto;
@@ -236,6 +236,8 @@ body {
 }
 
 .modal-row {
+    margin-right: 65px;
+    display: inline-block;
     padding: 5px;
     font-size: 20px;
     margin-bottom: 10px;

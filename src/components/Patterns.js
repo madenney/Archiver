@@ -1,4 +1,6 @@
 import React from 'react'
+//import { MultiSelect } from "react-multi-select-component";
+import Select from 'react-select'
 import Results from "./Results"
 import Video from "./Video"
 import { patternsConfig } from "../constants/config.js"
@@ -42,6 +44,17 @@ class Patterns extends React.Component {
 		this.forceUpdate();
 	}
 
+	handleMultiChange(e, array){
+		console.log(e, array)
+		const val = e.target.value
+		if(array.indexOf(val) > -1 ){
+			array.splice(array.indexOf(val),1)
+		} else {
+			array.push(val)
+		}
+		this.forceUpdate()
+	}
+
 	renderEditOptions(pattern){
 		const config = patternsConfig.find(p => p.id == pattern.type)
 		return config.options.map( option => {
@@ -56,11 +69,13 @@ class Patterns extends React.Component {
 					/>
 					break;
 				case "dropdown":
-					input = <select value={pattern.params[option.id]} className="modal-row-input" 
-						onChange={e => {pattern.params[option.id] = e.target.value; this.forceUpdate()}}>
-						<option value="">Any</option>
-						{option.options.map(o => <option key={o.id} value={o.id}>{o.shortName}</option> )}
-					</select>
+					input = <select 
+								value={pattern.params[option.id]} className="modal-row-input"
+								onChange={(e) => { pattern.params[option.id] = e.target.value; this.forceUpdate()}}
+							>
+							<option value="">Any</option>
+							{option.options.map(o => <option key={o.id} value={o.id}>{o.shortName}</option> )}
+						</select>
 					break;
 				case "checkbox":
 					input = <input 

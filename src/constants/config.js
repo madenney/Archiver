@@ -1,6 +1,7 @@
 import { legalStages } from "./stages"
 import { sortedCharacters } from "./characters"
 import { moves } from "./moves"
+import { actionStates } from "./actionStates"
 
 
 export const patternsConfig = [
@@ -199,7 +200,7 @@ export const patternsConfig = [
             }
         ]
     },{
-        id: "single-actionstate",
+        id: "actionStates",
         label: "Action State",
         options: [
             {
@@ -209,15 +210,53 @@ export const patternsConfig = [
                 default: ""
             },
             {
-                name: "Comboer Action State",
+                name: "Comboer State",
                 id: "comboerActionState",
-                int: "dropdown",
+                type: "dropdown",
+                options: actionStates,
                 default: ""
             },
             {
-                name: "Comboee Action State",
+                name: "Comboee State",
                 id: "comboeeActionState",
-                int: "dropdown",
+                type: "dropdown",
+                options: actionStates,
+                default: ""
+            },
+            {
+                name: "Comboer X Pos",
+                id: "comboerXPos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Y Pos",
+                id: "comboerYPos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Max D",
+                id: "comboerMaxD",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee X Pos",
+                id: "comboeeXpos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee Y Pos",
+                id: "comboeeYpos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee Max D",
+                id: "comboeeMaxD",
+                type: "int",
                 default: ""
             },
             {

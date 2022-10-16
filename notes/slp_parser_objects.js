@@ -295,3 +295,122 @@ const stats = {
     ],
     "gameComplete": true
 }
+
+// Get Frames
+const frames = {
+    "0" : {
+        "frame": 0,
+        "players": [
+            null,
+            {
+                "pre": {
+                    "frame": 0,
+                    "playerIndex": 1,
+                    "isFollower": false,
+                    "seed": 1448963454,
+                    "actionStateId": 14,
+                    "positionX": 42,
+                    "positionY": 23.450098037719727,
+                    "facingDirection": -1,
+                    "joystickX": 0,
+                    "joystickY": 0,
+                    "cStickX": 0,
+                    "cStickY": 0,
+                    "trigger": 0,
+                    "buttons": 0,
+                    "physicalButtons": 0,
+                    "physicalLTrigger": 0,
+                    "physicalRTrigger": 0.0357142873108387,
+                    "percent": 0
+                },
+                "post": {
+                    "frame": 0,
+                    "playerIndex": 1,
+                    "isFollower": false,
+                    "internalCharacterId": 22,
+                    "actionStateId": 14,
+                    "positionX": 42,
+                    "positionY": 23.450098037719727,
+                    "facingDirection": -1,
+                    "percent": 0,
+                    "shieldSize": 60,
+                    "lastAttackLanded": 0,
+                    "currentComboCount": 0,
+                    "lastHitBy": 6,
+                    "stocksRemaining": 4,
+                    "actionStateCounter": 15,
+                    "miscActionState": null,
+                    "isAirborne": null,
+                    "lastGroundId": null,
+                    "jumpsRemaining": null,
+                    "lCancelStatus": null,
+                    "hurtboxCollisionState": null,
+                    "selfInducedSpeeds": {
+                        "airX": null,
+                        "y": null,
+                        "attackX": null,
+                        "attackY": null,
+                        "groundX": null
+                    },
+                    "hitlagRemaining": null,
+                    "animationIndex": null
+                }
+            },
+            null,
+            {
+                "pre": {
+                    "frame": 0,
+                    "playerIndex": 3,
+                    "isFollower": false,
+                    "seed": 1448963454,
+                    "actionStateId": 14,
+                    "positionX": 0,
+                    "positionY": 0.00009999999747378752,
+                    "facingDirection": 1,
+                    "joystickX": 0,
+                    "joystickY": 0,
+                    "cStickX": 0.574999988079071,
+                    "cStickY": 0.30000001192092896,
+                    "trigger": 0,
+                    "buttons": 8388864,
+                    "physicalButtons": 256,
+                    "physicalLTrigger": 0.02857142873108387,
+                    "physicalRTrigger": 0.02857142873108387,
+                    "percent": 0
+                },
+                "post": {
+                    "frame": 0,
+                    "playerIndex": 3,
+                    "isFollower": false,
+                    "internalCharacterId": 7,
+                    "actionStateId": 14,
+                    "positionX": 0,
+                    "positionY": 0.00009999999747378752,
+                    "facingDirection": 1,
+                    "percent": 0,
+                    "shieldSize": 60,
+                    "lastAttackLanded": 0,
+                    "currentComboCount": 0,
+                    "lastHitBy": 6,
+                    "stocksRemaining": 4,
+                    "actionStateCounter": 3,
+                    "miscActionState": null,
+                    "isAirborne": null,
+                    "lastGroundId": null,
+                    "jumpsRemaining": null,
+                    "lCancelStatus": null,
+                    "hurtboxCollisionState": null,
+                    "selfInducedSpeeds": {
+                        "airX": null,
+                        "y": null,
+                        "attackX": null,
+                        "attackY": null,
+                        "groundX": null
+                    },
+                    "hitlagRemaining": null,
+                    "animationIndex": null
+                }
+            }
+        ]
+    }
+}

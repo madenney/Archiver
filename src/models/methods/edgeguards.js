@@ -20,7 +20,7 @@ export default (prev, params, eventEmitter) => {
     const results = []
     const { maxFiles } = params
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( file, index ) => {
-        const { maxFiles, comboerChar, comboerTag, comboeeChar, comboeeTag } = params
+        const { comboerChar, comboerTag, comboeeChar, comboeeTag } = params
         if( index % 100 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
         const { path, players, stage } = file
