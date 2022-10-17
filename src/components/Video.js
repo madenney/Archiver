@@ -1,10 +1,7 @@
 import React from 'react'
 import { videoConfig } from "../constants/config.js"
 import slpToVideo from '../slpToVideo.js'
-//console.log(slpToVideo)
-const crypto = require("crypto")
 const fs = require("fs")
-const os = require("os")
 const { ipcRenderer } = require("electron");
 const path = require("path")
 const { shuffleArray } = require("../lib").default
