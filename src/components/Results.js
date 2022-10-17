@@ -3,6 +3,13 @@ import React from 'react'
 const { characters } = require("../constants/characters")
 const { stages } = require("../constants/stages")
 const { importAll } = require('../lib').default
+const os = require("os")
+const path = require("path")
+const fsPromises = require("fs").promises
+const fs = require("fs")
+const crypto = require("crypto")
+const { spawn } = require("child_process")
+
 
 const images = importAll(require.context('../images', true, /\.(png|jpe?g|svg)$/));
 
@@ -14,7 +21,33 @@ class Results extends React.Component {
 			numPerPage: 8,
 			currentPage: 0
 		};
-	  }
+	}
+
+	showClip(result){
+		if(!localStorage.ssbmIsoPath) throw "Error: No ssbm iso path"
+		if(!localStorage.dolphinPath) throw "Error: No dolphin path"
+
+		const { path: slpPath, startFrame, endFrame } = result
+		console.log(slpPath, startFrame, endFrame)
+		const dolphinConfig = {
+			mode: "normal",
+			replay: slpPath,
+			startFrame,
+			endFrame,
+			isRealTimeMode: false,
+			commandId: `${crypto.randomBytes(12).toString("hex")}`
+		}
+		const tmpDir = path.resolve(os.tmpdir(),`tmp-${crypto.randomBytes(12).toString('hex')}`);
+		fs.mkdirSync(tmpDir)
+		const filePath = path.resolve(tmpDir,"dolphinConfig.json")
+		fsPromises.writeFile(
+            filePath, 
+            JSON.stringify(dolphinConfig)
+        )
+		const args = [ "-i", filePath,"-b","-e",localStorage.ssbmIsoPath]
+        spawn(localStorage.dolphinPath, args)
+		// TODO: Kill process when clip finishes playing and delete JSON file from tmp
+	}
 
 	renderStats(results){
 		const time = (results.reduce((n,c)=>{
@@ -61,7 +94,7 @@ class Results extends React.Component {
 				p2Image = images[characters[p2Char].img + characters[p2Char].colors[p2Color] + ".png"].default
 			}
 
-			return ( <div className="result" key={index}>
+			return ( <div className="result" onClick={() => this.showClip(result)}key={index}>
 				<div className="result-image-container">
 					<div className='characters-container'>
 						<img className='char1-image' src={p1Image}/>

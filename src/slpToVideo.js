@@ -27,8 +27,7 @@ const generateDolphinConfigs = async (replays,config) => {
             startFrame: replay.startFrame,
             endFrame: Math.min(replay.endFrame, metadata.lastFrame-1),
             isRealTimeMode: false,
-            commandId: `${crypto.randomBytes(12).toString("hex")}`,
-            overlayPath: replay.overlayPath
+            commandId: `${crypto.randomBytes(12).toString("hex")}`
         }
         return fsPromises.writeFile(
             path.join(config.outputPath,`${replay.index}.json`), 

@@ -358,6 +358,10 @@ body {
     background-color: #383838
 }
 
+.result:hover {
+    cursor: pointer;
+}
+
 .result-image-container {
     width: 150px;
     display: inline-block;
