@@ -1,12 +1,12 @@
-## Lunar Melee Archiver
+# Lunar Melee Archiver
 
 This is an app to automate clip generation from Slippi files.
 
-# Requirements
+## Requirements
 - [playback build of Ishiiruka Dolphin](https://github.com/project-slippi/Ishiiruka)
 - node version >16
 
-# Installation
+## Installation
 
 Currently, there is no production version of this app. To use, you must run the development version.
 
@@ -23,7 +23,7 @@ Installation steps:
   `npm start`
 
 
-# Usage (this section needs work)
+## Usage (this section needs work)
 - Add slippi files
 - Parse files using a series of filters
 - Check results 
