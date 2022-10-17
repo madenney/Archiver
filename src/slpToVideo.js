@@ -112,7 +112,6 @@ const processReplays = async (replays,config) => {
     console.log("Deleting unmerged audio and video files...")
     promises = []
     const unmergedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('unmerged'));
-    console.log(unmergedFiles)
     unmergedFiles.forEach((file) => {
         promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
     })
@@ -122,7 +121,6 @@ const processReplays = async (replays,config) => {
     console.log("Deleting dolphin config files...")
     promises = []
     const dolphinConfigFiles = fs.readdirSync(config.outputPath).filter(f => f.endsWith('.json'));
-    console.log(dolphinConfigFiles)
     dolphinConfigFiles.forEach((file) => {
         promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
     })
@@ -145,7 +143,6 @@ const executeCommandsInQueue = async (
   onSpawn,
   dolphinCutoff
 ) => {
-    console.log("ARGS:", argsArray[0])
     const numTasks = argsArray.length
     let count = 0
     if (process.stdout.isTTY) process.stdout.write(`${count}/${numTasks}`)
