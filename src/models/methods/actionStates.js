@@ -1,5 +1,5 @@
 const { SlippiGame } = require("@slippi/slippi-js");
-const actionStates = require("../../constants/actionStates")
+const {actionStates} = require("../../constants/actionStates")
 
 export default (prev, params, eventEmitter) => {
 
@@ -124,10 +124,18 @@ function isInstance(comboer,comboee,params){
     if(!comboerActionState && !comboeeActionState ){
         throw "Error: You've passed in no action states so every frame is a valid instance"
     }
-    console.log("Comboer: ", comboer.post.actionStateId)
-    console.log("target state: ", comboerActionState)
-    if( comboerActionState && comboer.post.actionStateId != comboerActionState  ) return false
-    if( comboeeActionState && comboee.post.actionStateId != comboeeActionState  ) return false
+    // convert to values. 
+    // TODO: figure out how to remove this logic 
+    if( comboerActionState){
+        let states = actionStates.find(s=>s.id == comboerActionState).actionStateID
+        states = Array.isArray(states) ? states : [states]
+
+        if( states.indexOf(comboer.post.actionStateId) == -1 ) return false
+    }
+    if( comboeeActionState ) {
+        let states = actionStates.find(s=>s.id == comboeeActionState).actionStateID
+        states = Array.isArray(states) ? states : [states]
+        if( states.indexOf(comboee.post.actionStateId) == -1 ) return false
+    } 
     return true 
-    
 }
