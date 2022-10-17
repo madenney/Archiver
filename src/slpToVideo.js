@@ -5,6 +5,8 @@ const fs = require("fs")
 const fsPromises = require("fs").promises
 const path = require("path")
 const readline = require("readline")
+const { SlippiGame } = require("@slippi/slippi-js");
+
 
 const EFB_SCALE = {
     "1x": 2,
@@ -17,11 +19,13 @@ const EFB_SCALE = {
 
 const generateDolphinConfigs = async (replays,config) => {
     await Promise.all(replays.map((replay) => {
+        const game = new SlippiGame(replay.path)
+        const metadata = game.getMetadata()
         const dolphinConfig = {
             mode: "normal",
             replay: replay.path,
             startFrame: replay.startFrame,
-            endFrame: replay.endFrame,
+            endFrame: Math.min(replay.endFrame, metadata.lastFrame-1),
             isRealTimeMode: false,
             commandId: `${crypto.randomBytes(12).toString("hex")}`,
             overlayPath: replay.overlayPath
