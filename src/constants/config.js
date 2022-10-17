@@ -334,12 +334,6 @@ export const videoConfig = [
         type: "checkbox"
     },
     {
-        label: "Concatenate",
-        default: false,
-        id: "concatenate",
-        type: "checkbox"
-    },
-    {
         label: "Shuffle",
         default: false,
         id: "shuffle",
@@ -382,6 +376,18 @@ export const videoConfig = [
         type: "int"
     },
     {
+        label: "Slice",
+        default: 0,
+        id: "slice",
+        type: "int"
+    },
+    {
+        label: "Dolphin Cutoff",
+        default: 300,
+        id: "dolphinCutoff",
+        type: "int"
+    },
+    {
         label: "ISO Path",
         default: "",
         id: "ssbmIsoPath",
@@ -398,17 +404,5 @@ export const videoConfig = [
         default: "",
         id: "outputPath",
         type: "openDirectory"
-    },
-    {
-        label: "Slice",
-        default: 0,
-        id: "slice",
-        type: "int"
-    },
-    {
-        label: "Dolphin Cutoff",
-        default: 300,
-        id: "dolphinCutoff",
-        type: "int"
-    },
+    }
 ]
