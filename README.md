@@ -13,14 +13,14 @@ Currently, there is no production version of this app. To use, you must run the 
 Installation steps:
 
 - Clone this repository 
- `git clone https://github.com/madenney/Archiver.git`
+`git clone https://github.com/madenney/Archiver.git`
 
 - Install node_modules
-  `cd Archiver`
-  `npm install`
+`cd Archiver`
+`npm install`
 
 - Start app
-  `npm start`
+`npm start`
 
 
 ## Usage (this section needs work)
