@@ -1,6 +1,6 @@
 import React from 'react'
 import { videoConfig } from "../constants/config.js"
-import slpToVideo from '../slp-to-video.js'
+import slpToVideo from '../slpToVideo.js'
 //console.log(slpToVideo)
 const crypto = require("crypto")
 const fs = require("fs")
@@ -40,13 +40,20 @@ class Video extends React.Component {
 			hideNames, fixedCamera, enableChants, bitrateKbps, resolution, concatenate,
 			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
 			dolphinCutoff, disableScreenShake } = this.state
-		const slpTmpDir = path.join(os.tmpdir(),
-                          `tmp-${crypto.randomBytes(12).toString('hex')}`);
+			
+
+		let outputDirectoryName = "output";
+		let count = 1;
+		while(fs.existsSync(path.resolve(`${outputPath}/${outputDirectoryName}`))){
+			outputDirectoryName = `output${count++}`
+		}
+		fs.mkdirSync(path.resolve(outputPath + "/" + outputDirectoryName))
+
 		const config = {
+			outputPath: path.resolve(outputPath + "/" + outputDirectoryName),
 			numProcesses: numCPUs,
 			dolphinPath: path.resolve(dolphinPath),
 			ssbmIsoPath: path.resolve(ssbmIsoPath),
-			tmpdir: path.resolve(slpTmpDir),
 			gameMusicOn: gameMusic,
 			hideHud: hideHud,
 			hideTags: hideTags,
@@ -56,41 +63,27 @@ class Video extends React.Component {
 			fixedCamera: fixedCamera,
 			bitrateKbps: bitrateKbps,
 			resolution: resolution,
-			concatenate: concatenate,
 			dolphinCutoff: dolphinCutoff
 		}
-
-		let outputDirectoryName = "output";
-		let count = 1;
-		while(fs.existsSync(path.resolve(`${outputPath}/${outputDirectoryName}`))){
-			outputDirectoryName = `output${count++}`
-		}
-		const fullOutputDirectoryPath = path.resolve(outputPath + "/" + outputDirectoryName)
 
 		let finalResults = selectedResults;
 		if( shuffle ) finalResults = shuffleArray(finalResults)
 		if( parseInt(slice) ) finalResults = finalResults.slice(0,parseInt(slice))
-		const inputJSON = []
+		const replays = []
 		finalResults.forEach((result, index) => {
-			inputJSON.push({
-				"outputPath": path.resolve(`${fullOutputDirectoryPath}/${index}.avi`),
-				"queue": [{
-					path: result.path,
-					startFrame: result.startFrame - parseInt(addStartFrames),
-					endFrame: result.endFrame + parseInt(addEndFrames)
-				}]
+			replays.push({
+				index,
+				path: result.path,
+				startFrame: result.startFrame - parseInt(addStartFrames),
+				endFrame: result.endFrame + parseInt(addEndFrames)
 			})
 		})
-
-		if( parseInt(lastClipOffset) ) inputJSON[inputJSON.length-1].queue[0].endFrame += parseInt(lastClipOffset)
-		console.log(fullOutputDirectoryPath)
-		fs.mkdirSync(path.resolve(fullOutputDirectoryPath))
-
+		if( parseInt(lastClipOffset) ) replays[replays.length-1].endFrame += parseInt(lastClipOffset)
 
 		console.log("RUNNING.")
-		console.log("INPUT JSON: ", inputJSON)
-		console.log("config: ", config)
-		await slpToVideo(inputJSON, config)
+		console.log("Replays: ", replays)
+		console.log("Config: ", config)
+		await slpToVideo(replays, config)
 
 		console.log("DONZO")
 	}

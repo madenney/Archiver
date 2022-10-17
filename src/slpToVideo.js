@@ -7,39 +7,130 @@ const os = require("os")
 const path = require("path")
 const readline = require("readline")
 const dir = require("node-dir")
-const { SlippiGame } = require("@slippi/slippi-js");
 
 const EFB_SCALE = {
-  "1x": 2,
-  "2x": 4,
-  "3x": 6,
-  "4x": 7,
-  "5x": 8,
-  "6x": 9,
+    "1x": 2,
+    "2x": 4,
+    "3x": 6,
+    "4x": 7,
+    "5x": 8,
+    "6x": 9,
 }
 
-const processReplays = async(replays,config) => {
-  replays.forEach(() => {
+const generateDolphinConfigs = async (replays,config) => {
+    await Promise.all(replays.map((replay) => {
+        const dolphinConfig = {
+            mode: "normal",
+            replay: replay.path,
+            startFrame: replay.startFrame,
+            endFrame: replay.endFrame,
+            isRealTimeMode: false,
+            commandId: `${crypto.randomBytes(12).toString("hex")}`,
+            overlayPath: replay.overlayPath
+        }
+        return fsPromises.writeFile(
+            path.join(config.outputPath,`${replay.index}.json`), 
+            JSON.stringify(dolphinConfig)
+        )
+    }))
+}
+
+
+const processReplays = async (replays,config) => {
+    const dolphinArgsArray = []
+    const ffmpegMergeArgsArray = []
+    const ffmpegOverlayArgsArray = []
+    let promises = []
     
-    //
-  })
+    replays.forEach( replay => {
+
+        const outputFilePath = path.join(config.outputPath,`${replay.index}.avi`)
+
+        dolphinArgsArray.push([
+            "-i",
+            path.resolve(config.outputPath,`${replay.index}.json`),
+            "-o",
+            `${replay.index}-unmerged`,
+            `--output-directory=${config.outputPath}`,
+            "-b",
+            "-e",
+            config.ssbmIsoPath,
+            "--cout",
+        ])
+        // Arguments for ffmpeg merging
+        const ffmpegMergeArgs = [
+            "-i",
+            path.resolve(config.outputPath,`${replay.index}-unmerged.avi`),
+            "-i",
+            path.resolve(config.outputPath,`${replay.index}-unmerged.wav`),
+            "-b:v",
+            `${config.bitrateKbps}k`,
+        ]
+        if (config.resolution === "2x" && !config.widescreenOff) {
+            // Slightly upscale to 1920x1080
+            ffmpegMergeArgs.push("-vf")
+            ffmpegMergeArgs.push("scale=1920:1080")
+        }
+        ffmpegMergeArgs.push(outputFilePath)
+        ffmpegMergeArgsArray.push(ffmpegMergeArgs)
+
+        // Arguments for adding overlays
+        if (replay.overlayPath) {
+            ffmpegOverlayArgsArray.push([
+            "-i",
+            `${outputFilePath}`,
+            "-i",
+            replay.overlayPath,
+            "-b:v",
+            `${config.bitrateKbps}k`,
+            "-filter_complex",
+            "[0:v][1:v] overlay",
+            path.resolve(config.outputPath,`${replay.index}-overlaid.avi`),
+            ])
+        }
+    })
+
+    // Dump frames to video and audio
+    console.log("Dumping video frames and audio...")
+    await executeCommandsInQueue(
+        config.dolphinPath,
+        dolphinArgsArray,
+        config.numProcesses,
+        {},
+        killDolphinOnEndFrame,
+        config.dolphinCutoff
+    )
+
+    // Merge video and audio files
+    console.log("Merging video and audio...")
+    await executeCommandsInQueue(
+        "ffmpeg",
+        ffmpegMergeArgsArray,
+        config.numProcesses,
+        { stdio: "ignore" }
+    )
+
+    // Delete unmerged video and audio files
+    console.log("Deleting unmerged audio and video files...")
+    promises = []
+    const unmergedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('unmerged'));
+    console.log(unmergedFiles)
+    unmergedFiles.forEach((file) => {
+        promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
+    })
+    await Promise.all(promises)
+
+    // Delete dolphin config json files
+    console.log("Deleting dolphin config files...")
+    promises = []
+    const dolphinConfigFiles = fs.readdirSync(config.outputPath).filter(f => f.endsWith('.json'));
+    console.log(dolphinConfigFiles)
+    dolphinConfigFiles.forEach((file) => {
+        promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
+    })
+    await Promise.all(promises)
 }
 
-
-const generateReplayConfig = async (replay, config) => {
-  const config = {
-    mode: "normal",
-    replay: replay.path,
-    startFrame: replay.startFrame,
-    endFrame: replay.endFrame,
-    isRealTimeMode: false,
-    commandId: `${crypto.randomBytes(12).toString("hex")}`,
-    overlayPath: replay.overlayPath,
-    outputPath: path.join(config.outputPath, `${replay.index}.avi`)
-  }
-  const configFn = path.join(config.outputPath, `${replay.index}.json`)
-  await fsPromises.writeFile(configFn, JSON.stringify(config))
-}
 
 const exit = (process) =>
   new Promise((resolve, reject) => {
@@ -64,41 +155,40 @@ const executeCommandsInQueue = async (
   onSpawn,
   dolphinCutoff
 ) => {
-  const numTasks = argsArray.length
-  let count = 0
-  if (process.stdout.isTTY) process.stdout.write(`${count}/${numTasks}`)
-  const worker = async () => {
-    let args
-    while ((args = argsArray.pop()) !== undefined) {
-      const process_ = spawn(command, args, options)
-      const exitPromise = exit(process_)
-      if( dolphinCutoff ){
-        console.log("setting dolphin cuttoff")
-        setTimeout(() => {
-          console.log("TOO SLOW")
-          process_.kill('SIGINT')
-        }, parseInt(dolphinCutoff)*1000)
-      }
-      if (onSpawn) {
-        await onSpawn(process_, args)
-      }
-      await exitPromise
-      count++
-      if (process.stdout.isTTY) {
-        process.stdout.clearLine()
-        process.stdout.cursorTo(0)
-        process.stdout.write(`${count}/${numTasks}`)
-      }
+    console.log("ARGS:", argsArray[0])
+    const numTasks = argsArray.length
+    let count = 0
+    if (process.stdout.isTTY) process.stdout.write(`${count}/${numTasks}`)
+    const worker = async () => {
+        let args
+        while ((args = argsArray.pop()) !== undefined) {
+        const process_ = spawn(command, args, options)
+        const exitPromise = exit(process_)
+        if( dolphinCutoff ){
+            setTimeout(() => {
+            process_.kill('SIGINT')
+            }, parseInt(dolphinCutoff)*1000)
+        }
+        if (onSpawn) {
+            await onSpawn(process_, args)
+        }
+        await exitPromise
+        count++
+        if (process.stdout.isTTY) {
+            process.stdout.clearLine()
+            process.stdout.cursorTo(0)
+            process.stdout.write(`${count}/${numTasks}`)
+        }
+        }
     }
-  }
-  const workers = []
-  while (workers.length < numWorkers) {
-    workers.push(worker())
-  }
-  while (workers.length > 0) {
-    await workers.pop()
-  }
-  if (process.stdout.isTTY) process.stdout.write("\n")
+    const workers = []
+    while (workers.length < numWorkers) {
+        workers.push(worker())
+    }
+    while (workers.length > 0) {
+        await workers.pop()
+    }
+    if (process.stdout.isTTY) process.stdout.write("\n")
 }
 
 const killDolphinOnEndFrame = (process) => {
@@ -397,6 +487,7 @@ const slpToVideo = async (replays, config) => {
       }
     })
     .then(() => configureDolphin(config))
+    .then(() => generateDolphinConfigs(replays,config))
     .then(() => processReplays(replays,config))
     .catch((err) => {
       console.error(err)

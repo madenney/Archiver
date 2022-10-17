@@ -85,6 +85,10 @@ class Archive {
             gameSettings: this.gameSettings
         } 
     }
+
+    generateVideo(){
+        
+    }
 }
 
 export default Archive
