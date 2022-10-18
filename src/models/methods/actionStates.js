@@ -49,16 +49,14 @@ export default (prev, params, eventEmitter) => {
 
         // Treat no comboer/comboee as a ditto, same logic applies
         if(comboer && !comboee){
-            comboee = players.find(p => p.playerIndex != comboer.playerIndex)
+            comboee = players.find(p => p&&p.playerIndex != comboer.playerIndex)
         } else if(!comboer && comboee ){
-            comboer = players.find(p => p.playerIndex != comboee.playerIndex)
+            comboer = players.find(p => p&&p.playerIndex != comboee.playerIndex)
         } else if (!comboer && !comboee ){
             ditto = true
-            comboer = players[0]
-            comboee = players[1]
+            comboer = players.find(p => p)
+            comboee = players.find(p => p&&p.playerIndex != comboer.playerIndex)
         }
-
-        console.log("Ditto? ", ditto)
 
         // once comboer and combee are determined:
         let temp = []
@@ -70,12 +68,11 @@ export default (prev, params, eventEmitter) => {
             
             // this is not always going to work
             if( isInstance(comboerThisFrame,comboeeThisFrame,params)){
-                console.log("Instance: ", currentFrame.frame)
                 temp.push(currentFrame)
             } else {
                 if(temp.length > 0 ){
                     results.push({
-                        file,
+                        path,
                         comboer,
                         comboee,
                         stage,
@@ -90,7 +87,6 @@ export default (prev, params, eventEmitter) => {
             // this will fuck up under conditions that will *probably* never arise
             if( ditto ){
                 if( isInstance(comboeeThisFrame,comboerThisFrame,params)){
-                    console.log("Reverse Instance: ", currentFrame.frame)
                     temp.push(currentFrame)
                 } else {
                     if(temp.length > 0 ){

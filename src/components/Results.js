@@ -45,8 +45,9 @@ class Results extends React.Component {
             JSON.stringify(dolphinConfig)
         )
 		const args = [ "-i", filePath,"-b","-e",localStorage.ssbmIsoPath]
-        spawn(localStorage.dolphinPath, args)
+        const process = spawn(localStorage.dolphinPath, args)
 		// TODO: Kill process when clip finishes playing and delete JSON file from tmp
+		setTimeout(() => {process.kill()}, 3000)
 	}
 
 	renderStats(results){

@@ -19,7 +19,13 @@ const EFB_SCALE = {
 
 const generateDolphinConfigs = async (replays,config) => {
     await Promise.all(replays.map((replay) => {
-        const game = new SlippiGame(replay.path)
+        let game
+        try {
+            game = new SlippiGame(replay.path)
+        } catch(e){
+            console.log("Broken file: ", replay.path)
+            return
+        }
         const metadata = game.getMetadata()
         const dolphinConfig = {
             mode: "normal",

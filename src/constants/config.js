@@ -286,6 +286,73 @@ export const patternsConfig = [
                 default: ""
             }
         ]
+    },{
+        id: "windowFilter",
+        label: "Window Filter",
+        options: [
+            {
+                name: "Start From",
+                id: "startFrom",
+                type: "int",
+                default: 0
+            },
+            {
+                name: "Search Range",
+                id: "searchRange",
+                type: "int",
+                default: 0
+            },
+            {
+                name: "Comboer State",
+                id: "comboerActionState",
+                type: "dropdown",
+                options: actionStates,
+                default: ""
+            },
+            {
+                name: "Comboee State",
+                id: "comboeeActionState",
+                type: "dropdown",
+                options: actionStates,
+                default: ""
+            },
+            {
+                name: "Comboer X Pos",
+                id: "comboerXPos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Y Pos",
+                id: "comboerYPos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboer Max D",
+                id: "comboerMaxD",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee X Pos",
+                id: "comboeeXpos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee Y Pos",
+                id: "comboeeYpos",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Comboee Max D",
+                id: "comboeeMaxD",
+                type: "int",
+                default: ""
+            }
+        ]
     }
 ]
 

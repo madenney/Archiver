@@ -9,8 +9,8 @@ export default (prev, params, eventEmitter) => {
         const {stage,char1,char2,player1,player2} = params
 
         if(stage){
-            if(!Array.isArray(stage)) stage = [stage];
-            if(stage.indexOf(file.stage.toString()) == -1 ) return false
+            const _stage = Array.isArray(stage) ? stage : [stage]
+            if(_stage.indexOf(file.stage.toString()) == -1 ) return false
         }
 
         if(char1 || char2){

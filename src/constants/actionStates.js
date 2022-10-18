@@ -23,6 +23,18 @@ const actionStates = [
       actionStateID: shineStates
     },
     {
+      id: 102,
+      name: "Rest",
+      shortName: "Rest",
+      actionStateID: [369,370,371,372]
+    },
+    {
+      id: 103,
+      name: "Star KO",
+      shortName: "Star KO",
+      actionStateID: [4]
+    },
+    {
       id: 2,
       name: "Jab",
       shortName: "jab",
