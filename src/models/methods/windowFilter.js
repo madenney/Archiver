@@ -40,11 +40,11 @@ export default (prev, params, eventEmitter) => {
 
             if( comboerActionState && comboeeActionState ){
 
-                if( comberStates.indexOf(_comboer.post.actionStateId) != -1 
+                if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 
                     && comboeeStates.indexOf(_comboer.post.actionStateId) != -1 
                 ) return true
             } else if( comboerActionState ){
-                if( comberStates.indexOf(_comboer.post.actionStateId) != -1 ) return true
+                if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 ) return true
             } else if( comboeeActionState ){
                 if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 ) return true
             }
