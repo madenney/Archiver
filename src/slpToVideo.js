@@ -30,7 +30,7 @@ const generateDolphinConfigs = async (replays,config) => {
         const dolphinConfig = {
             mode: "normal",
             replay: replay.path,
-            startFrame: replay.startFrame,
+            startFrame: replay.startFrame - 60 < -123 ? -123 : replay.startFrame - 60,
             endFrame: Math.min(replay.endFrame, metadata.lastFrame-1),
             isRealTimeMode: false,
             commandId: `${crypto.randomBytes(12).toString("hex")}`
@@ -46,6 +46,7 @@ const generateDolphinConfigs = async (replays,config) => {
 const processReplays = async (replays,config) => {
     const dolphinArgsArray = []
     const ffmpegMergeArgsArray = []
+    const ffmpegTrimArgsArray = []
     const ffmpegOverlayArgsArray = []
     let promises = []
     
@@ -64,6 +65,7 @@ const processReplays = async (replays,config) => {
             config.ssbmIsoPath,
             "--cout",
         ])
+
         // Arguments for ffmpeg merging
         const ffmpegMergeArgs = [
             "-i",
@@ -78,14 +80,26 @@ const processReplays = async (replays,config) => {
             ffmpegMergeArgs.push("-vf")
             ffmpegMergeArgs.push("scale=1920:1080")
         }
-        ffmpegMergeArgs.push(outputFilePath)
+        ffmpegMergeArgs.push(path.resolve(config.outputPath,`${replay.index}-merged.avi`))
         ffmpegMergeArgsArray.push(ffmpegMergeArgs)
+
+
+        // Arguments for ffmpeg trimming
+        ffmpegTrimArgsArray.push([
+            "-ss",
+            1,
+            "-i",
+            path.resolve(config.outputPath,`${replay.index}-merged.avi`),
+            "-c",
+            "copy",
+            path.resolve(config.outputPath,`${replay.index}.avi`)
+        ])
 
         // Arguments for adding overlays
         if (replay.overlayPath) {
             ffmpegOverlayArgsArray.push([
             "-i",
-            `${outputFilePath}`,
+            path.resolve(config.outputPath,`${replay.index}.avi`),
             "-i",
             replay.overlayPath,
             "-b:v",
@@ -117,11 +131,29 @@ const processReplays = async (replays,config) => {
         { stdio: "ignore" }
     )
 
+    // Trim buffer frames
+    console.log("Trimming off buffer frames...")
+    await executeCommandsInQueue(
+        "ffmpeg",
+        ffmpegTrimArgsArray,
+        config.numProcesses,
+        { stdio: "ignore" }
+    )
+
     // Delete unmerged video and audio files
     console.log("Deleting unmerged audio and video files...")
     promises = []
-    const unmergedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('unmerged'));
+    const unmergedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('-unmerged'));
     unmergedFiles.forEach((file) => {
+        promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
+    })
+    await Promise.all(promises)
+
+    // Delete untrimmed video and audio files
+    console.log("Deleting untrimmed audio and video files...")
+    promises = []
+    const untrimmedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('-merged'));
+    untrimmedFiles.forEach((file) => {
         promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
     })
     await Promise.all(promises)
