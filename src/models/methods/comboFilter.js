@@ -1,7 +1,6 @@
 
 export default (prev, params, eventEmitter) => {
     return prev.results.filter( ( combo, index )  => {
-        if(index % 100 == 0) eventEmitter({msg: `${index}/${prev.results.length}`})
         const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, comboStage, didKill, nthMoves } = params
         const { moves, comboer, comboee, path, stage } = combo
         if(minHits && moves.length < minHits ) return false

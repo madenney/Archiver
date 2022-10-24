@@ -368,6 +368,17 @@ export const patternsConfig = [
         id: "animeFalco",
         label: "Anime Falco",
         options: []
+    },{
+        id: "comboStats",
+        label: "Combo Stats",
+        options: [
+            {
+                name: "Depth",
+                id: "depth",
+                type: "int",
+                default: 0
+            }
+        ]
     }
 ]
 
