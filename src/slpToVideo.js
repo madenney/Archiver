@@ -6,6 +6,7 @@ const fsPromises = require("fs").promises
 const path = require("path")
 const readline = require("readline")
 const { SlippiGame } = require("@slippi/slippi-js");
+const { pad } = require("./lib").default
 
 
 const EFB_SCALE = {
@@ -36,7 +37,7 @@ const generateDolphinConfigs = async (replays,config) => {
             commandId: `${crypto.randomBytes(12).toString("hex")}`
         }
         return fsPromises.writeFile(
-            path.join(config.outputPath,`${replay.index}.json`), 
+            path.join(config.outputPath,`${pad(replay.index,3)}.json`), 
             JSON.stringify(dolphinConfig)
         )
     }))
@@ -52,13 +53,12 @@ const processReplays = async (replays,config) => {
     
     replays.forEach( replay => {
 
-        const outputFilePath = path.join(config.outputPath,`${replay.index}.avi`)
-
+        const fileBasename = pad(replay.index,3)
         dolphinArgsArray.push([
             "-i",
-            path.resolve(config.outputPath,`${replay.index}.json`),
+            path.resolve(config.outputPath,`${fileBasename}.json`),
             "-o",
-            `${replay.index}-unmerged`,
+            `${fileBasename}-unmerged`,
             `--output-directory=${config.outputPath}`,
             "-b",
             "-e",
@@ -69,9 +69,9 @@ const processReplays = async (replays,config) => {
         // Arguments for ffmpeg merging
         const ffmpegMergeArgs = [
             "-i",
-            path.resolve(config.outputPath,`${replay.index}-unmerged.avi`),
+            path.resolve(config.outputPath,`${fileBasename}-unmerged.avi`),
             "-i",
-            path.resolve(config.outputPath,`${replay.index}-unmerged.wav`),
+            path.resolve(config.outputPath,`${fileBasename}-unmerged.wav`),
             "-b:v",
             `${config.bitrateKbps}k`,
         ]
@@ -80,7 +80,7 @@ const processReplays = async (replays,config) => {
             ffmpegMergeArgs.push("-vf")
             ffmpegMergeArgs.push("scale=1920:1080")
         }
-        ffmpegMergeArgs.push(path.resolve(config.outputPath,`${replay.index}-merged.avi`))
+        ffmpegMergeArgs.push(path.resolve(config.outputPath,`${fileBasename}-merged.avi`))
         ffmpegMergeArgsArray.push(ffmpegMergeArgs)
 
 
@@ -89,24 +89,24 @@ const processReplays = async (replays,config) => {
             "-ss",
             1,
             "-i",
-            path.resolve(config.outputPath,`${replay.index}-merged.avi`),
+            path.resolve(config.outputPath,`${fileBasename}-merged.avi`),
             "-c",
             "copy",
-            path.resolve(config.outputPath,`${replay.index}.avi`)
+            path.resolve(config.outputPath,`${fileBasename}.avi`)
         ])
 
         // Arguments for adding overlays
         if (replay.overlayPath) {
             ffmpegOverlayArgsArray.push([
             "-i",
-            path.resolve(config.outputPath,`${replay.index}.avi`),
+            path.resolve(config.outputPath,`${fileBasename}.avi`),
             "-i",
             replay.overlayPath,
             "-b:v",
             `${config.bitrateKbps}k`,
             "-filter_complex",
             "[0:v][1:v] overlay",
-            path.resolve(config.outputPath,`${replay.index}-overlaid.avi`),
+            path.resolve(config.outputPath,`${fileBasename}-overlaid.avi`),
             ])
         }
     })
@@ -261,6 +261,7 @@ const configureDolphin = async (config) => {
   if (config.fixedCamera) newSettings.push("$Optional: Fixed Camera Always")
   if (!config.widescreenOff) newSettings.push("$Optional: Widescreen 16:9")
   if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
+  if (config.hideNeutralFalco) newSettings.push("$Optional: Hide Neutral Falco")
 
   newSettings.push("[Gecko_Disabled]")
   if (config.hideNames) newSettings.push("$Optional: Show Player Names")

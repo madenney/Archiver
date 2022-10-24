@@ -414,3 +414,71 @@ const frames = {
         ]
     }
 }
+
+// Get Settings 
+const settings = {
+    "slpVersion": "3.7.0",
+    "isTeams": false,
+    "isPAL": false,
+    "stageId": 31,
+    "players": [
+        {
+            "playerIndex": 0,
+            "port": 1,
+            "characterId": 20,
+            "characterColor": 2,
+            "startStocks": 4,
+            "type": 0,
+            "teamId": 0,
+            "controllerFix": "UCF",
+            "nametag": "",
+            "displayName": "",
+            "connectCode": "",
+            "userId": ""
+        },
+        {
+            "playerIndex": 1,
+            "port": 2,
+            "characterId": 20,
+            "characterColor": 0,
+            "startStocks": 4,
+            "type": 0,
+            "teamId": 0,
+            "controllerFix": "UCF",
+            "nametag": "",
+            "displayName": "",
+            "connectCode": "",
+            "userId": ""
+        }
+    ],
+    "scene": 2,
+    "gameMode": 8,
+    "language": null
+}
+
+// Get Metadata
+const metadata = {
+    "startAt": "2020-12-15T19:41:40Z",
+    "lastFrame": 6245,
+    "players": {
+        "0": {
+            "names": {
+                "netplay": "Captain Planet",
+                "code": "WOOG#832"
+            },
+            "characters": {
+                "22": 6590
+            }
+        },
+        "1": {
+            "names": {
+                "netplay": "mang0",
+                "code": "MANG#0"
+            },
+            "characters": {
+                "22": 6590
+            }
+        }
+    },
+    "playedOn": "dolphin"
+}

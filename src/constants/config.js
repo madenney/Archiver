@@ -353,6 +353,21 @@ export const patternsConfig = [
                 default: ""
             }
         ]
+    },{
+        id: "stomp",
+        label: "Stomp",
+        options: [
+            {
+                name: "Move",
+                id: "move",
+                type: "dropdown",
+                options: moves
+            },
+        ]
+    },{
+        id: "animeFalco",
+        label: "Anime Falco",
+        options: []
     }
 ]
 

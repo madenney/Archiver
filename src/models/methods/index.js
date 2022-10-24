@@ -4,7 +4,8 @@ const comboFilter = require("./comboFilter").default
 const edgeguards = require("./edgeguards").default
 const actionStates = require("./actionStates").default
 const windowFilter = require("./windowFilter").default
+const animeFalco = require("./animeFalco").default
 
 export default {
-    files, slpParser, comboFilter, edgeguards, actionStates, windowFilter
+    files, slpParser, comboFilter, edgeguards, actionStates, windowFilter, animeFalco
 }

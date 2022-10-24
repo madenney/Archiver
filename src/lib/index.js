@@ -9,6 +9,12 @@ async function asyncForEach(array, callback) {
   }
 }
 
+function pad(num, size) {
+  num = num.toString();
+  while (num.length < size) num = "0" + num;
+  return num;
+}
+
 function readableDate(timestamp){
   const d = new Date(parseInt(timestamp));
   return `${d.getMonth()+1}-${d.getDate()}-${d.getFullYear()}`
@@ -76,6 +82,7 @@ export default {
 	...require("./file"),
   getSlpFilePaths,
   asyncForEach,
+  pad,
   readableDate,
   objectsMatch,
   shuffleArray,

@@ -3,7 +3,7 @@ export default (prev, params, eventEmitter ) => {
     const results = []
     prev.results.forEach( file => {
 
-        function findFPAABSB(game,falco,notFalco,finalClips,file){
+        function findFPAABSG(game,falco,notFalco,finalClips,file){
             const frames = game.getFrames();
         
             // find shield stun clips
@@ -35,8 +35,6 @@ export default (prev, params, eventEmitter ) => {
                     }
                 }
             })
-            // shieldGrabs.forEach(clip => finalClips.push({clip,file}))
-            // return
         
             // find fsmash responses
             const fsmashResponses = []
