@@ -1,4 +1,4 @@
-const { SlippiGame } = require("@slippi/slippi-js");
+const { SlippiGame, ConsoleCommunication } = require("@slippi/slippi-js");
 const { asyncForEach, pad } = require("../../lib").default
 const { spawn } = require("child_process")
 const crypto = require("crypto")
@@ -6,6 +6,8 @@ const fs = require("fs")
 const fsPromises = require("fs").promises
 const path = require("path")
 const readline = require("readline")
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const damageStates = [0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56]
 //0x57,0x58,0x59,0x5A,0x5B
@@ -13,121 +15,31 @@ const damageStates = [0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x5
 export default (prev, params, eventEmitter) => {
 
     const clips = []
+    const outputPath = "/home/matt/Projects/output/"
+    let outputDirectoryName = "output";
+    let fileCount = 1;
+    while(fs.existsSync(path.resolve(`${outputPath}/${outputDirectoryName}`))){
+        outputDirectoryName = `output${fileCount++}`
+    }
+    fs.mkdirSync(path.resolve(outputPath + "/" + outputDirectoryName))
 
-    const clipNum = 5
-    asyncForEach(prev.results.slice(clipNum,clipNum+1), async ( combo, index )  => {
+    const clipNum = 40
+    asyncForEach(prev.results.slice(clipNum,clipNum+3), async ( combo, index )  => {
         if(index % 1 == 0) eventEmitter({msg: `${index}/${prev.results.length}`})
         const { moves, comboer, comboee, path: filePath, stage } = combo
-        console.log("Combo Moves: ", moves )
-        let frames
-        try {
-            const game = new SlippiGame( filePath )
-            frames = game.getFrames()
-        } catch(e){
-            console.log(e)
-            return console.log("Broken file:", filePath)
-        }
 
-        const startFrame = moves[0].frame
-        const endFrame = moves[moves.length-1].frame
-
-        const frameWindow = []
-        for( let i = startFrame - 60; i < endFrame + 60; i++ ){
-            frameWindow.push(i)
-        }
-
-        const moveFrames = moves.map(move => move.frame)
-        console.log(moveFrames)
-        const visibleFrames = 30
-        const buffer = 0
-        let temp = []
-        clips.push({
+        const preClipBufferFrames = 60
+        const postClipBufferFrames = 100
+        const clip = {
             path: filePath,
             stage,
             comboer,
             comboee,
             visible: false,
-            startFrame: moveFrames[0] - 60,
-            endFrame: moveFrames[0] - buffer
-        })
-        for( let i = 0; i < moveFrames.length - 1; i++ ){
-            clips.push({
-                path: filePath,
-                stage,
-                comboer,
-                comboee,
-                visible: true,
-                startFrame: moveFrames[i],
-                endFrame: moveFrames[i] + visibleFrames - buffer
-            })
-            clips.push({
-                path: filePath,
-                stage,
-                comboer,
-                comboee,
-                visible: false,
-                startFrame: moveFrames[i] + visibleFrames,
-                endFrame: moveFrames[i+1] - buffer
-            })
+            startFrame: moves[0].frame - preClipBufferFrames,
+            endFrame: moves[moves.length-1].frame + postClipBufferFrames
         }
-        clips.push({
-            path: filePath,
-            stage,
-            comboer,
-            comboee,
-            visible: false,
-            startFrame: moveFrames[moveFrames.length-1] + visibleFrames,
-            endFrame: moveFrames[moveFrames.length-1] + visibleFrames + 45
-        })
-        // console.log("Window Start: ", frameWindow[0])
-        // console.log("Window End: ", frameWindow[frameWindow.length-1])
-        
-        // // get first frame
-        // const currentFrame = frames[frameWindow[0]]
-        // const comboeeState = currentFrame.players.find(p=>p&&p.post.playerIndex == comboee.playerIndex).post.actionStateId
-        // let temp = [{ frame: currentFrame.frame, damageState: damageStates.indexOf(comboeeState) > -1}]
-        // console.log("Temp Start: ", temp[0])
-        // for( let i = 1; i < frameWindow.length; i++ ){ 
-        //     const currentFrame = frames[frameWindow[i]]
-        //     if(!currentFrame) break // reached end of game 
-        //     const comboeeState = currentFrame.players.find(p=>p&&p.post.playerIndex == comboee.playerIndex).post.actionStateId
-        //     const comboeeDamageState = damageStates.indexOf(comboeeState) > -1
-        //     console.log(comboeeDamageState)
-        //     if( temp[temp.length -1].damageState == comboeeDamageState ){ 
-        //         temp.push({ frame: currentFrame.frame, damageState: comboeeDamageState })
-        //     } else {
-        //         clips.push({
-        //             path: filePath,
-        //             stage,
-        //             comboer,
-        //             comboee,
-        //             damageState: temp[0].damageState,
-        //             startFrame: temp[0].frame,
-        //             endFrame: temp[temp.length-1].frame - buffer
-        //         })
-        //         temp = [{ frame: currentFrame.frame, damageState: comboeeDamageState }]  
-        //     }
-        // }
-        // clips.push({
-        //     path: filePath,
-        //     stage,
-        //     comboer,
-        //     comboee,
-        //     damageState: temp[0].damageState,
-        //     startFrame: temp[0].frame,
-        //     endFrame: temp[temp.length-1].frame
-        // })
-        console.log(clips)
-        
-        console.log("GENERATING VIDEO")
-         
-        const outputPath = "/home/matt/Projects/output/"
-        let outputDirectoryName = "output";
-        let count = 1;
-        while(fs.existsSync(path.resolve(`${outputPath}/${outputDirectoryName}`))){
-            outputDirectoryName = `output${count++}`
-        }
-        fs.mkdirSync(path.resolve(outputPath + "/" + outputDirectoryName))
+        clips.push(clip)// just to avoid breaking the existing parser flow
 
         const config = {
             outputPath: path.resolve(outputPath + "/" + outputDirectoryName),
@@ -136,21 +48,79 @@ export default (prev, params, eventEmitter) => {
             ssbmIsoPath: path.resolve("/home/matt/Files/melee/ssbm/melee.iso"),
             gameMusicOn: false,
             disableScreenShake: true,
-            bitrateKbps: 3000,
+            bitrateKbps: 6000,
             resolution: "2x",
             dolphinCutoff: 500
         }
-        
-        clips.forEach((clip, index) => { clip.index = index })
 
         console.log("Running slp to vid.")
-        console.log("clips: ", clips)
-        console.log("config: ", config)
-        await asyncForEach(clips, async (clip) => {
-            console.log("slpToVideo clip - ", clip)
-            await slpToVideo(clip, config)
+        const visibleClip = `${pad(index,3)}-visible`
+        const invisibleClip = `${pad(index,3)}-invisible`
+        
+        clip.visible = true
+        clip.index = index
+        clip.name = visibleClip
+        await slpToVideo(clip, config)
+        clip.visible = false
+        clip.name = invisibleClip
+        await slpToVideo(clip,config)
+
+        // slice clip
+        const visibleLength = 20
+        const visibleOffset = 10
+        const frameLength = 1/60
+        const visibleClipPath = path.resolve(outputPath,outputDirectoryName,visibleClip)
+        const invisibleClipPath = path.resolve(outputPath,outputDirectoryName,invisibleClip)
+        const finalOutputPath = path.resolve(outputPath,outputDirectoryName,`${pad(index,3)}.avi`)
+        // const visibleClipPath = "/home/matt/Projects/output/output26/000-visible"
+        // const invisibleClipPath = "/home/matt/Projects/output/output26/000-invisible"
+        // const finalOutputPath = "/home/matt/Projects/output/output26/000-final.avi"
+        const firstFrame = moves[0].frame - preClipBufferFrames
+        const cutPoints = []
+        moves.forEach(move => {
+            cutPoints.push((move.frame - firstFrame - visibleOffset)*frameLength)
+            cutPoints.push((move.frame - firstFrame - visibleOffset + visibleLength)*frameLength)
         })
-        console.log("Done?")
+        cutPoints.push(moves[moves.length-1].frame + postClipBufferFrames)
+
+        // go through cut points and make sure to merge overlapping points
+        for( let i = 0; i < cutPoints.length-1; i++ ){
+            if(cutPoints[i] > cutPoints[i+1]){
+                cutPoints.splice(i,2)
+            }
+        }
+
+        let str = `ffmpeg -i ${invisibleClipPath}.avi -i ${visibleClipPath}.avi `
+        let count = 0;
+        let currentTime = 0;
+        let currentVideo = 0
+
+        str+= '-filter_complex "'
+        cutPoints.forEach(cutPoint => {
+            str +=`[${currentVideo}:v]trim=${currentTime}:${cutPoint},setpts=PTS-STARTPTS[v${count}]; `
+            currentVideo = 1 - currentVideo
+            currentTime = cutPoint
+            count++
+        })
+
+        for(let i = 0; i < count; i++ ){
+            str+=`[v${i}]`
+        }
+        str+=`concat=n=${count}:v=1" ${finalOutputPath}`
+        console.log(str)
+        await exec(str)
+        console.log("Done splicing")
+
+        // Delete original files
+        console.log("Deleting original video files...")
+        const promises = []
+        const originalFiles = fs.readdirSync(path.resolve(outputPath,outputDirectoryName)).filter(f => f.includes('visible'));
+        originalFiles.forEach((file) => {
+            promises.push(fsPromises.unlink(path.resolve(outputPath,outputDirectoryName,file)))
+        })
+        await Promise.all(promises)
+
+        console.log("Donzo")
     })
     return clips
 }
@@ -182,7 +152,6 @@ const generateDolphinConfigs = async (clip,config) => {
         isRealTimeMode: false,
         commandId: `${crypto.randomBytes(12).toString("hex")}`
     }
-    console.log("D config: ", dolphinConfig)
     return await fsPromises.writeFile(
         path.join(config.outputPath,`${clip.index}.json`), 
         JSON.stringify(dolphinConfig)
@@ -195,7 +164,6 @@ const processReplays = async (clip,config) => {
     const ffmpegMergeArgsArray = []
     const ffmpegTrimArgsArray = []
     let promises = []
-    console.log(path)
 
     dolphinArgsArray.push([
         "-i",
@@ -223,7 +191,7 @@ const processReplays = async (clip,config) => {
         ffmpegMergeArgs.push("-vf")
         ffmpegMergeArgs.push("scale=1920:1080")
     }
-    ffmpegMergeArgs.push(path.resolve(config.outputPath,`${pad(clip.index, 3)}.avi`))
+    ffmpegMergeArgs.push(path.resolve(config.outputPath,`${clip.name}.avi`))
     ffmpegMergeArgsArray.push(ffmpegMergeArgs)
 
 
