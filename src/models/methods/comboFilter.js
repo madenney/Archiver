@@ -1,11 +1,12 @@
 
 export default (prev, params, eventEmitter) => {
     return prev.results.filter( ( combo, index )  => {
-        const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, comboStage, didKill, nthMoves } = params
+        const { minHits, maxHits, minDamage, comboerChar, comboerTag, comboeeChar, comboeeTag, comboStage, didKill, excludeICs, nthMoves } = params
         const { moves, comboer, comboee, path, stage } = combo
         if(minHits && moves.length < minHits ) return false
         if(maxHits && moves.length > maxHits ) return false
         if( minDamage && !(moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
+        if( excludeICs && comboer.characterId == 14 ) return false
         if( comboerChar && comboerChar != comboer.characterId) return false
         if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
         if( comboeeChar && comboeeChar != comboee.characterId) return false

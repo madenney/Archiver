@@ -154,6 +154,12 @@ export const patternsConfig = [
                 default: false
             },
             {
+                name: "Exclude ICs",
+                id: "excludeICs",
+                type: "checkbox",
+                default: false
+            },
+            {
                 name: "Nth Moves",
                 id: "nthMoves",
                 type: "nthMoves",
