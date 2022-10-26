@@ -25,25 +25,25 @@ export default (prev, params, eventEmitter) => {
         console.log("frames: ", Object.keys(frames).length)
         let comboer, comboee, ditto
         if(comboerChar){
-            comboer = players.find(p=> p.characterId == comboerChar)
+            comboer = players.find(p=> p&&p.characterId == comboerChar)
             // if the other character is also the target comboerChar, set flag
-            if(players.find(p=>p.playerIndex != comboer.playerIndex).characterId == comboerChar){
+            if(players.find(p=>p&&p.playerIndex != comboer.playerIndex).characterId == comboerChar){
                 ditto = true
             }
         }
         if(comboeeChar){
             comboee = players.find(p=> p.characterId == comboeeChar)
             // if the other character is also the target comboeeChar, set flag
-            if(players.find(p=>p.playerIndex != comboee.playerIndex).characterId == comboeeChar){
+            if(players.find(p=>p&&p.playerIndex != comboee.playerIndex).characterId == comboeeChar){
                 ditto = true
             }
         }
         if( comboerTag){
-            comboer = players.find(p=>p.displayName.toLowerCase() == comboerTag.toLowerCase())
+            comboer = players.find(p=>p&&p.displayName.toLowerCase() == comboerTag.toLowerCase())
             ditto = false
         }
         if( comboeeTag){
-            comboee = players.find(p=>p.displayName.toLowerCase() == comboeeTag.toLowerCase())
+            comboee = players.find(p=>p&&p.displayName.toLowerCase() == comboeeTag.toLowerCase())
             ditto = false
         }
 
@@ -91,7 +91,7 @@ export default (prev, params, eventEmitter) => {
                 } else {
                     if(temp.length > 0 ){
                         results.push({
-                            file,
+                            path,
                             comboer: comboee, // god forgive me
                             comboee: comboer, // the ugliest code
                             stage,
