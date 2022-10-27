@@ -45,7 +45,7 @@ C22FCCD8 00000003 #External/Always Hide Nametag/Always Hide Nametag.asm
 $Optional: Prevent Character Crowd Chants [Fizzi]
 04321D70 38600000
 
-$Hide Neutral Falco [Altafen]
+$Optional: Hide Neutral Falco [Altafen]
 C2080F38 00000005
 801E0004 2C000016
 40820018 881E0619

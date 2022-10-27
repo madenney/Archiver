@@ -1,3 +1,4 @@
+import file from "./lib/file"
 
 const { spawn } = require("child_process")
 const crypto = require("crypto")
@@ -37,7 +38,7 @@ const generateDolphinConfigs = async (replays,config) => {
             commandId: `${crypto.randomBytes(12).toString("hex")}`
         }
         return fsPromises.writeFile(
-            path.join(config.outputPath,`${pad(replay.index,3)}.json`), 
+            path.join(config.outputPath,`${pad(replay.index,4)}.json`), 
             JSON.stringify(dolphinConfig)
         )
     }))
@@ -53,7 +54,8 @@ const processReplays = async (replays,config) => {
     
     replays.forEach( replay => {
 
-        const fileBasename = pad(replay.index,3)
+        const fileBasename = pad(replay.index,4)
+        console.log(fileBasename)
         dolphinArgsArray.push([
             "-i",
             path.resolve(config.outputPath,`${fileBasename}.json`),
