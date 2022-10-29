@@ -265,9 +265,7 @@ const configureDolphin = async (config) => {
   if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
   if (config.hideNeutralFalco) newSettings.push("$Optional: Hide Neutral Falco")
   //if (true) newSettings.push("$Optional: Hide Neutral Falco")
-  if (true) newSettings.push("$Optional: Turn Green When Actionable")
-  // if (true) newSettings.push("$Optional: DI Draw1")
-  // if (true) newSettings.push("$Optional: DI Draw")
+  //if (true) newSettings.push("$Optional: Turn Green When Actionable")
 
   newSettings.push("[Gecko_Disabled]")
   if (config.hideNames) newSettings.push("$Optional: Show Player Names")
