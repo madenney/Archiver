@@ -24,20 +24,19 @@ export default (prev, params, eventEmitter) => {
     fs.mkdirSync(path.resolve(outputPath + "/" + outputDirectoryName))
 
     const clipNum = 40
-    asyncForEach(prev.results, async ( combo, index )  => {
+    asyncForEach(prev.results.slice(clipNum, clipNum+1), async ( combo, index )  => {
         if(index % 1 == 0) eventEmitter({msg: `${index}/${prev.results.length}`})
-        const { moves, comboer, comboee, path: filePath, stage, endFrame: comboEndFrame } = combo
+        const { moves, comboer, comboee, path: filePath, stage } = combo
 
-        const preClipBufferFrames = 120
-        const postClipBufferFrames = -1
+        const preClipBufferFrames = 60
+        const postClipBufferFrames = 100
         const clip = {
             path: filePath,
             stage,
             comboer,
             comboee,
-            visible: false,
             startFrame: moves[0].frame - preClipBufferFrames,
-            endFrame: comboEndFrame + postClipBufferFrames
+            endFrame: moves[moves.length-1].frame + postClipBufferFrames
         }
         clips.push(clip)// just to avoid breaking the existing parser flow
 
@@ -53,20 +52,15 @@ export default (prev, params, eventEmitter) => {
             dolphinCutoff: 500,
             hideTags: true,
             hideNames: true,
-            disableChants: true
+            disableChants: true,
         }
 
         console.log("Running slp to vid.")
         const visibleClip = `${pad(index,3)}-visible`
         const invisibleClip = `${pad(index,3)}-invisible`
         
-        clip.visible = true
-        clip.index = index
-        clip.name = visibleClip
         await slpToVideo(clip, config)
-        clip.visible = false
-        clip.name = invisibleClip
-        await slpToVideo(clip,config)
+
 
         // slice clip
         const visibleLength = 16
@@ -74,12 +68,10 @@ export default (prev, params, eventEmitter) => {
         const frameLength = 1/60
         const visibleClipPath = path.resolve(outputPath,outputDirectoryName,visibleClip)
         const invisibleClipPath = path.resolve(outputPath,outputDirectoryName,invisibleClip)
-        const splicedOutputPath = path.resolve(outputPath,outputDirectoryName,`${pad(index,3)}-spliced-visible.avi`)
         const finalOutputPath = path.resolve(outputPath,outputDirectoryName,`${pad(index,3)}.avi`)
-
         // const visibleClipPath = "/home/matt/Projects/output/output26/000-visible"
         // const invisibleClipPath = "/home/matt/Projects/output/output26/000-invisible"
-        // const splicedOutputPath = "/home/matt/Projects/output/output26/000-final.avi"
+        // const finalOutputPath = "/home/matt/Projects/output/output26/000-final.avi"
         const firstFrame = moves[0].frame - preClipBufferFrames
         const cutPoints = []
         moves.forEach(move => {
@@ -111,15 +103,10 @@ export default (prev, params, eventEmitter) => {
         for(let i = 0; i < count; i++ ){
             str+=`[v${i}]`
         }
-        str+=`concat=n=${count}:v=1" ${splicedOutputPath}`
+        str+=`concat=n=${count}:v=1" ${finalOutputPath}`
         console.log(str)
         await exec(str)
         console.log("Done splicing")
-
-        // chop first part off to remove weird audio thing
-        // Arguments for ffmpeg trimming
-        const ffmpegTrim = `ffmpeg -ss 1 -i ${path.resolve(splicedOutputPath)} -c copy ${path.resolve(finalOutputPath)}`
-        await exec(ffmpegTrim)
 
         // Delete original files
         console.log("Deleting original video files...")
@@ -204,17 +191,6 @@ const processReplays = async (clip,config) => {
     ffmpegMergeArgs.push(path.resolve(config.outputPath,`${clip.name}.avi`))
     ffmpegMergeArgsArray.push(ffmpegMergeArgs)
 
-
-    // Arguments for ffmpeg trimming
-    // ffmpegTrimArgsArray.push([
-    //     "-ss",
-    //     1,
-    //     "-i",
-    //     path.resolve(config.outputPath,`${clip.index}-merged.avi`),
-    //     "-c",
-    //     "copy",
-    //     path.resolve(config.outputPath,`${pad(clip.index, 3)}.avi`)
-    // ])
 
     // Dump frames to video and audio
     console.log("Dumping video frames and audio...")
@@ -366,7 +342,7 @@ const configureDolphin = async (config, clip) => {
   if (config.fixedCamera) newSettings.push("$Optional: Fixed Camera Always")
   if (!config.widescreenOff) newSettings.push("$Optional: Widescreen 16:9")
   if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
-  if (!clip.visible) newSettings.push("$Optional: Hide Neutral Falco")
+  newSettings.push("$Optional: Disable Battlefield Background + Particles [NeilHarbin0]")
 
   newSettings.push("[Gecko_Disabled]")
   if (config.hideNames) newSettings.push("$Optional: Show Player Names")

@@ -375,6 +375,10 @@ export const patternsConfig = [
         label: "Anime Falco",
         options: []
     },{
+        id: "beatsPerMango",
+        label: "BPM",
+        options: []
+    },{
         id: "comboStats",
         label: "Combo Stats",
         options: [
