@@ -10,7 +10,7 @@ import hashlib
 import glob
 import json
 
-peppi_command = "/home/matt/Projects/peppi-slp-0.3.2/target/release/slp -r last "
+peppi_command = "/home/matt/Projects/peppi-slp/target/release/slp -r last "
 
 def get_hash(filename, hash_algo=hashlib.sha1):
     hashobj = hash_algo()
@@ -29,10 +29,11 @@ def check_for_duplicates(path):
 
     for file in files:
         print(file)
-        game_json = json.loads(subprocess.check_output(peppi_command + file, shell=True))
+        game_json = json.loads(subprocess.check_output(peppi_command + '"'+file+'"', shell=True))
         frames = game_json["frames"]
-        frames_hash = str(hash(str(frames)))
-        print(frames_hash)
+        print(json.dumps(frames[0]))
+        frames_hash = str(hash(json.dumps(frames[0])))
+        #print(frames_hash)
         
         if frames_hash in frames_hashes:
             duplicates.append(file)
