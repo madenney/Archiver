@@ -3,7 +3,7 @@
 Removes duplicate slp files.
 Usage: duplicates.py <folder>
 """
-
+from os.path import abspath
 import subprocess
 import sys
 import hashlib
@@ -11,6 +11,7 @@ import glob
 import json
 
 peppi_command = "/home/matt/Projects/peppi-slp-0.3.2/target/release/slp -r last "
+dupes_file = "/home/matt/Projects/output/dupes.txt"
 
 def get_hash(filename, hash_algo=hashlib.sha1):
     hashobj = hash_algo()
@@ -23,7 +24,7 @@ def check_for_duplicates(path):
     print("Found " + str(len(files)) + " slp files.")
 
 
-    frames_hashes = dict()
+    hashes = dict()
     hash_algo=hashlib.sha1
     duplicates = []
 
@@ -31,18 +32,23 @@ def check_for_duplicates(path):
         print(file)
         game_json = json.loads(subprocess.check_output(peppi_command + file, shell=True))
         frames = game_json["frames"]
-        frames_hash = str(hash(str(frames)))
-        print(frames_hash)
-        
-        if frames_hash in frames_hashes:
+        inputs = []
+        for frame in frames:
+            inputs.append(frame["ports"][0]["leader"]["pre"]["position"]["x"])
+
+        inputs_hash = str(hash(str(inputs)))
+
+        if inputs_hash in hashes:
             duplicates.append(file)
         else:
-            frames_hashes[frames_hash] = file
+            hashes[inputs_hash] = file
     
-    print(frames_hashes)
-    print("Duplicates: ")
+    print("# Duplicates: " + str(len(duplicates)))
+    f = open(dupes_file, "a")
     for d in duplicates:
-        print(d)
+        f.write(abspath(d) + "\n")
+    f.close()
+
         
 
     # file - collisions will be duplicates
