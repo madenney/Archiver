@@ -19,6 +19,8 @@ def chunk_reader(fobj, chunk_size=1024):
             return
         yield chunk
 
+def getFrames(filename):
+    
 
 def get_hash(filename, first_chunk_only=False, hash_algo=hashlib.sha1):
     hashobj = hash_algo()

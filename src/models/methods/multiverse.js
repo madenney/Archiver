@@ -1,5 +1,5 @@
-const { SlippiGame, ConsoleCommunication } = require("@slippi/slippi-js");
-const { asyncForEach, pad } = require("../../lib").default
+const { SlippiGame, ConsoleCommunication, ConsoleConnection } = require("@slippi/slippi-js");
+const { asyncForEach, pad, shuffleArray } = require("../../lib").default
 const { spawn } = require("child_process")
 const crypto = require("crypto")
 const fs = require("fs")
@@ -13,7 +13,6 @@ const vanilla = "melee (copy).iso"
 const isos = [
 "gold_black.iso",
 "grayscale.iso",
-"halloween_melee.iso",
 "icy.iso",
 "matrix.iso",
 "neon.iso",
@@ -42,19 +41,20 @@ export default (prev, params, eventEmitter) => {
 
     const clipNum = 0
     let currentIso = 0;
-    asyncForEach(prev.results.slice(clipNum,clipNum+1), async ( combo, index )  => {
+    const goodClips = [7,16]
+    asyncForEach(prev.results, async ( combo, index )  => {
         if(index % 1 == 0) eventEmitter({msg: `${index}/${prev.results.length}`})
         const { moves, comboer, comboee, path: filePath, stage } = combo
 
-        const preClipBufferFrames = 60
-        const postClipBufferFrames = 100
+        const preClipBufferFrames = 120
+        const postClipBufferFrames = 45
         const clip = {
             path: filePath,
             stage,
             comboer,
             comboee,
-            startFrame: moves[0].frame - preClipBufferFrames,
-            endFrame: moves[moves.length-1].frame + postClipBufferFrames
+            startFrame: combo.startFrame - preClipBufferFrames,
+            endFrame: combo.endFrame + postClipBufferFrames
         }
         clips.push(clip)// just to avoid breaking the existing parser flow
 
@@ -66,56 +66,65 @@ export default (prev, params, eventEmitter) => {
             gameMusicOn: false,
             disableScreenShake: true,
             bitrateKbps: 6000,
-            resolution: "2x",
+            resolution: "6x",
             dolphinCutoff: 500
         }
 
+        // generate clips
         console.log("Running slp to vid.")
-        const visibleClip = `${pad(index,3)}-visible`
-        const invisibleClip = `${pad(index,3)}-invisible`
-        
-        clip.visible = true
-        clip.index = index
-        clip.name = visibleClip
-        await slpToVideo(clip, config)
-        clip.visible = false
-        clip.name = invisibleClip
-        await slpToVideo(clip,config)
-
-        // slice clip
-        const visibleLength = 20
-        const visibleOffset = 10
-        const frameLength = 1/60
-        const visibleClipPath = path.resolve(outputPath,outputDirectoryName,visibleClip)
-        const invisibleClipPath = path.resolve(outputPath,outputDirectoryName,invisibleClip)
-        const finalOutputPath = path.resolve(outputPath,outputDirectoryName,`${pad(index,3)}.avi`)
-        // const visibleClipPath = "/home/matt/Projects/output/output26/000-visible"
-        // const invisibleClipPath = "/home/matt/Projects/output/output26/000-invisible"
-        // const finalOutputPath = "/home/matt/Projects/output/output26/000-final.avi"
-        const firstFrame = moves[0].frame - preClipBufferFrames
-        const cutPoints = []
-        moves.forEach(move => {
-            cutPoints.push((move.frame - firstFrame - visibleOffset)*frameLength)
-            cutPoints.push((move.frame - firstFrame - visibleOffset + visibleLength)*frameLength)
+        const clipPaths = []
+        await asyncForEach(shuffleArray(isos), async (iso, isoIndex) => {
+          const clipName = `${pad(index,3)}-${pad(isoIndex,2)}`
+          const preSlicePath = path.resolve(config.outputPath, `${clipName}-preslice.avi`)
+          const postSlicePath = path.resolve(config.outputPath, `${clipName}-postslice.avi`)
+          clipPaths.push(postSlicePath)
+          clip.name = clipName + "-preslice"
+          config.ssbmIsoPath = path.resolve(`/home/matt/Files/melee/custom_isos/${iso}`)
+          console.log("config: ", config)
+          console.log("clip: ", clip)
+          await slpToVideo(clip, config)
+          console.log("WHY AM I HERE")
+          // chop first part off to remove weird audio thing
+          // Arguments for ffmpeg trimming
+          const ffmpegTrim = `ffmpeg -ss 1 -i ${preSlicePath} -c copy ${postSlicePath}`
+          await exec(ffmpegTrim)
         })
-        cutPoints.push(moves[moves.length-1].frame + postClipBufferFrames)
 
-        // go through cut points and make sure to merge overlapping points
-        for( let i = 0; i < cutPoints.length-1; i++ ){
-            if(cutPoints[i] > cutPoints[i+1]){
-                cutPoints.splice(i,2)
-            }
+        // get vanilla copy
+        const clipName = `${pad(index,3)}-vanilla`
+        clip.name = clipName + "-preslice"
+        config.ssbmIsoPath = path.resolve(`/home/matt/Files/melee/custom_isos/${vanilla}`)
+        await slpToVideo(clip, config)
+        const preSlicePath = path.resolve(config.outputPath, `${clipName}-preslice.avi`)
+        const postSlicePath = path.resolve(config.outputPath, `${clipName}.avi`)
+        const ffmpegTrim = `ffmpeg -ss 1 -i ${preSlicePath} -c copy ${postSlicePath}`
+        await exec(ffmpegTrim)
+
+
+        // construct ffmpeg command
+        const sliceLength = 60/129 // song is 129 BPM
+        const finalOutputPath = path.resolve(outputPath,outputDirectoryName,`${pad(index,3)}-final.avi`)
+        const cutPoints = []
+        const clipLength = ((combo.endFrame + postClipBufferFrames) - ( combo.startFrame - 60))/60
+
+        for( var i = 1; i < (clipLength/sliceLength) + sliceLength; i++){
+          cutPoints.push(i*sliceLength)
         }
+        cutPoints.push(clipLength/sliceLength)
+        console.log("Cutpoints: ", cutPoints)
 
-        let str = `ffmpeg -i ${invisibleClipPath}.avi -i ${visibleClipPath}.avi `
+        let str = `ffmpeg` //`-i ${invisibleClipPath}.avi -i ${visibleClipPath}.avi `
+        clipPaths.forEach( clipPath => {
+          str += ` -i ${clipPath}`
+        })
         let count = 0;
         let currentTime = 0;
         let currentVideo = 0
-
-        str+= '-filter_complex "'
+        str+= ' -filter_complex "'
         cutPoints.forEach(cutPoint => {
             str +=`[${currentVideo}:v]trim=${currentTime}:${cutPoint},setpts=PTS-STARTPTS[v${count}]; `
-            currentVideo = 1 - currentVideo
+            currentVideo++
+            if(currentVideo == isos.length ) currentVideo = 0
             currentTime = cutPoint
             count++
         })
@@ -128,10 +137,10 @@ export default (prev, params, eventEmitter) => {
         await exec(str)
         console.log("Done splicing")
 
-        // Delete original files
+        //Delete original files
         console.log("Deleting original video files...")
         const promises = []
-        const originalFiles = fs.readdirSync(path.resolve(outputPath,outputDirectoryName)).filter(f => f.includes('visible'));
+        const originalFiles = fs.readdirSync(path.resolve(outputPath,outputDirectoryName)).filter(f => f.includes('slice'));
         originalFiles.forEach((file) => {
             promises.push(fsPromises.unlink(path.resolve(outputPath,outputDirectoryName,file)))
         })
@@ -170,7 +179,7 @@ const generateDolphinConfigs = async (clip,config) => {
         commandId: `${crypto.randomBytes(12).toString("hex")}`
     }
     return await fsPromises.writeFile(
-        path.join(config.outputPath,`${clip.index}.json`), 
+        path.join(config.outputPath,`${clip.name}.json`), 
         JSON.stringify(dolphinConfig)
     )
 }
@@ -184,9 +193,9 @@ const processReplays = async (clip,config) => {
 
     dolphinArgsArray.push([
         "-i",
-        path.resolve(config.outputPath,`${clip.index}.json`),
+        path.resolve(config.outputPath,`${clip.name}.json`),
         "-o",
-        `${clip.index}-unmerged`,
+        `${clip.name}-unmerged`,
         `--output-directory=${config.outputPath}`,
         "-b",
         "-e",
@@ -197,9 +206,9 @@ const processReplays = async (clip,config) => {
     // Arguments for ffmpeg merging
     const ffmpegMergeArgs = [
         "-i",
-        path.resolve(config.outputPath,`${clip.index}-unmerged.avi`),
+        path.resolve(config.outputPath,`${clip.name}-unmerged.avi`),
         "-i",
-        path.resolve(config.outputPath,`${clip.index}-unmerged.wav`),
+        path.resolve(config.outputPath,`${clip.name}-unmerged.wav`),
         "-b:v",
         `${config.bitrateKbps}k`,
     ]
@@ -217,10 +226,10 @@ const processReplays = async (clip,config) => {
     //     "-ss",
     //     1,
     //     "-i",
-    //     path.resolve(config.outputPath,`${clip.index}-merged.avi`),
+    //     path.resolve(config.outputPath,`${clip.name}-merged.avi`),
     //     "-c",
     //     "copy",
-    //     path.resolve(config.outputPath,`${pad(clip.index, 3)}.avi`)
+    //     path.resolve(config.outputPath,`${pad(clip.name, 3)}.avi`)
     // ])
 
     // Dump frames to video and audio
@@ -373,7 +382,7 @@ const configureDolphin = async (config, clip) => {
   if (config.fixedCamera) newSettings.push("$Optional: Fixed Camera Always")
   if (!config.widescreenOff) newSettings.push("$Optional: Widescreen 16:9")
   if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
-  if (!clip.visible) newSettings.push("$Optional: Hide Neutral Falco")
+  //if (!clip.visible) newSettings.push("$Optional: Hide Neutral Falco")
 
   newSettings.push("[Gecko_Disabled]")
   if (config.hideNames) newSettings.push("$Optional: Show Player Names")

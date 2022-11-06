@@ -375,6 +375,10 @@ export const patternsConfig = [
         label: "Anime Falco",
         options: []
     },{
+        id: "multiverse",
+        label: "Multi Verse",
+        options: []
+    },{
         id: "beatsPerMango",
         label: "BPM",
         options: []

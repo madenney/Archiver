@@ -8,9 +8,10 @@ const stomp = require("./stomp").default
 const animeFalco = require("./animeFalco").default
 const beatsPerMango = require("./beatsPerMango").default
 const comboStats = require("./comboStats").default
+const multiverse = require("./multiverse").default
 
 export default {
     files, slpParser, comboFilter, edgeguards, 
     actionStates, windowFilter, comboStats,
-    stomp, animeFalco, beatsPerMango
+    stomp, animeFalco, beatsPerMango, multiverse
 }
