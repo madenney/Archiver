@@ -297,6 +297,12 @@ export const patternsConfig = [
         label: "Window Filter",
         options: [
             {
+                name: "Max Files",
+                id: "maxFiles",
+                type: "int",
+                default: ""
+            },
+            {
                 name: "Start From",
                 id: "startFrom",
                 type: "int",
@@ -368,6 +374,17 @@ export const patternsConfig = [
                 id: "move",
                 type: "dropdown",
                 options: moves
+            },
+        ]
+    },{
+        id: "sort",
+        label: "Sort",
+        options: [
+            {
+                name: "Start From",
+                id: "startFrom",
+                type: "int",
+                default: 0
             },
         ]
     },{

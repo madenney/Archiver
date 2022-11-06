@@ -35,6 +35,12 @@ const actionStates = [
       actionStateID: [4]
     },
     {
+      id: 104,
+      name: "Plat Drop",
+      shortName: "Plat Drop",
+      actionStateID: [0xF4]
+    },
+    {
       id: 2,
       name: "Jab",
       shortName: "jab",

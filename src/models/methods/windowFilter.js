@@ -2,7 +2,8 @@ const { SlippiGame } = require("@slippi/slippi-js");
 const {actionStates} = require("../../constants/actionStates")
 
 export default (prev, params, eventEmitter) => {
-    return prev.results.filter( ( result, index ) => {
+    const { maxFiles } = params
+    return prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).filter( ( result, index ) => {
 
         if( index % 20 == 0 ) eventEmitter({msg: `${index}/${prev.results.length}`})
 
