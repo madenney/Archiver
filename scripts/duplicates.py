@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Removes duplicate slp files.
+Detects duplicates and invalid slp files.
 Usage: duplicates.py <folder>
 """
 from os.path import abspath
@@ -14,7 +14,6 @@ peppi_command = "/home/matt/Projects/peppi-slp/target/release/slp -r last "
 dupes_file = "/home/matt/Projects/output/galint_dupes.txt"
 error_file = "/home/matt/Projects/output/galint_error.txt"
 
-
 def check_for_duplicates(path):
 
     files = glob.glob(path + '/**/*.slp', recursive=True)
@@ -22,7 +21,6 @@ def check_for_duplicates(path):
 
     hashes = dict()
     duplicates = []
-
 
     for index, file in enumerate(files):
         print(str(index) + "/" + str(len(files)) + " - " + file)
