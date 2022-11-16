@@ -34,7 +34,7 @@ class Video extends React.Component {
 		console.log("GENERATING VIDEO")
 		const { selectedResults } = this.props
 		const { numCPUs, dolphinPath, ssbmIsoPath, gameMusic, hideHud, hideTags,
-			hideNames, fixedCamera, enableChants, bitrateKbps, resolution, concatenate,
+			hideNames, fixedCamera, enableChants, bitrateKbps, resolution,
 			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
 			dolphinCutoff, disableScreenShake } = this.state
 			

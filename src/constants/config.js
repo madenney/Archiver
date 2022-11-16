@@ -388,12 +388,20 @@ export const patternsConfig = [
             },
         ]
     },{
+        id: "removeStarKOFrames",
+        label: "Remove Star KO Frames",
+        options: []
+    },{
         id: "animeFalco",
         label: "Anime Falco",
         options: []
     },{
         id: "multiverse",
         label: "Multi Verse",
+        options: []
+    },{
+        id: "alternatingDimensions",
+        label: "Alternate",
         options: []
     },{
         id: "beatsPerMango",

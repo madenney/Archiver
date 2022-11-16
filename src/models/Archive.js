@@ -55,11 +55,10 @@ class Archive {
     }
 
     processFiles(eventEmitter){
-        let count = 0;
-        const length = this.files.length
+        let count = 0
         this.files.forEach(file => {
-            if(file.isProcessed ) return 
-            eventEmitter({msg: `${count++}/${length}`})
+            eventEmitter({msg: `${count++}/${this.files.length}`})
+            if(file.isProcessed) return 
             file.process()
         })
     }

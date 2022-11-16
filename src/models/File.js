@@ -41,12 +41,14 @@ class File {
             return
         }
 
-        // Stage Check
+        // stage check
         if( validStageIds.indexOf( settings.stageId ) === -1 ){ 
             this.isValid = false;
             this.info = "Invalid stage";
             return
         }
+
+        // bot check
         const p1 = settings.players[0]
         const p2 = settings.players[1]
         if( p1.type === 1 || p2.type === 1 ){ 
