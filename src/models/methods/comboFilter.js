@@ -17,8 +17,10 @@ export default (prev, params, eventEmitter) => {
             if(!nthMoves.every( nthMove => {
                 const n = parseInt(nthMove.n)
                 if( n >= 0 ){
+                    if( !moves[n]) return false
                     return moves[n].moveId == nthMove.moveId
                 } else {
+                    if( !moves[moves.length+n]) return true
                     return moves[moves.length+n].moveId == nthMove.moveId
                 }
             })) return false

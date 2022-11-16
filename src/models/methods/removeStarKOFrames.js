@@ -22,13 +22,9 @@ export default (prev, params, eventEmitter) => {
             const currentFrame = frames[i];
             const _comboee = currentFrame.players.find(p=>p&&(p.post.playerIndex == comboee.playerIndex))
             if(_comboee.post.actionStateId == 4){
-                console.log("REMOVING ENDFRAME : ", i)
                 newEndFrame=i-1
             } else { break }
         }
-        
-        console.log("END FRAME: ", endFrame )
-        console.log("NEW EFRAM: ", newEndFrame)
 
         return {
             ...clip,

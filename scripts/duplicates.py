@@ -11,8 +11,8 @@ import glob
 import json
 
 peppi_command = "/home/matt/Projects/peppi-slp/target/release/slp -r last "
-dupes_file = "/home/matt/Projects/output/galint_dupes.txt"
-error_file = "/home/matt/Projects/output/galint_error.txt"
+dupes_file = "/home/matt/Projects/output/dupes.txt"
+error_file = "/home/matt/Projects/output/error.txt"
 
 def check_for_duplicates(path):
 
