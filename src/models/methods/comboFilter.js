@@ -16,13 +16,46 @@ export default (prev, params, eventEmitter) => {
         if( nthMoves && nthMoves.length > 0 ){
             if(!nthMoves.every( nthMove => {
                 const n = parseInt(nthMove.n)
-                if( n >= 0 ){
+                const t = parseInt(nthMove.t)
+                const d = parseInt(nthMove.d)
+
+                if( isNaN(n) ){
+                    // c for 'contains'
+                    if( nthMove.n == "c"){
+                        const move = moves.find((move,index) => {
+                            if(move.moveId != nthMove.moveId) return false
+                            console.log(move)
+                            if(move.hitCount > 1 ) return false
+                            if(move.damage < 2 ) return false
+                            if(move.damage > 5 ) return false
+                            // if(d && move.damage > d) return false
+                            if(t && moves[index-1]){
+                                if( (move.frame - moves[index-1].frame) > t ) return false
+                            }
+                            return true
+                        })
+                        if(!move) return false
+                    }
+                } else if( n >= 0 ){
                     if( !moves[n]) return false
-                    return moves[n].moveId == nthMove.moveId
+                    if(moves[n].moveId != nthMove.moveId) return false
+                    if(d && moves[n].damage > d ) return false
+                    if(t && moves[n-1]){
+                        if((moves[n].frame - moves[n-1].frame) > t ) return false
+                    }
                 } else {
-                    if( !moves[moves.length+n]) return true
-                    return moves[moves.length+n].moveId == nthMove.moveId
+                    if( !moves[moves.length+n]) return false
+                    if( moves[moves.length+n].moveId != nthMove.moveId ) return false
+
+                    // TEMP - for single hit moves
+                    if(moves[moves.length-1].hitCount > 1) return false
+
+                    if(d && moves[moves.length+n].damage < d ) return false
+                    if(t && moves[moves.length+n-1]){
+                        if((moves[moves.length+n].frame - moves[moves.length+n-1].frame) > t ) return false
+                    }
                 }
+                return true
             })) return false
         }
 

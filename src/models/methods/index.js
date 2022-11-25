@@ -9,6 +9,9 @@ const animeFalco = require("./animeFalco").default
 const beatsPerMango = require("./beatsPerMango").default
 const comboStats = require("./comboStats").default
 const multiverse = require("./multiverse").default
+const endOfStock = require("./endOfStock").default
+const zeldaParser = require("./zeldaParser").default
+const scrubbleJump = require("./scrubbleJump").default
 const alternatingDimensions = require("./alternatingDimensions").default
 const removeStarKOFrames = require("./removeStarKOFrames").default
 const sort = require("./sort").default
@@ -18,5 +21,6 @@ export default {
     actionStates, windowFilter, comboStats,
     stomp, animeFalco, beatsPerMango, multiverse,
     sort, stomp, animeFalco, alternatingDimensions,
-    removeStarKOFrames
+    removeStarKOFrames, scrubbleJump, endOfStock,
+    zeldaParser
 }

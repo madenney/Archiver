@@ -87,15 +87,23 @@ class Patterns extends React.Component {
 				case "nthMoves":
 					input = <div className="nth-moves">
 						<button className="add-nth-move-button" 
-							onClick={() => {pattern.params[option.id].push({moveId: "", n: ""}); this.forceUpdate()}}
+							onClick={() => {pattern.params[option.id].push({moveId: "", n: "", d: ""}); this.forceUpdate()}}
 						>Add Move</button>
 						{ pattern.params[option.id].map((move,index) => {
 							return <div key={index} className="nth-move">
-								<div className="nth-move-label">N</div>
-								<input className="nth-move-input" value={move.n} 
+								<div className="nth-move-label">N:</div>
+								<input className="nth-move-int-input" value={move.n} 
 									onChange={e => {move.n = e.target.value; this.forceUpdate()}}
 								/>
-								<div className="nth-move-label">Move</div>
+								<div className="nth-move-label">T:</div>
+								<input className="nth-move-int-input" value={move.t} 
+									onChange={e => {move.t = e.target.value; this.forceUpdate()}}
+								/>
+								<div className="nth-move-label">D:</div>
+								<input className="nth-move-int-input" value={move.d} 
+									onChange={e => {move.d = e.target.value; this.forceUpdate()}}
+								/>
+								<div className="nth-move-label-move">Move:</div>
 								<select className="nth-move-input" value={move.moveId} 
 									onChange={e => {move.moveId = e.target.value; this.forceUpdate()}}
 								>{option.options.map(o => <option key={o.id} value={o.id}>{o.shortName}</option> )}

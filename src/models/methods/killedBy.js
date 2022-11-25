@@ -4,7 +4,7 @@ const shineStates = [360,361,362,363,364,365,366,367,368]
 
 export default (prev, params, eventEmitter) => {
 
-    this.results = []
+    const results = []
     let badCount = 0
     prev.results.forEach( file => {
 
@@ -65,5 +65,5 @@ export default (prev, params, eventEmitter) => {
         })
     })
     console.log("Bad Count: ", badCount)
-    return this.results
+    return results
 }

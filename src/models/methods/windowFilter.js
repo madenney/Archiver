@@ -7,8 +7,9 @@ export default (prev, params, eventEmitter) => {
 
         if( index % 20 == 0 ) eventEmitter({msg: `${index}/${prev.results.length}`})
 
-        const { path, comboer, comboee, startFrame, endFrame } = result
-        const { startFrom, searchRange, comboerActionState, comboeeActionState } = params
+        const { path, comboer, comboee, startFrame, endFrame, moves } = result
+        const { startFrom, searchRange, comboerActionState, comboeeActionState,
+            startFromNthMove, comboerYPos } = params
         const game = new SlippiGame( path )
         let frames, lastFrame
         try {
@@ -19,8 +20,18 @@ export default (prev, params, eventEmitter) => {
             return console.log("Broken file:", file)
         }
         const _startFrom = parseInt(startFrom)
+        const _startFromNthMove = parseInt(startFromNthMove)
         const _searchRange = parseInt(searchRange)
-        const _startFrame = startFrom > -1 ? frames[startFrame + _startFrom] : frames[endFrame + _startFrom]
+        let _startFrame
+        if( _startFrom && _startFromNthMove) throw "Error: You can't have start frame and start from nth move"
+    
+        if( _startFrom ){
+            _startFrame = startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
+        } 
+        if( _startFromNthMove ){
+            if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"
+            _startFrame = _startFromNthMove > -1 ? moves[_startFromNthMove].frame : moves[moves.length + _startFromNthMove].frame
+        }
 
         let comboerStates, comboeeStates
         if( comboerActionState ){ comboerStates = actionStates.find(s=>s.id == comboerActionState).actionStateID }
@@ -28,13 +39,14 @@ export default (prev, params, eventEmitter) => {
         if( comboeeActionState ){ comboeeStates = actionStates.find(s=>s.id == comboeeActionState).actionStateID }
         comboeeStates = Array.isArray(comboeeStates) ? comboeeStates : [comboeeStates]
 
-        for(let i = _startFrame.frame; 
+        for(let i = _startFrame; 
             (_searchRange > -1 ? 
-            ((i <= _startFrame.frame + _searchRange) && ( i < lastFrame - 1 ))
-            : ( i >= _startFrame.frame + _searchRange ));
+            ((i <= _startFrame + _searchRange) && ( i < lastFrame - 1 ))
+            : ( i >= _startFrame + _searchRange ));
             _searchRange > -1 ? i++ : i--
         ){
             const currentFrame = frames[i.toString()]
+            if(!currentFrame) return false 
             let _comboer, _comboee
             if( comboerActionState ) _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
             if( comboeeActionState ) _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
@@ -48,6 +60,14 @@ export default (prev, params, eventEmitter) => {
                 if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 ) return true
             } else if( comboeeActionState ){
                 if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 ) return true
+                // if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 &&
+                //    _comboee.post.positionY < -2
+                // ) return true
+            }
+
+            if( comboerYPos ){
+                const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                if( _comboer.post.positionY > comboerYPos ){ return true }
             }
         }
         return false

@@ -1,6 +1,8 @@
 const { SlippiGame } = require("@slippi/slippi-js");
 const {actionStates} = require("../../constants/actionStates")
 
+const starKOs = [3,4,5,6,7,8,9,10]
+
 export default (prev, params, eventEmitter) => {
     return prev.results.map( ( clip, index )  => {
         const { path, comboee, startFrame, endFrame } = clip
@@ -21,7 +23,7 @@ export default (prev, params, eventEmitter) => {
         for(var i = parseInt(endFrame); i > parseInt(startFrame); i-- ){
             const currentFrame = frames[i];
             const _comboee = currentFrame.players.find(p=>p&&(p.post.playerIndex == comboee.playerIndex))
-            if(_comboee.post.actionStateId == 4){
+            if(starKOs.indexOf(_comboee.post.actionStateId) > -1 ){
                 newEndFrame=i-1
             } else { break }
         }

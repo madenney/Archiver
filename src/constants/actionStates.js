@@ -2,6 +2,7 @@
 
 const damageStates = [0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x5B]
 const shineStates = [360,361,362,363,364,365,366,367,368]
+const doubleJumpStates = [0x1B,0x1C]
 
 const actionStates = [
     {
@@ -39,6 +40,18 @@ const actionStates = [
       name: "Plat Drop",
       shortName: "Plat Drop",
       actionStateID: [0xF4]
+    },
+    {
+      id: 105,
+      name: "Double Jump",
+      shortName: "Double Jump",
+      actionStateID: [0x1B,0x1C]
+    },
+    {
+      id: 345,
+      name: "Doc Side B",
+      shortName: "Doc Side B",
+      actionStateID: [345,346]
     },
     {
       id: 2,

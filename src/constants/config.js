@@ -2,7 +2,7 @@ import { legalStages } from "./stages"
 import { sortedCharacters } from "./characters"
 import { moves } from "./moves"
 import { actionStates } from "./actionStates"
-
+import { deathDirections } from "./deathDirections"
 
 export const patternsConfig = [
     {
@@ -303,8 +303,14 @@ export const patternsConfig = [
                 default: ""
             },
             {
-                name: "Start From",
+                name: "Start Frame",
                 id: "startFrom",
+                type: "int",
+                default: 0
+            },
+            {
+                name: "Nth Move",
+                id: "startFromNthMove",
                 type: "int",
                 default: 0
             },
@@ -329,52 +335,49 @@ export const patternsConfig = [
                 default: ""
             },
             {
-                name: "Comboer X Pos",
-                id: "comboerXPos",
-                type: "int",
-                default: ""
-            },
-            {
                 name: "Comboer Y Pos",
                 id: "comboerYPos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboer Max D",
-                id: "comboerMaxD",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee X Pos",
-                id: "comboeeXpos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee Y Pos",
-                id: "comboeeYpos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee Max D",
-                id: "comboeeMaxD",
                 type: "int",
                 default: ""
             }
         ]
     },{
-        id: "stomp",
-        label: "Stomp",
+        id: "endOfStock",
+        label: "End Of Stock",
         options: [
             {
-                name: "Move",
-                id: "move",
-                type: "dropdown",
-                options: moves
+                name: "Max Files",
+                id: "maxFiles",
+                type: "int",
+                default: ""
             },
+            {
+                name: "Comboer Char",
+                id: "comboerChar",
+                type: "dropdown",
+                options: sortedCharacters,
+                default: ""
+            },
+            {
+                name: "Comboee Char",
+                id: "comboeeChar",
+                type: "dropdown",
+                options: sortedCharacters,
+                default: ""
+            },
+            {
+                name: "Death Direction",
+                id: "deathDirection",
+                type: "dropdown",
+                options: deathDirections,
+                default: "",
+            },
+            {
+                name: "Frame Window",
+                id: "frameWindow",
+                type: "int",
+                default: "60",
+            }
         ]
     },{
         id: "sort",
@@ -392,20 +395,8 @@ export const patternsConfig = [
         label: "Remove Star KO Frames",
         options: []
     },{
-        id: "animeFalco",
-        label: "Anime Falco",
-        options: []
-    },{
-        id: "multiverse",
-        label: "Multi Verse",
-        options: []
-    },{
-        id: "alternatingDimensions",
-        label: "Alternate",
-        options: []
-    },{
-        id: "beatsPerMango",
-        label: "BPM",
+        id: "custom",
+        label: "Custom Code",
         options: []
     },{
         id: "comboStats",
@@ -418,7 +409,82 @@ export const patternsConfig = [
                 default: 0
             }
         ]
-    }
+    },
+    // {
+    //     id: "stomp",
+    //     label: "Stomp",
+    //     options: [
+    //         {
+    //             name: "Move",
+    //             id: "move",
+    //             type: "dropdown",
+    //             options: moves
+    //         },
+    //     ]
+    // }
+    // {
+    //     id: "scrubbleJump",
+    //     label: "Scrubble Jump",
+    //     options: []
+    // },{
+    //     id: "animeFalco",
+    //     label: "Anime Falco",
+    //     options: []
+    // },{
+    //     id: "multiverse",
+    //     label: "Multi Verse",
+    //     options: []
+    // },{
+    //     id: "alternatingDimensions",
+    //     label: "Alternate",
+    //     options: []
+    // },{
+    //     id: "beatsPerMango",
+    //     label: "BPM",
+    //     options: []
+    // },{
+    //     id: "zeldaParser",
+    //     label: "Zelda Parser",
+    //     options: [
+    //         {
+    //             name: "Min Hits",
+    //             id: "minHits",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Max Files",
+    //             id: "maxFiles",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Char",
+    //             id: "comboeeChar",
+    //             type: "dropdown",
+    //             options: sortedCharacters,
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer Tag",
+    //             id: "comboerTag",
+    //             type: "textInput",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Tag",
+    //             id: "comboeeTag",
+    //             type: "textInput",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Did Kill",
+    //             id: "didKill",
+    //             type: "checkbox",
+    //             default: false
+    //         }
+    //     ]
+    // }
 ]
 
 
