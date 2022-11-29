@@ -48,6 +48,18 @@ const actionStates = [
       actionStateID: [0x1B,0x1C]
     },
     {
+      id: 185,
+      name: "Missed tech damage",
+      shortName: "Missed tech damage",
+      actionStateID: [185,193]
+    },
+    {
+      id: 297,
+      name: "Asleep",
+      shortName: "Asleep",
+      actionStateID: [297,298,299]
+    },
+    {
       id: 345,
       name: "Doc Side B",
       shortName: "Doc Side B",

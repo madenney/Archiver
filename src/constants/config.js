@@ -335,6 +335,12 @@ export const patternsConfig = [
                 default: ""
             },
             {
+                name: "Exclude",
+                id: "exclude",
+                type: "checkbox",
+                default: false
+            },
+            {
                 name: "Comboer Y Pos",
                 id: "comboerYPos",
                 type: "int",
@@ -392,12 +398,30 @@ export const patternsConfig = [
         ]
     },{
         id: "removeStarKOFrames",
-        label: "Remove Star KO Frames",
+        label: "Cut Star KO",
         options: []
     },{
         id: "custom",
         label: "Custom Code",
-        options: []
+        options: [
+            {
+                name: "N",
+                id: "n",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "X",
+                id: "x",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "Max Files",
+                id: "maxFiles",
+                type: "int",
+                default: ""
+            }]
     },{
         id: "comboStats",
         label: "Combo Stats",

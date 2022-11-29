@@ -24,11 +24,7 @@ export default (prev, params, eventEmitter) => {
                     if( nthMove.n == "c"){
                         const move = moves.find((move,index) => {
                             if(move.moveId != nthMove.moveId) return false
-                            console.log(move)
-                            if(move.hitCount > 1 ) return false
-                            if(move.damage < 2 ) return false
-                            if(move.damage > 5 ) return false
-                            // if(d && move.damage > d) return false
+                            if(d && move.damage < d) return false
                             if(t && moves[index-1]){
                                 if( (move.frame - moves[index-1].frame) > t ) return false
                             }
@@ -39,17 +35,13 @@ export default (prev, params, eventEmitter) => {
                 } else if( n >= 0 ){
                     if( !moves[n]) return false
                     if(moves[n].moveId != nthMove.moveId) return false
-                    if(d && moves[n].damage > d ) return false
+                    if(d && moves[n].damage < d ) return false
                     if(t && moves[n-1]){
                         if((moves[n].frame - moves[n-1].frame) > t ) return false
                     }
                 } else {
                     if( !moves[moves.length+n]) return false
                     if( moves[moves.length+n].moveId != nthMove.moveId ) return false
-
-                    // TEMP - for single hit moves
-                    if(moves[moves.length-1].hitCount > 1) return false
-
                     if(d && moves[moves.length+n].damage < d ) return false
                     if(t && moves[moves.length+n-1]){
                         if((moves[moves.length+n].frame - moves[moves.length+n-1].frame) > t ) return false

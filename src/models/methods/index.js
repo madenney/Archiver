@@ -4,6 +4,7 @@ const comboFilter = require("./comboFilter").default
 const edgeguards = require("./edgeguards").default
 const actionStates = require("./actionStates").default
 const windowFilter = require("./windowFilter").default
+const custom = require("./custom").default
 const stomp = require("./stomp").default
 const animeFalco = require("./animeFalco").default
 const beatsPerMango = require("./beatsPerMango").default
@@ -22,5 +23,5 @@ export default {
     stomp, animeFalco, beatsPerMango, multiverse,
     sort, stomp, animeFalco, alternatingDimensions,
     removeStarKOFrames, scrubbleJump, endOfStock,
-    zeldaParser
+    zeldaParser, custom
 }

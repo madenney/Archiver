@@ -9,7 +9,7 @@ export default (prev, params, eventEmitter) => {
 
         const { path, comboer, comboee, startFrame, endFrame, moves } = result
         const { startFrom, searchRange, comboerActionState, comboeeActionState,
-            startFromNthMove, comboerYPos } = params
+            startFromNthMove, comboerYPos, exclude } = params
         const game = new SlippiGame( path )
         let frames, lastFrame
         try {
@@ -39,6 +39,7 @@ export default (prev, params, eventEmitter) => {
         if( comboeeActionState ){ comboeeStates = actionStates.find(s=>s.id == comboeeActionState).actionStateID }
         comboeeStates = Array.isArray(comboeeStates) ? comboeeStates : [comboeeStates]
 
+        let found = false
         for(let i = _startFrame; 
             (_searchRange > -1 ? 
             ((i <= _startFrame + _searchRange) && ( i < lastFrame - 1 ))
@@ -55,21 +56,22 @@ export default (prev, params, eventEmitter) => {
 
                 if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 
                     && comboeeStates.indexOf(_comboer.post.actionStateId) != -1 
-                ) return true
+                ){ found = true; break; }
             } else if( comboerActionState ){
-                if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 ) return true
+                if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 ){ found = true; break; }
             } else if( comboeeActionState ){
-                if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 ) return true
-                // if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 &&
-                //    _comboee.post.positionY < -2
-                // ) return true
+                if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 ){ found = true; break; }
             }
 
             if( comboerYPos ){
                 const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
-                if( _comboer.post.positionY > comboerYPos ){ return true }
+                if( _comboer.post.positionY > comboerYPos ){ found = true; break; }
             }
         }
-        return false
+        if(exclude){
+            return !found
+        } else {
+            return found
+        }
     }) 
 }
