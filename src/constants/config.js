@@ -401,6 +401,30 @@ export const patternsConfig = [
         label: "Cut Star KO",
         options: []
     },{
+        id: "reverse",
+        label: "Reverse Hit",
+        options: [
+            {
+                name: "Max Files",
+                id: "maxFiles",
+                type: "int",
+                default: ""
+            },
+            {
+                name: "nth Move",
+                id: "n",
+                type: "int",
+                default: "",
+            },
+            {
+                name: "Move type",
+                id: "moveId",
+                type: "dropdown",
+                options: moves,
+                default: ""
+            }
+        ]
+    },{
         id: "custom",
         label: "Custom Code",
         options: [
