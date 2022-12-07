@@ -113,6 +113,101 @@ export default (prev, params, eventEmitter) => {
                 })
                 break
 
+            case "4": // uair shine
+                const uairId = 16
+                moves.forEach( (move, index) => {
+                    if( move.moveId == uairId && moves[index+1] && moves[index+1].moveId == 21 ){
+                        if( move.damage < x ){
+                            results.push({...combo })
+                        }
+                    }
+                })
+                break
+
+            case "5": // lazer reset
+                const missedTechDamage1 = [185,193]
+                // const uair = [0x44]
+                // const jabState = [0x2c]
+                const neutralGetup1 = [186,194]
+                let frames1
+                try {
+                    frames1 = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                let frame = moves[moves.length-1].frame
+                let foundNeutralGetup1 = false
+                let foundMissedTechDamage = false
+                for(var i = frame; i > frame - 45; i-- ){
+                    const currentFrame = frames1[i]
+                    if(!currentFrame) break
+
+                    const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                    if(neutralGetup1.indexOf(_comboee.post.actionStateId) > -1 ) foundNeutralGetup1 = true
+                }
+                if(!foundNeutralGetup1) return false
+                for(var i = frame; i > frame - 60; i-- ){
+                    const currentFrame = frames1[i]
+                    if(!currentFrame) break
+
+                    const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                    if(missedTechDamage1.indexOf(_comboee.post.actionStateId) > -1 ) foundMissedTechDamage = true
+                }
+                if(foundMissedTechDamage){
+                    results.push({...combo }) 
+                }
+                break
+            
+            case "6": // double pummel
+                const pummelId = 52
+                let last = ""
+                let bad = false
+                moves.forEach( (move, index) => {
+                    if(move.moveId == pummelId && last == pummelId){
+                        bad = true
+                        return false
+                    }
+                    last = move.moveId
+                })
+                if(bad)return false
+                results.push({...combo })
+                break
+
+            case "7": // shine TURNAROUND bair
+                let frames2
+                try {
+                    frames2 = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                let bairFrame = frames2[moves[moves.length-1].frame + 20]
+                let preShineFrame = frames2[moves[moves.length-2].frame - 5]
+                if(!bairFrame) return
+                if(!preShineFrame) return
+                const bairFrameComboer = bairFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                const preShineFrameComboer = preShineFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                console.log(bairFrame)
+                console.log(preShineFrame)
+                if(bairFrameComboer.post.facingDirection != preShineFrameComboer.post.facingDirection){
+                    results.push({...combo })
+                }
+                break
+
+            case "8": // wobbles
+                const pummel = 52
+                let count = 0
+                moves.forEach( (move, index) => {
+                    if(move.moveId == pummel ){
+                        count++
+                    }
+                })
+                if(count > 10 ){
+                    results.push({...combo })
+                }
+                break
+
             default:
                 throw "Error: No custom filter option selected"
         }

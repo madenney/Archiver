@@ -11,7 +11,7 @@ C216E8A0 00000002
 3D808016 618C5290
 60000000 00000000
 
-$No Electric SFX [Altafen]
+$Optional: No Electric SFX [Altafen]
 C238D010 00000005 #sfx.asm
 2C030090 40820018
 3860FFFF 3D808038
@@ -28,10 +28,10 @@ $Optional: Disable Stadium Screen [UnclePunch]
 $Optional: Disable Screen Shake [Achilles1515]
 04030E44 4E800020 #External/Disable Screen Shake/Disable Screen Shake.asm
 
-$Disable Magnifying-glass HUD [NeilHarbin0]
+$Optional: Disable Magnifying-glass HUD [NeilHarbin0]
 042fb8c0 4E800020
 
-$Force 2P Center HUD [UnclePunch]
+$Optional: Force 2P Center HUD [UnclePunch]
 *HUD for Players occupy the P2 and P3 Positions on the Screen
 0416e9ac 38600002
 
@@ -58,10 +58,10 @@ $Disable Battlefield Background + Particles [NeilHarbin0]
 04219d1c 60000000
 04219d24 60000000
 
-$Disable Final Destination Background Transitions (1.02) [Achilles, Dan Salvato]
+$Optional: Disable Final Destination Background Transitions (1.02) [Achilles, Dan Salvato]
 0421AAE4 60000000
 
-$Disable Magnifying-glass HUD [NeilHarbin0]
+$Optional: Disable Magnifying-glass HUD [NeilHarbin0]
 042fb8c0 4E800020
 
 $Unrestricted Camera in Camera Mode [UnclePunch]
@@ -145,3 +145,5 @@ C0250004 D03F04C4
 43340000 8001002C
 60000000 00000000
 
+$Optional: Prevent Crowd Noises [Fizzi]
+04024170 3860FFFF

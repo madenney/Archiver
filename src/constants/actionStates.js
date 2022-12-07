@@ -54,6 +54,48 @@ const actionStates = [
       actionStateID: [185,193]
     },
     {
+      id: 188,
+      name: "Any Roll",
+      shortName: "Any Roll",
+      actionStateID: [188,189,196,197,200,201,233,234,258,259]
+    },
+    {
+      id: 189,
+      name: "Missed Tech Roll",
+      shortName: "Missed Tech Roll",
+      actionStateID: [188,189,196,197]
+    },
+    {
+      id: 199,
+      name: "Neutral Tech",
+      shortName: "Neutral Tech",
+      actionStateID: [199]
+    },
+    {
+      id: 200,
+      name: "Tech Roll",
+      shortName: "Tech Roll",
+      actionStateID: [200,201]
+    },
+    {
+      id: 233,
+      name: "Normal Roll",
+      shortName: "Normal Roll",
+      actionStateID: [233,234]
+    },
+    {
+      id: 235,
+      name: "Spot Dodge",
+      shortName: "Spot Dodge",
+      actionStateID: [235]
+    },
+    {
+      id: 258,
+      name: "Ledge Roll",
+      shortName: "Ledge Roll",
+      actionStateID: [258,259]
+    },
+    {
       id: 297,
       name: "Asleep",
       shortName: "Asleep",

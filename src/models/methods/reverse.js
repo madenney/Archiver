@@ -26,7 +26,6 @@ export default (prev, params, eventEmitter) => {
                 if(!moves[_n]) return false
                 targetMoves.push(moves[_n])
             } else {
-                console.log(moves[moves.length+_n])
                 if(!moves[moves.length+_n]) return false
                 targetMoves.push(moves[moves.length+_n])
             }
@@ -53,8 +52,8 @@ export default (prev, params, eventEmitter) => {
             const comboerX = _comboer.post.positionX
             const comboerFacing = _comboer.post.facingDirection
             const comboeeX = _comboee.post.positionX
-            const isBair = bairMoveIds.indexOf(move.moveId) > -1
-
+            const isBair = (move.moveId == 15)
+            
             // console.log("comboerX: ", comboerX)
             // console.log("comboeeX: ", comboeeX)
             // console.log("comboerFacing: ", comboerFacing)
@@ -80,27 +79,4 @@ export default (prev, params, eventEmitter) => {
        
     })
     return results
-}
-
-function isInstance(comboer,comboee,params){
-    const {comboerActionState, comboeeActionState, comboerXPos, comboerYPos, 
-        comboerMaxD, comboeeXpos, comboeeYpos, comboeeMaxD } = params
-
-    if(!comboerActionState && !comboeeActionState ){
-        throw "Error: You've passed in no action states so every frame is a valid instance"
-    }
-    // convert to values. 
-    // TODO: figure out how to remove this logic 
-    if( comboerActionState){
-        let states = actionStates.find(s=>s.id == comboerActionState).actionStateID
-        states = Array.isArray(states) ? states : [states]
-
-        if( states.indexOf(comboer.post.actionStateId) == -1 ) return false
-    }
-    if( comboeeActionState ) {
-        let states = actionStates.find(s=>s.id == comboeeActionState).actionStateID
-        states = Array.isArray(states) ? states : [states]
-        if( states.indexOf(comboee.post.actionStateId) == -1 ) return false
-    } 
-    return true 
 }
