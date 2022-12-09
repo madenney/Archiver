@@ -12,10 +12,17 @@ const actionStates = [
       actionStateID: damageStates
     },
     {
+<<<<<<< Updated upstream
       id: 58,
       name: "Smash Attack",
       shortName: "Smash Attack",
       actionStateID: [58,59,60,61,62,63,64]
+=======
+      id: 35,
+      name: "Special Fall",
+      shortName: "Special Fall",
+      actionStateID: [35,36,37]
+>>>>>>> Stashed changes
     },
     {
       id: 100,
@@ -85,10 +92,16 @@ const actionStates = [
     },
     {
       id: 202,
-      name: "Wall tech/jump",
-      shortName: "Wall tech/jump",
-      actionStateID: [202,203]
+      name: "Wall tech",
+      shortName: "Wall tech",
+      actionStateID: [202]
     },
+    {
+      id: 203,
+      name: "Wall jump",
+      shortName: "Wall jump",
+      actionStateID: [203]
+    }, 
     {
       id: 212,
       name: "Grab",

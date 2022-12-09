@@ -9,7 +9,7 @@ export default (prev, params, eventEmitter) => {
 
         const { path, comboer, comboee, startFrame, endFrame, moves } = result
         const { startFrom, searchRange, comboerActionState, comboeeActionState,
-            startFromNthMove, comboerYPos, exclude } = params
+            startFromNthMove, comboerYPos, comboeeYPos, exclude } = params
         const game = new SlippiGame( path )
         let frames, lastFrame
         try {
@@ -23,7 +23,6 @@ export default (prev, params, eventEmitter) => {
         const _startFromNthMove = parseInt(startFromNthMove)
         const _searchRange = parseInt(searchRange)
         let _startFrame
-        if( _startFrom && _startFromNthMove) throw "Error: You can't have start frame and start from nth move"
     
         if( _startFrom ){
             _startFrame = startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
@@ -31,6 +30,11 @@ export default (prev, params, eventEmitter) => {
         if( _startFromNthMove ){
             if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"
             _startFrame = _startFromNthMove > -1 ? moves[_startFromNthMove].frame : moves[moves.length + _startFromNthMove].frame
+        }
+        if( _startFrom && _startFromNthMove ){
+            if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"
+            const moveFrame = _startFromNthMove > -1 ? moves[_startFromNthMove].frame : moves[moves.length + _startFromNthMove].frame
+            _startFrame = startFrom > -1 ? frames[moveFrame + _startFrom].frame : frames[moveFrame + _startFrom].frame
         }
 
         let comboerStates, comboeeStates
@@ -55,7 +59,7 @@ export default (prev, params, eventEmitter) => {
             if( comboerActionState && comboeeActionState ){
 
                 if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 
-                    && comboeeStates.indexOf(_comboer.post.actionStateId) != -1 
+                    && comboeeStates.indexOf(_comboee.post.actionStateId) != -1 
                 ){ found = true; break; }
             } else if( comboerActionState ){
                 if( comboerStates.indexOf(_comboer.post.actionStateId) != -1 ){ found = true; break; }
@@ -63,10 +67,15 @@ export default (prev, params, eventEmitter) => {
                 if( comboeeStates.indexOf(_comboee.post.actionStateId) != -1 ){ found = true; break; }
             }
 
-            if( comboerYPos ){
+            if( comboerYPos){
                 const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
                 if( _comboer.post.positionY > comboerYPos ){ found = true; break; }
             }
+            if( comboeeYPos){
+                const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                if( _comboee.post.positionY < comboeeYPos ){ found = true; break; }
+            }
+    
         }
         if(exclude){
             return !found

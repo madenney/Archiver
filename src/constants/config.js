@@ -351,6 +351,12 @@ export const patternsConfig = [
                 id: "comboerYPos",
                 type: "int",
                 default: ""
+            },
+            {
+                name: "Comboee Y Pos",
+                id: "comboeeYPos",
+                type: "int",
+                default: ""
             }
         ]
     },{
