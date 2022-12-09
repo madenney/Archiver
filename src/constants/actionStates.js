@@ -12,6 +12,12 @@ const actionStates = [
       actionStateID: damageStates
     },
     {
+      id: 58,
+      name: "Smash Attack",
+      shortName: "Smash Attack",
+      actionStateID: [58,59,60,61,62,63,64]
+    },
+    {
       id: 100,
       name: "Shield Stun",
       shortName: "Shield Stun",
@@ -78,6 +84,18 @@ const actionStates = [
       actionStateID: [200,201]
     },
     {
+      id: 202,
+      name: "Wall tech/jump",
+      shortName: "Wall tech/jump",
+      actionStateID: [202,203]
+    },
+    {
+      id: 212,
+      name: "Grab",
+      shortName: "Grab",
+      actionStateID: [212]
+    },
+    {
       id: 233,
       name: "Normal Roll",
       shortName: "Normal Roll",
@@ -88,6 +106,12 @@ const actionStates = [
       name: "Spot Dodge",
       shortName: "Spot Dodge",
       actionStateID: [235]
+    },
+    {
+      id: 236,
+      name: "Air Dodge",
+      shortName: "Air Dodge",
+      actionStateID: [236]
     },
     {
       id: 258,

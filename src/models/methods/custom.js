@@ -1,5 +1,6 @@
 
 const { SlippiGame, ConnectionEvent } = require("@slippi/slippi-js");
+import { keyBy, size } from "lodash";
 
 export default (prev, params, eventEmitter) => {
     const results = []
@@ -20,9 +21,9 @@ export default (prev, params, eventEmitter) => {
                 })
                 if(!potentialThunders) return false
                 const game = new SlippiGame( path )
-                let frames
+                let frames3
                 try {
-                    frames = game.getFrames()
+                    frames3 = game.getFrames()
                 } catch(e){
                     console.log(e)
                     return console.log("Broken file:", file)
@@ -37,14 +38,14 @@ export default (prev, params, eventEmitter) => {
                 let foundThunder = false
                 let jabResetFrame = ""
                 for(var i = startFrame; i < endFrame; i++){
-                    const currentFrame = frames[i]
+                    const currentFrame = frames3[i]
                     if(!currentFrame) break
                     const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
                     const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
 
                     if(missedTechDamage.indexOf(_comboee.post.actionStateId) == -1 ) continue
 
-                    const prevFrame = frames[i-2]
+                    const prevFrame = frames3[i-2]
                     if(!prevFrame) break
                     if(jabState.indexOf(_comboer.post.actionStateId) == -1 )continue
                     jabResetFrame = currentFrame.frame
@@ -56,7 +57,7 @@ export default (prev, params, eventEmitter) => {
                 let foundUair = false
                 let foundNeutralGetup = false
                 for(var i = jabResetFrame - 10; i < 90; i++){
-                    const currentFrame = frames[i]
+                    const currentFrame = frames3[i]
                     if(!currentFrame) break
                     const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
                     const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
@@ -112,7 +113,6 @@ export default (prev, params, eventEmitter) => {
                     }
                 })
                 break
-
             case "4": // uair shine
                 const uairId = 16
                 moves.forEach( (move, index) => {
@@ -123,7 +123,6 @@ export default (prev, params, eventEmitter) => {
                     }
                 })
                 break
-
             case "5": // lazer reset
                 const missedTechDamage1 = [185,193]
                 // const uair = [0x44]
@@ -157,8 +156,7 @@ export default (prev, params, eventEmitter) => {
                 if(foundMissedTechDamage){
                     results.push({...combo }) 
                 }
-                break
-            
+                break          
             case "6": // double pummel
                 const pummelId = 52
                 let last = ""
@@ -173,8 +171,7 @@ export default (prev, params, eventEmitter) => {
                 if(bad)return false
                 results.push({...combo })
                 break
-
-            case "7": // shine TURNAROUND bair
+            case "7": // shine turnaround bair
                 let frames2
                 try {
                     frames2 = new SlippiGame( path ).getFrames()
@@ -194,7 +191,6 @@ export default (prev, params, eventEmitter) => {
                     results.push({...combo })
                 }
                 break
-
             case "8": // wobbles
                 const pummel = 52
                 let count = 0
@@ -207,7 +203,6 @@ export default (prev, params, eventEmitter) => {
                     results.push({...combo })
                 }
                 break
-
             case "9": // double knee
                 const fair = 14
                 let firstKnee = false
@@ -227,6 +222,85 @@ export default (prev, params, eventEmitter) => {
                     results.push({...combo })
                 }
                 break
+            case "10": // waveland back bait
+
+                // Assume its parsed as a one move combo
+                const killMove = moves[0]
+                // make sure kill move was a smash attack
+                const smashAttackStates = [10,11,12]
+                console.log(killMove.moveId)
+                if(smashAttackStates.indexOf(killMove.moveId) == -1) return false
+
+                let frames
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+
+                const killFrame = killMove.frame
+                // find grab
+                let foundGrab = false
+                for(var i = killFrame; i > killFrame - 30; i--){
+                    const grabState = 212
+                    const currentFrame = frames[i]
+                    if(!currentFrame) break
+                    const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                    const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if(_comboee.post.actionStateId == grabState){
+                        foundGrab = true 
+                        break
+                    }
+                }
+                if(!foundGrab) return false
+                
+                // see if opponent wavelanded backward
+                let foundWaveLand = false
+                for(var i = killFrame - 80; i < killFrame - 10; i++ ){
+                    const currentFrame = frames[i]
+                    const prevFrame = frames[i-1]
+                    if(!currentFrame) break
+                    if(!prevFrame) break
+                    const comboerNow = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    const comboerPrev = prevFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    
+                    const isSpecialLanding = comboerNow.post.actionStateId === 0x2b
+                    const isAcceptablePrevious = isWavedashActionState(comboerPrev.post.actionStateId)
+                    const isPossibleWavedash = isSpecialLanding && isAcceptablePrevious;
+                    if (!isPossibleWavedash) {
+                        continue;
+                    }
+                    // Here we special landed, it might be a wavedash, let's check
+                    // We grab the last 8 frames here because that should be enough time to execute a
+                    // wavedash. This number could be tweaked if we find false negatives
+                    const recentFrames = []
+                    for(var j = 8; j > 0; j--){
+                        recentFrames.push(frames[i-j])
+                    }
+                    const recentAnimations = recentFrames.map(frame => {
+                        const _comboer = frame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                        return _comboer.post.actionStateId
+                    });
+
+                    const recentAnimationsKeyed = keyBy(recentAnimations, (animation) => animation);
+                
+                    if (size(recentAnimationsKeyed) === 2 && recentAnimationsKeyed[236]) {
+                        // If the only other animation is air dodge, this might be really late to the point
+                        // where it was actually an air dodge. Air dodge animation is really long
+                        return;
+                    }
+                
+                    if (!recentAnimationsKeyed[0x18]) {
+                        foundWaveLand = true
+                        break
+                    }
+                }
+
+                if(foundWaveLand){
+                    results.push({...combo})
+                }
+                break
 
             default:
                 throw "Error: No custom filter option selected"
@@ -234,3 +308,65 @@ export default (prev, params, eventEmitter) => {
     })
     return results
 }
+
+
+
+function isWavedashActionState(actionStateID) {
+    if (actionStateID === 0xec) {
+        return true;
+    }
+    const isAboveMin = actionStateID >= 0x18;
+    const isBelowMax = actionStateID <= 0x22;
+    return isAboveMin && isBelowMax;
+}
+
+// straight from slippi-js
+// function handleActionWavedash(counts: ActionCountsType, animations: State[]): void {
+//     const currentAnimation = last(animations);
+//     const prevAnimation = animations[animations.length - 2] as number;
+  
+//     const isSpecialLanding = currentAnimation === State.LANDING_FALL_SPECIAL;
+//     const isAcceptablePrevious = isWavedashInitiationAnimation(prevAnimation);
+//     const isPossibleWavedash = isSpecialLanding && isAcceptablePrevious;
+  
+//     if (!isPossibleWavedash) {
+//       return;
+//     }
+  
+//     // Here we special landed, it might be a wavedash, let's check
+//     // We grab the last 8 frames here because that should be enough time to execute a
+//     // wavedash. This number could be tweaked if we find false negatives
+//     const recentFrames = animations.slice(-8);
+//     const recentAnimations = keyBy(recentFrames, (animation) => animation);
+  
+//     if (size(recentAnimations) === 2 && recentAnimations[State.AIR_DODGE]) {
+//       // If the only other animation is air dodge, this might be really late to the point
+//       // where it was actually an air dodge. Air dodge animation is really long
+//       return;
+//     }
+  
+//     if (recentAnimations[State.AIR_DODGE]) {
+//       // If one of the recent animations was an air dodge, let's remove that from the
+//       // air dodge counter, we don't want to count air dodges used to wavedash/land
+//       counts.airDodgeCount -= 1;
+//     }
+  
+//     if (recentAnimations[State.ACTION_KNEE_BEND]) {
+//       // If a jump was started recently, we will consider this a wavedash
+//       counts.wavedashCount += 1;
+//     } else {
+//       // If there was no jump recently, this is a waveland
+//       counts.wavelandCount += 1;
+//     }
+//   }
+  
+// function isWavedashInitiationAnimation(animation: State): boolean {
+//     if (animation === State.AIR_DODGE) {
+//         return true;
+//     }
+
+//     const isAboveMin = animation >= State.CONTROLLED_JUMP_START;
+//     const isBelowMax = animation <= State.CONTROLLED_JUMP_END;
+//     return isAboveMin && isBelowMax;
+// }
+  
