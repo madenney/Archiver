@@ -208,6 +208,26 @@ export default (prev, params, eventEmitter) => {
                 }
                 break
 
+            case "9": // double knee
+                const fair = 14
+                let firstKnee = false
+                let foundDoubleKnee = false
+                moves.forEach( (move, index) => {
+                    if(move.moveId == fair ){
+                        if(firstKnee){
+                            foundDoubleKnee = true
+                        } else {
+                            firstKnee = true
+                        }
+                    } else {
+                        firstKnee = false
+                    }
+                })
+                if(foundDoubleKnee){
+                    results.push({...combo })
+                }
+                break
+
             default:
                 throw "Error: No custom filter option selected"
         }

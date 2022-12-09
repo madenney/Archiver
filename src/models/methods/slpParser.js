@@ -4,7 +4,7 @@ export default (prev, params, eventEmitter) => {
     const results = []
     const { maxFiles } = params
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( (file, index) => {
-        const { minHits, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = params
+        const { minHits, maxHits, comboerChar, comboerTag, comboeeChar, comboeeTag, didKill } = params
         if(index % 100 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
         const { path, players, stage } = file
@@ -18,6 +18,7 @@ export default (prev, params, eventEmitter) => {
         const filteredCombos = []
         combos.forEach( combo => {
             if(minHits && combo.moves.length < minHits ) return false
+            if(maxHits && combo.moves.length > maxHits ) return false
             const comboer = players.find(p => p.playerIndex == combo.moves[0].playerIndex)
             const comboee = players.find(p => p.playerIndex == combo.playerIndex )
             if( comboerChar && comboerChar != comboer.characterId) return false
