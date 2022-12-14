@@ -453,6 +453,12 @@ export const patternsConfig = [
                 default: ""
             },
             {
+                name: "Y",
+                id: "y",
+                type: "int",
+                default: ""
+            },
+            {
                 name: "Max Files",
                 id: "maxFiles",
                 type: "int",

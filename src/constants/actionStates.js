@@ -12,17 +12,16 @@ const actionStates = [
       actionStateID: damageStates
     },
     {
-<<<<<<< Updated upstream
-      id: 58,
-      name: "Smash Attack",
-      shortName: "Smash Attack",
-      actionStateID: [58,59,60,61,62,63,64]
-=======
       id: 35,
       name: "Special Fall",
       shortName: "Special Fall",
       actionStateID: [35,36,37]
->>>>>>> Stashed changes
+    },
+    {
+      id: 58,
+      name: "Smash Attack",
+      shortName: "Smash Attack",
+      actionStateID: [58,59,60,61,62,63,64]
     },
     {
       id: 100,

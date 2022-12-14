@@ -10,8 +10,9 @@ export default (prev, params, eventEmitter) => {
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( combo, index )  => {
         if( index % 1 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
-        const { n, x } = params
+        const { n, x, y } = params
         const { moves, comboer, comboee, path, stage } = combo
+        let frames
         switch ( n ){
             case "1": // thunder's combo
                 const potentialThunders = moves.find((move, index) => {
@@ -231,7 +232,6 @@ export default (prev, params, eventEmitter) => {
                 console.log(killMove.moveId)
                 if(smashAttackStates.indexOf(killMove.moveId) == -1) return false
 
-                let frames
                 try {
                     frames = new SlippiGame( path ).getFrames()
                 } catch(e){
@@ -301,7 +301,55 @@ export default (prev, params, eventEmitter) => {
                     results.push({...combo})
                 }
                 break
+            case "runningshine":
 
+                const runningStates = [21,22]
+
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+
+                for(var i = moves[0].frame - x; i > moves[0].frame - y; i--){
+                    const currentFrame = frames[i]
+                    if(!currentFrame) return false
+                    const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if(runningStates.indexOf(_comboer.post.actionStateId) == -1 ) return false
+                }
+                results.push({...combo})
+                break
+            case "allshine":
+                if(!moves.every(m => m.moveId == 21 )) return false
+                results.push({...combo})
+                break
+            case "df":
+                const targetMoves = [53,56]
+                if(targetMoves.indexOf(moves[moves.length-2].moveId) == -1 ) return false
+                results.push({...combo})
+                break
+            case "waveshinenair":
+                const nair = 13
+                const shine = 21
+                let found1 = false
+                moves.forEach((move,index) => {
+                    if(found1) return
+                    if(moves[index+1]){
+                        if(move.moveId == shine && moves[index+1].moveId == nair){
+                            if( moves[index+1].frame - move.frame < x ){
+                                found1 = true
+                                results.push({...combo})
+                            }
+                        }
+                    }
+                })
+                break
+            case "fn":
+                const fn = [13,14]
+                if(fn.indexOf(moves[moves.length-2].moveId) == -1 ) return false
+                results.push({...combo})
+                break
             default:
                 throw "Error: No custom filter option selected"
         }
