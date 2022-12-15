@@ -36,7 +36,8 @@ class Video extends React.Component {
 		const { numCPUs, dolphinPath, ssbmIsoPath, gameMusic, hideHud, hideTags,
 			hideNames, fixedCamera, enableChants, bitrateKbps, resolution,
 			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
-			dolphinCutoff, disableScreenShake } = this.state
+			dolphinCutoff, disableScreenShake, noElectricSFX, noCrowdNoise, 
+			disableMagnifyingGlass } = this.state
 			
 
 		let outputDirectoryName = "output";
@@ -57,6 +58,9 @@ class Video extends React.Component {
 			hideNames: hideNames,
 			disableScreenShake: disableScreenShake,
 			disableChants: !enableChants,
+			noElectricSFX: noElectricSFX,
+			noCrowdNoise: noCrowdNoise,
+			disableMagnifyingGlass: disableMagnifyingGlass,
 			fixedCamera: fixedCamera,
 			bitrateKbps: bitrateKbps,
 			resolution: resolution,
@@ -82,7 +86,7 @@ class Video extends React.Component {
 		console.log("Config: ", config)
 		await slpToVideo(replays, config)
 
-		console.log("DONZO")
+		console.log("DONE")
 	}
 
 	handleChange(key,value){

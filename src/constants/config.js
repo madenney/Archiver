@@ -598,6 +598,24 @@ export const videoConfig = [
         type: "checkbox"
     },
     {
+        label: "Disable Electric Buzz",
+        default: false,
+        id: "noElectricSFX",
+        type: "checkbox"
+    },
+    {
+        label: "Disable Crowd Noises",
+        default: false,
+        id: "noCrowdNoise",
+        type: "checkbox"
+    },
+    {
+        label: "No Magnifying Glass",
+        default: false,
+        id: "disableMagnifyingGlass",
+        type: "checkbox"
+    },
+    {
         label: "Shuffle",
         default: false,
         id: "shuffle",

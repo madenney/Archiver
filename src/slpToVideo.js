@@ -1,4 +1,9 @@
-import file from "./lib/file"
+
+/* Where the magic happens. 
+If you're here to see how to convert slp to mp4, I recommend starting here:
+https://github.com/kevinsung/slp-to-video
+*/
+
 
 const { spawn } = require("child_process")
 const crypto = require("crypto")
@@ -261,10 +266,10 @@ const configureDolphin = async (config) => {
   if (config.fixedCamera) newSettings.push("$Optional: Fixed Camera Always")
   if (!config.widescreenOff) newSettings.push("$Optional: Widescreen 16:9")
   if (config.disableScreenShake) newSettings.push("$Optional: Disable Screen Shake")
-  newSettings.push("$Optional: No Electric SFX")
-  newSettings.push("$Optional: Prevent Crowd Noises")
-  newSettings.push("$Optional: Prevent Character Crowd Chants")
-  newSettings.push("$Optional: Disable Magnifying-glass HUD")
+  if (config.noElectricSFX) newSettings.push("$Optional: No Electric SFX")
+  if (config.noCrowdNoise) newSettings.push("$Optional: Prevent Crowd Noises")
+  if (!config.enableChants) newSettings.push("$Optional: Prevent Character Crowd Chants")
+  if (config.disableMagnifyingGlass) newSettings.push("$Optional: Disable Magnifying-glass HUD")
   //newSettings.push("$Optional: Force 2P Center HUD")
   //if (config.hideNeutralFalco) newSettings.push("$Optional: Hide Neutral Falco")
   //if (true) newSettings.push("$Optional: Hide Neutral Falco")
