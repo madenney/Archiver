@@ -12,7 +12,7 @@ export default (prev, params, eventEmitter) => {
 
         const { n, x, y } = params
         const { moves, comboer, comboee, path, stage } = combo
-        let frames
+        let frames, targetStates
         switch ( n ){
             case "1": // thunder's combo
                 const potentialThunders = moves.find((move, index) => {
@@ -350,6 +350,39 @@ export default (prev, params, eventEmitter) => {
                 if(fn.indexOf(moves[moves.length-2].moveId) == -1 ) return false
                 results.push({...combo})
                 break
+            case "stomp":
+                const moveFrame = moves[moves.length-1].frame
+                results.push({
+                    ...combo,
+                    startFrame: moveFrame - 20
+                })
+                break
+            
+            case "cloud":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                targetStates = [183,191,199,200,201,202,203]
+                const range = 60
+                const frame1 = moves[moves.length-1].frame
+                for( var i = frame1; i < (frame1 +  range); i++){
+                    const currentFrame = frames[i]
+                    if(!currentFrame) return false
+                    const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                    if(targetStates.indexOf(_comboee.post.actionStateId) != -1 ){
+                        results.push({...combo})
+                        break
+                    }
+                }
+
+                break
+            case "":
+                break  
+            case "":
+                break
             default:
                 throw "Error: No custom filter option selected"
         }
@@ -370,10 +403,9 @@ function isWavedashActionState(actionStateID) {
 
 // straight from slippi-js
 // function handleActionWavedash(counts: ActionCountsType, animations: State[]): void {
-//     const currentAnimation = last(animations);
-//     const prevAnimation = animations[animations.length - 2] as number;
+  //     const prevAnimation = animations[animations.length - 2] as number;
   
-//     const isSpecialLanding = currentAnimation === State.LANDING_FALL_SPECIAL;
+//     const   = currentAnimation === State.LANDING_FALL_SPECIAL;
 //     const isAcceptablePrevious = isWavedashInitiationAnimation(prevAnimation);
 //     const isPossibleWavedash = isSpecialLanding && isAcceptablePrevious;
   

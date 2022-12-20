@@ -81,7 +81,7 @@ const moves = [
   {
     id: 14,
     name: "Forward Air",
-    shortName: "fair",
+    shortName: "fair", 
     actionStateID: 0x42
   },
   {
