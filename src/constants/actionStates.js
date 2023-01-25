@@ -143,6 +143,12 @@ const actionStates = [
       actionStateID: [345,346]
     },
     {
+      id: 347,
+      name: "Spacie Side B",
+      shortName: "Spacie Side B",
+      actionStateID: [347,348,349,350,351,352]
+    },
+    {
       id: 2,
       name: "Jab",
       shortName: "jab",

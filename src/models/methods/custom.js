@@ -2,6 +2,18 @@
 const { SlippiGame, ConnectionEvent } = require("@slippi/slippi-js");
 import { keyBy, size } from "lodash";
 
+import { fastFallers } from "../../constants/characters";
+import  rectangles from "../../constants/rectangles";
+import comboStats from "./comboStats";
+//  whatever unit ikneedata.com uses
+const stageRadii = {
+    2: 63.6, // FoD
+    3: 87.6, // pokemon
+    8: 56, // yoshis
+    28: 77, // dreamland
+    31: 69, // batts
+    32:  85.4 // fd
+}
 export default (prev, params, eventEmitter) => {
     const results = []
     const { maxFiles } = params
@@ -12,7 +24,7 @@ export default (prev, params, eventEmitter) => {
 
         const { n, x, y } = params
         const { moves, comboer, comboee, path, stage } = combo
-        let frames, targetStates
+        let frames, targetStates, _comboer, currentFrame, count, posX, posY
         switch ( n ){
             case "1": // thunder's combo
                 const potentialThunders = moves.find((move, index) => {
@@ -194,7 +206,7 @@ export default (prev, params, eventEmitter) => {
                 break
             case "8": // wobbles
                 const pummel = 52
-                let count = 0
+                count = 0
                 moves.forEach( (move, index) => {
                     if(move.moveId == pummel ){
                         count++
@@ -379,10 +391,170 @@ export default (prev, params, eventEmitter) => {
                 }
 
                 break
-            case "":
+            case "psychic":
+                const psychics = [10,11,18]
+                const throwIds = [53,54,55,56]
+                if(psychics.indexOf(comboer.characterId) == -1 ) return false
+                results.push(combo)
                 break  
+            case "d":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                posX = _comboer.post.positionX
+                posY = _comboer.post.positionY
+                const d = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2))
+                results.push({ ...combo, d })
+                break
+
+            case "x":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                results.push({ ...combo, x: _comboer.post.positionX })
+                break
+            case "y":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                results.push({ ...combo, y: _comboer.post.positionY })
+                break
+            case "mario":
+                const marios = [8,22]
+                if(marios.indexOf(comboer.characterId) == -1 ) return false
+                results.push(combo)
+                break
+            case "offstage":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                posX= _comboer.post.positionX
+                const s = rectangles[stage].edge
+                if( posX< 0 ){
+                    if( posX> ( s.xMax*-1 ) ) return false
+                } else {
+                    if( posX< ( s.xMax ) ) return false
+                }
+                results.push(combo)
+                break
+            case "maxY":
+                console.log(combo.y)
+                console.log(y)
+                if(combo.y > y ) return false
+                results.push(combo)
+                break
+            case "mangstats":
+                const sample = prev.results.slice(0,2100)
+                count = 0
+                sample.forEach( combo => {
+                    if(combo.comboer.displayName == "mang") count++
+                })
+                console.log("mang count: ", count)
+                break
+            case "spacie":
+                const spacies = [2,20]
+                if(spacies.indexOf(combo.comboee.characterId) == -1 ) return false
+                results.push(combo)
+                break
+            case "onstageKO":
+                // subtract 20 because that's about a max character's width away
+                if( Math.abs(combo.x) < ( stageRadii[combo.stage] - 20 ) ) results.push(combo)
+                break
+            case "offstageKO":
+                if( Math.abs(combo.x) > ( stageRadii[combo.stage] + 5 ) ) results.push(combo)
+                break
+
+            case "lastMove":
+                results.push({
+                    ...combo,
+                    endFrame: combo.moves[combo.moves.length-1].frame + parseInt(x)
+                })
+                break
+            case "minY":
+                if( combo.y < 15 ) return false
+                results.push(combo)
+                break
+            case "uniqueHits":
+                const hits = []
+                const jabs = [3,4]
+                for(var i = 0; i < combo.moves.length; i++){
+                    let moveId = combo.moves[i].moveId
+                    if( jabs.indexOf(moveId) > -1 ){
+                        moveId = 2
+                    }
+                    if(hits.indexOf(moveId) > -1 ){
+                        return false
+                    } else {
+                        hits.push(moveId)
+                    }
+                }
+                results.push(combo)
+                break
+            case "shieldBreaks":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                if(!frames) return false
+                if(frames.length == 0) return false
+                const shieldBreakStates = [205,206,207,208,209,210,211]
+                let temp = []
+                Object.keys(frames).forEach( f => {
+                    const frame = frames[f]
+                    const players = frame.players.filter(p => p)
+                    if(players.length != 2) return false
+                    try {
+                        if(shieldBreakStates.indexOf(players[0].post.actionStateID) > -1 ||
+                        shieldBreakStates.indexOf(players[1].post.actionStateID) > -1
+                        ){
+                            temp.push(frame)
+                        } else {
+                            if(temp.length > 0 ){
+                                results.push({
+                                    startFrame: temp[0].frame,
+                                    endFrame: temp[temp.length-1].frame,
+                                    ...combo
+                                })
+                            }
+                            temp = []
+                        }
+
+                    } catch(e){
+                        return false
+                    }
+                })
+                break
             case "":
                 break
+            case "":
+                break
+            
             default:
                 throw "Error: No custom filter option selected"
         }

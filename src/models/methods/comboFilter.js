@@ -24,13 +24,25 @@ export default (prev, params, eventEmitter) => {
                     if( nthMove.n == "c"){
                         const move = moves.find((move,index) => {
                             if(move.moveId != nthMove.moveId) return false
-                            if(d && move.damage < d) return false
+                            if(d && move.damage > d) return false
                             if(t && moves[index-1]){
                                 if( (move.frame - moves[index-1].frame) > t ) return false
                             }
                             return true
                         })
                         if(!move) return false
+                    }
+                    // e for 'every'
+                    if( nthMove.n == "e"){
+                        const every = moves.every((move,index) => {
+                            if(move.moveId != nthMove.moveId) return false
+                            if(d && move.damage < d) return false
+                            if(t && moves[index-1]){
+                                if( (move.frame - moves[index-1].frame) > t ) return false
+                            }
+                            return true
+                        })
+                        if(!every) return false
                     }
                 } else if( n >= 0 ){
                     if( !moves[n]) return false

@@ -9,7 +9,7 @@ export default (prev, params, eventEmitter) => {
 
         const { path, comboer, comboee, startFrame, endFrame, moves } = result
         const { startFrom, searchRange, comboerActionState, comboeeActionState,
-            startFromNthMove, comboerYPos, comboeeYPos, exclude } = params
+            startFromNthMove, comboerYPos, comboerXPos, comboeeYPos, exclude } = params
         const game = new SlippiGame( path )
         let frames, lastFrame
         try {
@@ -35,6 +35,9 @@ export default (prev, params, eventEmitter) => {
             if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"
             const moveFrame = _startFromNthMove > -1 ? moves[_startFromNthMove].frame : moves[moves.length + _startFromNthMove].frame
             _startFrame = startFrom > -1 ? frames[moveFrame + _startFrom].frame : frames[moveFrame + _startFrom].frame
+        }
+        if( !_startFrom && !_startFromNthMove ){
+            _startFrame = moves[0].frame
         }
 
         let comboerStates, comboeeStates
@@ -70,6 +73,10 @@ export default (prev, params, eventEmitter) => {
             if( comboerYPos){
                 const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
                 if( _comboer.post.positionY > comboerYPos ){ found = true; break; }
+            }
+            if( comboerXPos){
+                const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                if( _comboer.post.positionX > comboerXPos ){ found = true; break; }
             }
             if( comboeeYPos){
                 const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)

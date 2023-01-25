@@ -7,7 +7,7 @@ import { deathDirections } from "./deathDirections"
 export const patternsConfig = [
     {
         id: "files",
-        label: "Files",
+        label: "Start Files",
         options: [
             {
                 name: "Stage",
@@ -45,7 +45,7 @@ export const patternsConfig = [
         ]
     },{
         id: "slpParser",
-        label: "Combo Parser",
+        label: "File Parser",
         options: [
             {
                 name: "Min Hits",
@@ -211,94 +211,96 @@ export const patternsConfig = [
                 default: ""
             }
         ]
-    },{
-        id: "actionStates",
-        label: "Action State",
-        options: [
-            {
-                name: "Max Files",
-                id: "maxFiles",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboer State",
-                id: "comboerActionState",
-                type: "dropdown",
-                options: actionStates,
-                default: ""
-            },
-            {
-                name: "Comboee State",
-                id: "comboeeActionState",
-                type: "dropdown",
-                options: actionStates,
-                default: ""
-            },
-            {
-                name: "Comboer X Pos",
-                id: "comboerXPos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboer Y Pos",
-                id: "comboerYPos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboer Max D",
-                id: "comboerMaxD",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee X Pos",
-                id: "comboeeXpos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee Y Pos",
-                id: "comboeeYpos",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboee Max D",
-                id: "comboeeMaxD",
-                type: "int",
-                default: ""
-            },
-            {
-                name: "Comboer Char",
-                id: "comboerChar",
-                type: "dropdown",
-                options: sortedCharacters,
-                default: ""
-            },
-            {
-                name: "Comboee Char",
-                id: "comboeeChar",
-                type: "dropdown",
-                options: sortedCharacters,
-                default: ""
-            },
-            {
-                name: "Comboer Tag",
-                id: "comboerTag",
-                type: "textInput",
-                default: ""
-            },
-            {
-                name: "Comboee Tag",
-                id: "comboeeTag",
-                type: "textInput",
-                default: ""
-            }
-        ]
-    },{
+    },
+    // {
+    //     id: "actionStates",
+    //     label: "Action State",
+    //     options: [
+    //         {
+    //             name: "Max Files",
+    //             id: "maxFiles",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer State",
+    //             id: "comboerActionState",
+    //             type: "dropdown",
+    //             options: actionStates,
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee State",
+    //             id: "comboeeActionState",
+    //             type: "dropdown",
+    //             options: actionStates,
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer X Pos",
+    //             id: "comboerXPos",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer Y Pos",
+    //             id: "comboerYPos",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer Max D",
+    //             id: "comboerMaxD",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee X Pos",
+    //             id: "comboeeXpos",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Y Pos",
+    //             id: "comboeeYpos",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Max D",
+    //             id: "comboeeMaxD",
+    //             type: "int",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer Char",
+    //             id: "comboerChar",
+    //             type: "dropdown",
+    //             options: sortedCharacters,
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Char",
+    //             id: "comboeeChar",
+    //             type: "dropdown",
+    //             options: sortedCharacters,
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboer Tag",
+    //             id: "comboerTag",
+    //             type: "textInput",
+    //             default: ""
+    //         },
+    //         {
+    //             name: "Comboee Tag",
+    //             id: "comboeeTag",
+    //             type: "textInput",
+    //             default: ""
+    //         }
+    //     ]
+    // }
+    {
         id: "windowFilter",
         label: "Window Filter",
         options: [
@@ -353,6 +355,12 @@ export const patternsConfig = [
                 default: ""
             },
             {
+                name: "Comboer X Pos",
+                id: "comboerXPos",
+                type: "int",
+                default: ""
+            },
+            {
                 name: "Comboee Y Pos",
                 id: "comboeeYPos",
                 type: "int",
@@ -402,11 +410,23 @@ export const patternsConfig = [
         label: "Sort",
         options: [
             {
-                name: "Start From",
-                id: "startFrom",
+                name: "Sort Function",
+                id: "sortFunction",
+                type: "textInput",
+                default: 0
+            },
+            {
+                name: "n",
+                id: "n",
                 type: "int",
                 default: 0
             },
+            {
+                name: "Reverse",
+                id: "reverse",
+                type: "checkbox",
+                default: false
+            }
         ]
     },{
         id: "removeStarKOFrames",
