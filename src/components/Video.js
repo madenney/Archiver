@@ -70,12 +70,26 @@ class Video extends React.Component {
 		let finalResults = selectedResults;
 		if( shuffle ) finalResults = shuffleArray(finalResults)
 		if( parseInt(slice) ) finalResults = finalResults.slice(0,parseInt(slice))
+
+		let min, max
+		if(addStartFrames.includes("-")){
+			min = parseInt(addStartFrames.slice(0, addStartFrames.indexOf("-")))
+			max = parseInt(addStartFrames.slice(addStartFrames.indexOf("-")+1))
+		}
 		const replays = []
 		finalResults.forEach((result, index) => {
+
+			let startFrame
+			if(addStartFrames.includes("-")){
+				startFrame = Math.floor(Math.random() * (max - min + 1) + min)
+			} else {
+				startFrame = parseInt(addStartFrames)
+			}
+
 			replays.push({
 				index,
 				path: result.path,
-				startFrame: result.startFrame - parseInt(addStartFrames),
+				startFrame: result.startFrame - startFrame,
 				endFrame: result.endFrame + parseInt(addEndFrames)
 			})
 		})

@@ -51,6 +51,15 @@ export default (prev, params, eventEmitter) => {
             const damageB = combo_B.moves.reduce(((t,n) => t+n),0)
             return damageA - damageB
         },
+        endDamage: ( combo_A, combo_B ) => {
+            const damageA = combo_A.endPercent
+            const damageB = combo_B.endPercent
+            if( reverse ){
+                return damageA - damageB
+            } else {
+                return damageB - damageA
+            }
+        },
         x: ( combo_A, combo_B ) => {
             if( reverse ){
                 return combo_B.x - combo_A.x

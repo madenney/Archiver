@@ -425,6 +425,18 @@ export default (prev, params, eventEmitter) => {
                 _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
                 results.push({ ...combo, x: _comboer.post.positionX })
                 break
+            case "ex":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                results.push({ ...combo, x: _comboer.post.positionX })
+                break
             case "y":
                 try {
                     frames = new SlippiGame( path ).getFrames()
@@ -462,8 +474,6 @@ export default (prev, params, eventEmitter) => {
                 results.push(combo)
                 break
             case "maxY":
-                console.log(combo.y)
-                console.log(y)
                 if(combo.y > y ) return false
                 results.push(combo)
                 break
@@ -550,11 +560,51 @@ export default (prev, params, eventEmitter) => {
                     }
                 })
                 break
-            case "":
+            case "doubleFair":
+                let bingo = false
+                combo.moves.forEach(m => {
+                    if(m.moveId == 14 ){
+                        if(bingo){
+                            results.push(combo)
+                        } else {
+                            bingo = true
+                        }
+                    } else {
+                        bingo = false
+                    }
+                })
+                break
+            case "throw":
+                const throws = [54,56]
+                if(throws.indexOf(combo.moves[combo.moves.length-2].moveId) > -1){
+                    results.push(combo)
+                }
+                break
+            case "zeroToDeath":
+                if(combo.startPercent == 0){
+                    results.push(combo)
+                }
+                break
+            case "swords":
+                const marthRoy = [9,23]
+                if(marthRoy.indexOf(combo.comboer.characterId) > -1){
+                    results.push(combo)
+                }
+                break
+            case "hoon":
+                const names = ["", "antihoon", "bo3? antihoon", "tv/antihoon", "stepsisstuck", "le croix"]
+                if(names.indexOf(combo.comboer.displayName) > -1 ){
+                    results.push(combo)
+                }
+                break
+            case "matt":
+                const mattNames = ["Mad Matt", "Nomad"]
+                if(mattNames.indexOf(combo.comboer.displayName) > -1 ){
+                    results.push(combo)
+                }
                 break
             case "":
                 break
-            
             default:
                 throw "Error: No custom filter option selected"
         }
