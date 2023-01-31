@@ -2,6 +2,9 @@
 """
 Detects duplicates and invalid slp files.
 Usage: duplicates.py <folder>
+
+This uses the x inputs of player 1 to detect duplicates.
+There must be a better way but this works for now.
 """
 from os.path import abspath
 import subprocess
