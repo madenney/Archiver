@@ -24,7 +24,7 @@ export default (prev, params, eventEmitter) => {
                     if( nthMove.n == "c"){
                         const move = moves.find((move,index) => {
                             if(move.moveId != nthMove.moveId) return false
-                            if(d && move.damage > d) return false
+                            if(d && move.damage < d) return false
                             if(t && moves[index-1]){
                                 if( (move.frame - moves[index-1].frame) > t ) return false
                             }

@@ -72,7 +72,8 @@ class Video extends React.Component {
 		if( parseInt(slice) ) finalResults = finalResults.slice(0,parseInt(slice))
 
 		let min, max
-		if(addStartFrames.includes("-")){
+		
+		if(addStartFrames && addStartFrames.includes("-")){
 			min = parseInt(addStartFrames.slice(0, addStartFrames.indexOf("-")))
 			max = parseInt(addStartFrames.slice(addStartFrames.indexOf("-")+1))
 		}

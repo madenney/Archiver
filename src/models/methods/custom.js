@@ -19,6 +19,7 @@ export default (prev, params, eventEmitter) => {
     const { maxFiles } = params
     console.log("MAX FILES: ", maxFiles )
     console.log(prev.results.length)
+    let dmg = 0
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( combo, index )  => {
         if( index % 1 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
@@ -425,6 +426,18 @@ export default (prev, params, eventEmitter) => {
                 _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
                 results.push({ ...combo, x: _comboer.post.positionX })
                 break
+            case "absx":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                results.push({ ...combo, x: Math.abs(_comboer.post.positionX) })
+                break
             case "ex":
                 try {
                     frames = new SlippiGame( path ).getFrames()
@@ -591,17 +604,59 @@ export default (prev, params, eventEmitter) => {
                     results.push(combo)
                 }
                 break
-            case "hoon":
-                const names = ["", "antihoon", "bo3? antihoon", "tv/antihoon", "stepsisstuck", "le croix"]
-                if(names.indexOf(combo.comboer.displayName) > -1 ){
-                    results.push(combo)
-                }
+            case "excludeShineDair":
+                if(combo.moves[combo.moves.length-1].moveId == 17 
+                && combo.moves[combo.moves.length-2].moveId == 21
+                ){ return }
+                results.push(combo)
                 break
-            case "matt":
-                const mattNames = ["Mad Matt", "Nomad"]
-                if(mattNames.indexOf(combo.comboer.displayName) > -1 ){
-                    results.push(combo)
+            case "excludeNeutralB":
+                if( combo.moves.find(c => c.moveId == 18 ) ){ return }
+                results.push(combo)
+                break
+            case "only":
+                const t = [0,1,9,10,11,16,20,25]
+                if ( t.indexOf(combo.comboer.characterId) > -1 ){ results.push(combo) }
+                break
+            case "12":
+                //const target = [8,8,8,8,8,16,16,16]
+                const target = [8,8,8,8,16,16,16]
+                const uthrow = combo.moves.find(m => m.moveId == 55)
+                if(!uthrow) return
+                const uthrowIndex = combo.moves.indexOf(uthrow)
+                for(var i = 1; i <= target.length; i++){
+                    if(!combo.moves[uthrowIndex + i]) return false
+                    if(combo.moves[uthrowIndex + i].moveId != target[i-1]){
+                        return false
+                    }
                 }
+                results.push(combo)
+                break
+            case "isolate_dair":
+                const dair = combo.moves.find(m => m.moveId == 17 )
+                dmg+= dair.damage
+                results.push({
+                    ...combo,
+                    startFrame: dair.frame - 10,
+                    endFrame: dair.frame + 60
+                })
+                console.log(dmg)
+                break
+            case "isolate_dsmash":
+                const dsmash = combo.moves.find(m => m.moveId == 12 )
+                dmg+= dsmash.damage
+                results.push({
+                    ...combo,
+                    startFrame: dsmash.frame - 5,
+                    endFrame: dsmash.frame + 50
+                })
+                console.log(dmg)
+                break
+            case "":
+                break
+            case "":
+                break
+            case "":
                 break
             case "":
                 break
