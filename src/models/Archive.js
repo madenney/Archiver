@@ -6,7 +6,6 @@ const Pattern = require("./Pattern").default;
 const { patternsConfig } = require("../constants/config.js")
 const { getSlpFilePaths } = require("../lib").default;
 const  fileTemplate = JSON.parse( fs.readFileSync(path.resolve("src/constants/jsonTemplates/fileTemplate.json")));
-const  patternTemplate = JSON.parse( fs.readFileSync(path.resolve("src/constants/jsonTemplates/patternTemplate.json")));
 
 class Archive {
     

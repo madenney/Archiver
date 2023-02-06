@@ -1,7 +1,10 @@
 
-/* Where the magic happens. 
+/* 
+
+Where the magic happens. 
 If you're here to see how to convert slp to mp4, I recommend starting here:
 https://github.com/kevinsung/slp-to-video
+
 */
 
 

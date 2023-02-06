@@ -1,4 +1,4 @@
-export enum State {
+
     // Animation ID ranges
     DAMAGE_START = 0x4b,
     DAMAGE_END = 0x5b,
@@ -97,4 +97,3 @@ export enum State {
   
     COMMAND_GRAB_RANGE2_START = 0x147,
     COMMAND_GRAB_RANGE2_END = 0x152,
-  }
