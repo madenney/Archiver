@@ -5,6 +5,7 @@ const fs = require("fs")
 const { ipcRenderer } = require("electron");
 const path = require("path")
 const { shuffleArray } = require("../lib").default
+const { generateOverlays } = require("../lib/overlay").default
 
 class Video extends React.Component {
 
@@ -37,7 +38,7 @@ class Video extends React.Component {
 			hideNames, fixedCamera, enableChants, bitrateKbps, resolution,
 			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
 			dolphinCutoff, disableScreenShake, noElectricSFX, noCrowdNoise, 
-			disableMagnifyingGlass } = this.state
+			disableMagnifyingGlass, overlaySource } = this.state
 			
 
 		let outputDirectoryName = "output";
@@ -56,6 +57,7 @@ class Video extends React.Component {
 			hideHud: hideHud,
 			hideTags: hideTags,
 			hideNames: hideNames,
+			overlaySource: overlaySource,
 			disableScreenShake: disableScreenShake,
 			disableChants: !enableChants,
 			noElectricSFX: noElectricSFX,
@@ -96,7 +98,10 @@ class Video extends React.Component {
 		})
 		if( parseInt(lastClipOffset) ) replays[replays.length-1].endFrame += parseInt(lastClipOffset)
 
-		console.log("RUNNING.")
+		if(overlaySource){
+			await generateOverlays(replays, path.resolve(outputPath + "/" + outputDirectoryName))
+		}
+		
 		console.log("Replays: ", replays)
 		console.log("Config: ", config)
 		await slpToVideo(replays, config)

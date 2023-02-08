@@ -63,7 +63,8 @@ const processReplays = async (replays,config) => {
     replays.forEach( replay => {
 
         const fileBasename = pad(replay.index,4)
-        console.log(fileBasename)
+
+        // arguments for dolphin recording
         dolphinArgsArray.push([
             "-i",
             path.resolve(config.outputPath,`${fileBasename}.json`),
@@ -94,6 +95,7 @@ const processReplays = async (replays,config) => {
         ffmpegMergeArgsArray.push(ffmpegMergeArgs)
 
 
+        
         // Arguments for ffmpeg trimming
         ffmpegTrimArgsArray.push([
             "-ss",
@@ -101,23 +103,26 @@ const processReplays = async (replays,config) => {
             "-i",
             path.resolve(config.outputPath,`${fileBasename}-merged.avi`),
             "-c",
-            "copy",
-            path.resolve(config.outputPath,`${fileBasename}.avi`)
+            "copy"
         ])
 
         // Arguments for adding overlays
-        if (replay.overlayPath) {
-            ffmpegOverlayArgsArray.push([
+        if(replay.overlayPath){
+          console.log("?", replay.overlayPath)
+          ffmpegTrimArgsArray[ffmpegTrimArgsArray.length-1].push(path.resolve(config.outputPath,`${fileBasename}-pre-overlay.avi`))
+          ffmpegOverlayArgsArray.push([
             "-i",
-            path.resolve(config.outputPath,`${fileBasename}.avi`),
+            path.resolve(config.outputPath,`${fileBasename}-pre-overlay.avi`),
             "-i",
             replay.overlayPath,
             "-b:v",
             `${config.bitrateKbps}k`,
             "-filter_complex",
             "[0:v][1:v] overlay",
-            path.resolve(config.outputPath,`${fileBasename}-overlaid.avi`),
-            ])
+            path.resolve(config.outputPath,`${fileBasename}.avi`),
+          ])
+        } else {
+          ffmpegTrimArgsArray[ffmpegTrimArgsArray.length-1].push(path.resolve(config.outputPath,`${fileBasename}.avi`))
         }
     })
 
@@ -150,6 +155,15 @@ const processReplays = async (replays,config) => {
         { stdio: "ignore" }
     )
 
+    // Add overlays
+    console.log("Adding overlays...")
+    await executeCommandsInQueue(
+        "ffmpeg",
+        ffmpegOverlayArgsArray,
+        config.numProcesses,
+        { stdio: "ignore" }
+    )
+
     // Delete unmerged video and audio files
     console.log("Deleting unmerged audio and video files...")
     promises = []
@@ -164,6 +178,15 @@ const processReplays = async (replays,config) => {
     promises = []
     const untrimmedFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('-merged'));
     untrimmedFiles.forEach((file) => {
+        promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
+    })
+    await Promise.all(promises)
+
+    // Delete pre-overlay video files
+    console.log("Deleting pre-overlay video files...")
+    promises = []
+    const preOverlayFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('-pre-overlay'));
+    preOverlayFiles.forEach((file) => {
         promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
     })
     await Promise.all(promises)

@@ -612,6 +612,12 @@ export const videoConfig = [
         type: "checkbox"
     },
     {
+        label: "Overlay Source",
+        default: false,
+        id: "overlaySource",
+        type: "checkbox"
+    },
+    {
         label: "Fixed Camera",
         default: false,
         id: "fixedCamera",

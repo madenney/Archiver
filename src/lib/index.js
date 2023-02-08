@@ -80,6 +80,7 @@ function getDistance(x1, y1, x2, y2){
 
 export default {
 	...require("./file"),
+	...require("./overlay"),
   getSlpFilePaths,
   asyncForEach,
   pad,
