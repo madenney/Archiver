@@ -1,20 +1,20 @@
 const deathDirections = [{
-    id: 0,
+    id: "down",
     name: "Down",
     shortName: "Down",
     actionStates: [0]
   }, {
-    id: 1,
+    id: "left",
     name: "Left",
     shortName: "Left",
     actionStates: [1],
   }, {
-    id: 2,
+    id: "right",
     name: "Right",
     shortName: "Right",
     actionStates: [2]
   }, {
-    id: 3,
+    id: "up",
     name: "Up",
     shortName: "Up",
     actionStates: [3,4,5,6,7,8,9,10]

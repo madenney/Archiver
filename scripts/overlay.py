@@ -182,7 +182,7 @@ def main():
     
     # New transparent image
     image = Image.new("RGBA", (5632, 3168), color=(0,0,0,0))
-    font = ImageFont.truetype("/home/matt/Projects/Archiver/assets/cour_bold.ttf", 100)
+    font = ImageFont.truetype("/home/matt/Projects/Archiver/assets/cour_bold.ttf", 70)
     draw = ImageDraw.Draw(image)
 
     xRatio = 1920/5632
@@ -193,13 +193,13 @@ def main():
     print(td)
     text_width = td[2]-td[0]
     text_height = (td[3]-td[1]) * 1.75
-    x1 = 30
-    y1 = 3020
-    x2 = 30 + text_width
-    y2 = 3020 + text_height
+    x1 = -5
+    y1 = 3087
+    x2 = -5 + text_width
+    y2 = 3087 + text_height
     # Draw a rounded rectangle
-    draw.rounded_rectangle([(x1, y1), (x2 + 60, y2 )], fill="#202020", radius=15)
-    draw.text((x1 + 30, y1+30), args.text, font=font)
+    draw.rounded_rectangle([(x1, y1), (x2 + 55, y2 )], fill="#202020", radius=5)
+    draw.text((x1 + 25, y1+16), args.text, font=font)
 
 
     # create image with correct size and black background

@@ -10,8 +10,21 @@ const generateOverlays = async function( replays, outputDir ){
     await asyncForEach( replays, async (replay) => {
  
         replay.overlayPath = path.resolve(outputDir, `${replay.index}.png`)
-        const source = "Beyond - The Summit: 1000"
-        
+
+        const { path: filePath } = replay
+        const dirs = filePath.split("/")
+        let source = "Source: "
+
+        const deeper = ["GALINT Collection", "Half Moon"]
+        if(dirs[5] == "Local Drives"){
+            source += dirs[6] + " netplay"
+        } else if (dirs[5] == "GALINT Collection"){
+            source += `${dirs[5]}/${dirs[6]}`
+        } else if (dirs[5] == "Half Moon"){
+            source += `Half Moon ${dirs[6]}`
+        } else {
+            source += dirs[5]
+        }
 
         const args = []
         args.push(`--outputPath=${replay.overlayPath}`)

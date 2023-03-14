@@ -4,7 +4,6 @@ import { keyBy, size } from "lodash";
 
 import { fastFallers } from "../../constants/characters";
 import  rectangles from "../../constants/rectangles";
-import comboStats from "./comboStats";
 //  whatever unit ikneedata.com uses
 const stageRadii = {
     2: 63.6, // FoD
@@ -21,11 +20,11 @@ export default (prev, params, eventEmitter) => {
     console.log(prev.results.length)
     let dmg = 0
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( combo, index )  => {
-        if( index % 1 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
+        if( index % 1000 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
 
         const { n, x, y } = params
         const { moves, comboer, comboee, path, stage } = combo
-        let frames, targetStates, _comboer, currentFrame, count, posX, posY
+        let frames, targetStates, _comboer, _comboee, currentFrame, count, posX, posY
         switch ( n ){
             case "1": // thunder's combo
                 const potentialThunders = moves.find((move, index) => {
@@ -358,9 +357,10 @@ export default (prev, params, eventEmitter) => {
                     }
                 })
                 break
-            case "fn":
-                const fn = [13,14]
-                if(fn.indexOf(moves[moves.length-2].moveId) == -1 ) return false
+            case "names":
+                const names = ["jerry shinefeld", "connormcdairvid"]
+                if(names.indexOf(comboer.displayName.toLowerCase()) == -1) return false
+                console.log(comboer.displayName)
                 results.push({...combo})
                 break
             case "stomp":
@@ -369,8 +369,7 @@ export default (prev, params, eventEmitter) => {
                     ...combo,
                     startFrame: moveFrame - 20
                 })
-                break
-            
+                break          
             case "cloud":
                 try {
                     frames = new SlippiGame( path ).getFrames()
@@ -413,7 +412,6 @@ export default (prev, params, eventEmitter) => {
                 const d = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2))
                 results.push({ ...combo, d })
                 break
-
             case "x":
                 try {
                     frames = new SlippiGame( path ).getFrames()
@@ -498,10 +496,15 @@ export default (prev, params, eventEmitter) => {
                 })
                 console.log("mang count: ", count)
                 break
-            case "spacie":
+            case "spacies":
                 const spacies = [2,20]
-                if(spacies.indexOf(combo.comboee.characterId) == -1 ) return false
-                results.push(combo)
+                if(spacies.indexOf(combo.comboer.characterId) == -1 ) return false
+                results.push({...combo})
+                break
+            case "spacies_comboee":
+                const spacie = [2,20]
+                if(spacie.indexOf(combo.comboee.characterId) == -1 ) return false
+                results.push({...combo})
                 break
             case "onstageKO":
                 // subtract 20 because that's about a max character's width away
@@ -510,11 +513,16 @@ export default (prev, params, eventEmitter) => {
             case "offstageKO":
                 if( Math.abs(combo.x) > ( stageRadii[combo.stage] + 5 ) ) results.push(combo)
                 break
-
             case "lastMove":
                 results.push({
                     ...combo,
                     endFrame: combo.moves[combo.moves.length-1].frame + parseInt(x)
+                })
+                break
+            case "preLastMove":
+                results.push({
+                    ...combo,
+                    startFrame: combo.moves[combo.moves.length-1].frame - parseInt(x)
                 })
                 break
             case "minY":
@@ -559,6 +567,7 @@ export default (prev, params, eventEmitter) => {
                             temp.push(frame)
                         } else {
                             if(temp.length > 0 ){
+                                console.log("FOUND ONE")
                                 results.push({
                                     startFrame: temp[0].frame,
                                     endFrame: temp[temp.length-1].frame,
@@ -652,13 +661,101 @@ export default (prev, params, eventEmitter) => {
                 })
                 console.log(dmg)
                 break
-            case "":
+            case "late_dair":
                 break
-            case "":
+            case "triple_dair":
+                const dairID = 17
+                let c = 0
+                for( var i = 0; i < moves.length; i++){
+                    if( moves[i].moveId == dairID ){
+                        c++
+                        if(c == 3 ){
+                            results.push({...combo})
+                            return
+                        } 
+                        
+                    } else {
+                        c = 0
+                    }
+                }
                 break
-            case "":
+            case "random2":
+                const e = Math.ceil(( Math.random() * (combo.lastFrame - 180 - x) ) + 180)
+                results.push({
+                    startFrame: e,
+                    endFrame: e+parseInt(x),
+                    ...combo
+                })
                 break
-            case "":
+            case "stocks":
+                let stocks
+                try {
+                    stocks = new SlippiGame( path ).getStats().stocks
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                results.push({
+                    stocks: stocks,
+                    ...combo
+                })
+                break
+            case "firstStock":
+
+                let a0 = combo.stocks[0].endFrame
+                let a1 = combo.stocks[1].endFrame
+                if(a0 === null) a0 = combo.lastFrame
+                if(a1 === null) a1 = combo.lastFrame
+                let firstStock
+                if( a0 < a1 ){
+                    firstStock = combo.stocks[0]
+                    _comboer = combo.players.find( p => p && p.playerIndex == combo.stocks[1].playerIndex )
+                    _comboee = combo.players.find( p => p && p.playerIndex == combo.stocks[0].playerIndex )
+                } else { 
+                    firstStock = combo.stocks[1]
+                    _comboer = combo.players.find( p => p && p.playerIndex == combo.stocks[0].playerIndex )
+                    _comboee = combo.players.find( p => p && p.playerIndex == combo.stocks[1].playerIndex )
+                }
+                if(firstStock.endFrame < 60 ) return false
+                if(firstStock.endPercent < 10 ) return false
+                results.push({
+                    startFrame: -123,
+                    endFrame: firstStock.endFrame,
+                    comboer: _comboer,
+                    comboee: _comboee,
+                    ...combo
+                })
+                break
+            case "11":
+                console.log(moves[moves.length-1].moveId)
+                if( moves[moves.length-1].moveId == 1 || moves[moves.length-2].moveId == 1 ){
+                    results.push({...combo})
+                }
+                break
+            case "exclude":
+                if(comboer.characterId == parseInt(x)) return false
+                results.push(combo)
+                break
+            case "noDamage":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                const preFrame = frames[moves[0].frame - 1]
+                const postFrame = frames[moves[moves.length-1].frame + 1]
+                if(!preFrame || !postFrame) return false
+                const preDamage = preFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex).post.percent
+                const postDamage = postFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex).post.percent
+                if( preDamage == postDamage ) results.push({ ...combo})
+                break
+            case "moveCount":
+                count = 0
+                combo.moves.forEach(m => {
+                    if(m.moveId == 17 ) count++
+                })
+                if(count >= x ) results.push(combo)
                 break
             default:
                 throw "Error: No custom filter option selected"

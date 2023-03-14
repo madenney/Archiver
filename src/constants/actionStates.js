@@ -149,6 +149,18 @@ const actionStates = [
       actionStateID: [347,348,349,350,351,352]
     },
     {
+      id: 354,
+      name: "Spacie Up B",
+      shortName: "Spacie Up B",
+      actionStateID: [354,356]
+    },
+    {
+      id: 360,
+      name: "Sheik Poof Reappear",
+      shortName: "Sheik Poof Reappear",
+      actionStateID: [360]
+    },
+    {
       id: 2,
       name: "Jab",
       shortName: "jab",

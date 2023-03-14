@@ -5,10 +5,9 @@ export default (prev, params, eventEmitter) => {
     const results = []
     prev.results.forEach( (file, index) => {
 
-        // ToDo, add death directions functionality
-        const { maxFiles, comboerChar, comboeeChar, frameWindow, deathDirections } = params
+        const { maxFiles, comboerChar, comboeeChar, frameWindow } = params
         if(parseInt(maxFiles) && index > parseInt(maxFiles) ) return 
-        eventEmitter({msg: `${index}/${prev.results.length}`})
+        if( index % 1000 == 0 ) eventEmitter({msg: `${index}/${prev.results.length}`})
         const { path, players, stage } = file
         const game = new SlippiGame( path )
         let stocks
@@ -20,7 +19,6 @@ export default (prev, params, eventEmitter) => {
         }
         
         stocks.forEach( stock => {
-
             if(!stock.endFrame) return false
 
             const comboee = players.find(p => p.playerIndex == stock.playerIndex)
@@ -31,6 +29,7 @@ export default (prev, params, eventEmitter) => {
             results.push({
                 comboer,
                 comboee,
+                deathDirection: getDeathDirection(stock.deathAnimation),
                 path,
                 stage,
                 endFrame: stock.endFrame,
@@ -39,4 +38,20 @@ export default (prev, params, eventEmitter) => {
         })
     })
     return results
+}
+
+function getDeathDirection(actionStateId) {
+    if (actionStateId > 0xa) {
+        return null;
+    }
+    switch (actionStateId) {
+        case 0:
+            return 'down';
+        case 1:
+            return 'left';
+        case 2:
+            return 'right';
+        default:
+            return 'up';
+    }
 }

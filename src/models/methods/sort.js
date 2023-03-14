@@ -67,6 +67,13 @@ export default (prev, params, eventEmitter) => {
                 return combo_A.x - combo_B.x 
             } 
         },
+        absx: ( combo_A, combo_B ) => {
+            if( reverse ){
+                return Math.abs(combo_B.x) - Math.abs(combo_A.x)
+            } else {
+                return Math.abs(combo_A.x) - Math.abs(combo_B.x) 
+            } 
+        },
         y: ( combo_A, combo_B ) => { 
             if( reverse ){
                 return combo_B.y - combo_A.y
@@ -80,6 +87,23 @@ export default (prev, params, eventEmitter) => {
             } else {
                 return combo_A.d - combo_B.d 
             } 
+        },
+        firstStock: (a,b)=>{
+            let a0 = a.stocks[0].endFrame
+            let a1 = a.stocks[1].endFrame
+            if(a0 === null) a0 = a.lastFrame
+            if(a1 === null) a1 = a.lastFrame
+            let lowA = Math.min(a0,a1)
+
+
+            let b0 = b.stocks[0].endFrame
+            let b1 = b.stocks[1].endFrame
+            if(b0 === null) b0 = b.lastFrame
+            if(b1 === null) b1 = b.lastFrame
+            let lowB = Math.min(b0,b1)
+            
+
+            return lowA - lowB
         }
     }
     

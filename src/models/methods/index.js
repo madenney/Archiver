@@ -16,6 +16,7 @@ const zeldaParser = require("./zeldaParser").default
 const scrubbleJump = require("./scrubbleJump").default
 const alternatingDimensions = require("./alternatingDimensions").default
 const removeStarKOFrames = require("./removeStarKOFrames").default
+const deathDirection = require("./deathDirection").default
 const sort = require("./sort").default
 
 export default {
@@ -24,5 +25,5 @@ export default {
     stomp, animeFalco, beatsPerMango, multiverse,
     sort, stomp, animeFalco, alternatingDimensions,
     removeStarKOFrames, scrubbleJump, endOfStock,
-    zeldaParser, custom, reverse
+    zeldaParser, custom, reverse, deathDirection
 }

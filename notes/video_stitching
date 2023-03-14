@@ -1,0 +1,4 @@
+
+printf "file '%s'\n" * > file.txt
+
+ffmpeg -f concat -i file.txt -c:v copy -b:v 15000k -af aresample=async=1:first_pts=0 -c:a aac -b:a 128k -fflags +genpts final.avi

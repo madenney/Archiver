@@ -392,13 +392,6 @@ export const patternsConfig = [
                 default: ""
             },
             {
-                name: "Death Direction",
-                id: "deathDirection",
-                type: "dropdown",
-                options: deathDirections,
-                default: "",
-            },
-            {
                 name: "Frame Window",
                 id: "frameWindow",
                 type: "int",
@@ -413,7 +406,7 @@ export const patternsConfig = [
                 name: "Sort Function",
                 id: "sortFunction",
                 type: "textInput",
-                default: 0
+                default: "dps"
             },
             {
                 name: "n",
@@ -495,7 +488,19 @@ export const patternsConfig = [
                 default: 0
             }
         ]
-    },
+    },{
+        id: "deathDirection",
+        label: "Death Direction",
+        options: [
+            {
+                name: "Direction",
+                id: "direction",
+                type: "dropdown",
+                options: deathDirections,
+                default: ""
+            }
+        ]
+    }
     // {
     //     id: "stomp",
     //     label: "Stomp",
@@ -655,7 +660,7 @@ export const videoConfig = [
     },
     {
         label: "Bitrate",
-        default: 6000,
+        default: 15000,
         id: "bitrateKbps",
         type: "textInput",
     },

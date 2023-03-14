@@ -6,7 +6,7 @@ export default (prev, params, eventEmitter) => {
     const results = []
     const { maxFiles } = params
     prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).forEach( ( combo, index ) => {
-        if( index % 1 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
+        if( index % 100 == 0 ) eventEmitter({msg: `${index}/${maxFiles ? maxFiles : prev.results.length}`})
         const { n, moveId } = params
         const { moves, comboer, comboee, path } = combo
 

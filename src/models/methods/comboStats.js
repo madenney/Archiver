@@ -8,7 +8,7 @@ export default (prev, params, eventEmitter) => {
     const variations = []
     prev.results.forEach( ( combo, index )  => {
         //if(index % 1 == 0) eventEmitter({msg: `${index}/${prev.results.length}`})
-        //const { depth } = params
+        const { depth } = params
         const { moves } = combo
         const variation = variations.find( variation => {
             if( variation.moves.length != moves.length ) return false

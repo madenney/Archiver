@@ -56,7 +56,7 @@ class Archive {
     processFiles(eventEmitter){
         let count = 0
         this.files.forEach(file => {
-            eventEmitter({msg: `${count++}/${this.files.length}`})
+            if(count%1000 == 0) eventEmitter({msg: `${count++}/${this.files.length}`})
             if(file.isProcessed) return 
             file.process()
         })

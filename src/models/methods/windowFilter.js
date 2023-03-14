@@ -5,7 +5,7 @@ export default (prev, params, eventEmitter) => {
     const { maxFiles } = params
     return prev.results.slice(0,maxFiles==""?undefined:parseInt(maxFiles)).filter( ( result, index ) => {
 
-        if( index % 20 == 0 ) eventEmitter({msg: `${index}/${prev.results.length}`})
+        if( index % 1000 == 0 ) eventEmitter({msg: `${index}/${prev.results.length}`})
 
         const { path, comboer, comboee, startFrame, endFrame, moves } = result
         const { startFrom, searchRange, comboerActionState, comboeeActionState,
@@ -25,7 +25,7 @@ export default (prev, params, eventEmitter) => {
         let _startFrame
     
         if( _startFrom ){
-            _startFrame = startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
+            _startFrame = _startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
         } 
         if( _startFromNthMove ){
             if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"

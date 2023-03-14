@@ -108,7 +108,6 @@ const processReplays = async (replays,config) => {
 
         // Arguments for adding overlays
         if(replay.overlayPath){
-          console.log("?", replay.overlayPath)
           ffmpegTrimArgsArray[ffmpegTrimArgsArray.length-1].push(path.resolve(config.outputPath,`${fileBasename}-pre-overlay.avi`))
           ffmpegOverlayArgsArray.push([
             "-i",
@@ -187,6 +186,15 @@ const processReplays = async (replays,config) => {
     promises = []
     const preOverlayFiles = fs.readdirSync(config.outputPath).filter(f => f.includes('-pre-overlay'));
     preOverlayFiles.forEach((file) => {
+        promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
+    })
+    await Promise.all(promises)
+
+    // Delete overlays
+    console.log("Deleting overlays...")
+    promises = []
+    const overlays = fs.readdirSync(config.outputPath).filter(f => f.includes('.png'));
+    overlays.forEach((file) => {
         promises.push(fsPromises.unlink(path.resolve(config.outputPath,file)))
     })
     await Promise.all(promises)

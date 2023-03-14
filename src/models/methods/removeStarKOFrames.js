@@ -14,7 +14,7 @@ export default (prev, params, eventEmitter) => {
             frames = game.getFrames()
         } catch(e){
             console.log(e)
-            console.log("Broken file:", file)
+            console.log("Broken file:", path)
             return null
         }
         // Lets just assume star KO frames happen at the end of the clip
@@ -30,7 +30,7 @@ export default (prev, params, eventEmitter) => {
 
         return {
             ...clip,
-            endFrame: newEndFrame ? newEndFrame : endFrame
+            endFrame: newEndFrame ? newEndFrame + 5 : endFrame
         }
     })
 }
