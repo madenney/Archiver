@@ -50,6 +50,14 @@ class Results extends React.Component {
 		setTimeout(() => {process.kill()}, 3000)
 	}
 
+	// obviously not the way to do this but I'm in a rush
+	deleteClip(result, results){
+		const index = results.indexOf(result)
+		results.splice(index,1)
+		this.forceUpdate();
+
+	}
+
 	renderStats(results){
 		const time = (results.reduce((n,c)=>{
 				const a = c.endFrame - c.startFrame;
@@ -79,23 +87,27 @@ class Results extends React.Component {
 			const stageImage = images[stages[stage].img].default
 			const arrowImage = images[(darkStages.indexOf(stage) != -1 ? "white":"") + "next.png"].default
 			let p1Image, p2Image
-			if(comboer){
-				const p1Char = comboer.characterId
-				const p1Color = comboer.characterColor
-				p1Image = images[characters[p1Char].img + characters[p1Char].colors[p1Color] + ".png"].default
-				const p2Char = comboee.characterId
-				const p2Color = comboee.characterColor
-				p2Image = images[characters[p2Char].img + characters[p2Char].colors[p2Color] + ".png"].default
-			} else {
-				const p1Char = result.players[0].characterId
-				const p1Color = result.players[0].characterColor
-				p1Image = images[characters[p1Char].img + characters[p1Char].colors[p1Color] + ".png"].default
-				const p2Char = result.players[1].characterId
-				const p2Color = result.players[1].characterColor
-				p2Image = images[characters[p2Char].img + characters[p2Char].colors[p2Color] + ".png"].default
+			try {
+				if(comboer){
+					const p1Char = comboer.characterId
+					const p1Color = comboer.characterColor
+					p1Image = images[characters[p1Char].img + characters[p1Char].colors[p1Color] + ".png"].default
+					const p2Char = comboee.characterId
+					const p2Color = comboee.characterColor
+					p2Image = images[characters[p2Char].img + characters[p2Char].colors[p2Color] + ".png"].default
+				} else {
+					const p1Char = result.players[0].characterId
+					const p1Color = result.players[0].characterColor
+					p1Image = images[characters[p1Char].img + characters[p1Char].colors[p1Color] + ".png"].default
+					const p2Char = result.players[1].characterId
+					const p2Color = result.players[1].characterColor
+					p2Image = images[characters[p2Char].img + characters[p2Char].colors[p2Color] + ".png"].default
+				}
+			} catch (e){
+				console.log(e)
 			}
 
-			return ( <div className="result" onClick={() => this.showClip(result)}key={index}>
+			return ( <div className="result" onClick={() => this.deleteClip(result,results)}key={index}>
 				<div className="result-image-container">
 					<div className='characters-container'>
 						<img className='char1-image' src={p1Image}/>
@@ -138,7 +150,6 @@ class Results extends React.Component {
 	render(){
 		const { selectedResults } = this.props
 		const { numPerPage } = this.state
-		console.log("RENDER? ", selectedResults)
 		return (
 			<div className="results-section">
 				{ this.renderStats(selectedResults) }

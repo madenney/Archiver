@@ -4,7 +4,7 @@ const path = require("path")
 const { PythonShell } = require("python-shell");
 
 
-const generateOverlays = async function( replays, outputDir ){
+const generateOverlays = async function( replays, outputDir , overlayTopLeft){
     console.log("GENERATING ", replays.length, " overlays")
     
     await asyncForEach( replays, async (replay) => {
@@ -29,7 +29,10 @@ const generateOverlays = async function( replays, outputDir ){
         const args = []
         args.push(`--outputPath=${replay.overlayPath}`)
         args.push(`--text=${source}`)
-
+        if(overlayTopLeft){
+            args.push(`--number=#${replay.index}`)
+        }
+        
         const scriptPath = path.resolve("scripts")
         const pyShellOptions = {
             mode: "text",

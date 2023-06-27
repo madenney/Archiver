@@ -44,7 +44,11 @@ export default (prev, params, eventEmitter) => {
             }
         },
         moves: ( combo_A, combo_B ) => {
-            return combo_A.moves.length - combo_B.moves.length
+            if( reverse ){
+                return combo_A.moves.length - combo_B.moves.length
+            } else {
+                return combo_B.moves.length - combo_A.moves.length
+            }
         },
         damage: ( combo_A, combo_B ) => {
             const damageA = combo_A.moves.reduce(((t,n) => t+n),0)
@@ -104,6 +108,13 @@ export default (prev, params, eventEmitter) => {
             
 
             return lowA - lowB
+        },
+        length: ( combo_A, combo_B ) => {
+            //let b = combo_B.moves[combo_B.moves.length-1].frame - combo_B.moves[0].frame 
+
+            let a = combo_A.endFrame - combo_A.startFrame
+            let b = combo_B.endFrame - combo_B.startFrame 
+            return a - b
         }
     }
     

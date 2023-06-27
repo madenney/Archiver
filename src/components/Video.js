@@ -38,7 +38,7 @@ class Video extends React.Component {
 			hideNames, fixedCamera, enableChants, bitrateKbps, resolution,
 			outputPath, addStartFrames, addEndFrames, slice, shuffle, lastClipOffset,
 			dolphinCutoff, disableScreenShake, noElectricSFX, noCrowdNoise, 
-			disableMagnifyingGlass, overlaySource } = this.state
+			disableMagnifyingGlass, overlaySource, overlayTopLeft } = this.state
 			
 
 		let outputDirectoryName = "output";
@@ -99,7 +99,7 @@ class Video extends React.Component {
 		if( parseInt(lastClipOffset) ) replays[replays.length-1].endFrame += parseInt(lastClipOffset)
 
 		if(overlaySource){
-			await generateOverlays(replays, path.resolve(outputPath + "/" + outputDirectoryName))
+			await generateOverlays(replays, path.resolve(outputPath + "/" + outputDirectoryName), overlayTopLeft)
 		}
 		
 		console.log("Replays: ", replays)

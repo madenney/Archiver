@@ -105,6 +105,12 @@ const actionStates = [
       name: "Grab",
       shortName: "Grab",
       actionStateID: [212]
+    }, 
+    {
+      id: 229,
+      name: "Grab Release",
+      shortName: "Grab Release",
+      actionStateID: [229]
     },
     {
       id: 233,
@@ -123,6 +129,12 @@ const actionStates = [
       name: "Air Dodge",
       shortName: "Air Dodge",
       actionStateID: [236]
+    },
+    {
+      id: 252,
+      name: "Ledge catch/hang",
+      shortName: "Ledge catch/hang",
+      actionStateID: [252,252]
     },
     {
       id: 258,

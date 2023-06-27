@@ -172,51 +172,62 @@ def main():
 
     # python3 -m pip install pillow --upgrade
 
-    print("Hello World :)")
+    # test script:
+    # python3 overlay.py --text "Tournament 2020" --outputPath ~/Projects/output/test.png --number "#10"
     parser = argparse.ArgumentParser(description="Generate overlay for a Melee combo video")
 
     parser.add_argument("--text")
     parser.add_argument("--outputPath")
+    parser.add_argument("--number", default=None)
 
     args = parser.parse_args()
     
-    # New transparent image
+
     image = Image.new("RGBA", (5632, 3168), color=(0,0,0,0))
-    font = ImageFont.truetype("/home/matt/Projects/Archiver/assets/cour_bold.ttf", 70)
+    font_path = "/home/matt/Projects/Archiver/assets/cour_bold.ttf"
     draw = ImageDraw.Draw(image)
 
     xRatio = 1920/5632
     yRatio = 1080/3168
 
-    # get text size
+
+    # Source - bottom left
+    font = ImageFont.truetype(font_path, 70)
     td = font.getbbox(args.text)
-    print(td)
     text_width = td[2]-td[0]
     text_height = (td[3]-td[1]) * 1.75
     x1 = -5
     y1 = 3087
     x2 = -5 + text_width
     y2 = 3087 + text_height
-    # Draw a rounded rectangle
+    
     draw.rounded_rectangle([(x1, y1), (x2 + 55, y2 )], fill="#202020", radius=5)
     draw.text((x1 + 25, y1+16), args.text, font=font)
 
 
-    # create image with correct size and black background
-    #rectangle_img = Image.new('RGBA', rectangle_size, "black")
+    if args.number:
+        font = ImageFont.truetype(font_path, 250)
+        td = font.getbbox(args.number)
+        text_width = td[2]-td[0]
+        text_height = (td[3]-td[1]) * 1.75
+        x1 = 20
+        y1 = 20
+        x2 = 20 + text_width
+        y2 = 20 + text_height
+    
+        draw.rounded_rectangle([(x1, y1), (x2 + 70, y2 )], fill="#202020", radius=12)
+        draw.text((x1 + 35, y1+60), args.number, font=font)
 
-    # put text on rectangle with 10px margins
-    #rectangle_draw = ImageDraw.Draw(rectangle_img)
-    #rectangle_draw.text((10, 5), args.text, font=font)
 
-    # put rectangle on source image in position (0, 0)
-    #image.paste(rectangle_img, (50, 50))
+
 
     image.save(args.outputPath)
     image.close()
 
     print("DONE")
     return 0
+
+
     # Positional args
     parser.add_argument("outputPath")
     parser.add_argument("overlayWidth", type=int)

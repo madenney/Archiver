@@ -4,6 +4,7 @@ import { keyBy, size } from "lodash";
 
 import { fastFallers } from "../../constants/characters";
 import  rectangles from "../../constants/rectangles";
+const shineStates = [360,361,362,363,364,365,366,367,368]
 //  whatever unit ikneedata.com uses
 const stageRadii = {
     2: 63.6, // FoD
@@ -417,12 +418,72 @@ export default (prev, params, eventEmitter) => {
                     frames = new SlippiGame( path ).getFrames()
                 } catch(e){
                     console.log(e)
-                    return console.log("Broken file:", file)
+                    return console.log("Broken file:", path)
                 }
                 currentFrame = frames[moves[moves.length-1].frame]
                 if(!currentFrame) return false
                 _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
-                results.push({ ...combo, x: _comboer.post.positionX })
+                results.push({ 
+                    ...combo, 
+                    x: _comboer.post.positionX,
+                    facingDirection: _comboer.post.facingDirection
+                })
+                break
+            case "turnaround_dair":
+
+                if( combo.x > 0 && combo.facingDirection === -1 ) return false
+                if( combo.x < 0 && combo.facingDirection === 1 ) return false
+                
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                
+                // look backward to find shine turnaround
+                let turnaround = false
+                for(var i = 0; i < 40; i++ ){
+                    const _frame = frames[ moves[moves.length-1].frame - i ]
+                    _comboer = _frame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if( _comboer.post.actionStateId ===  369 ){
+                        results.push({...combo})
+                        return
+                    }
+                }
+                break
+            case "shine_stall":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                currentFrame = frames[moves[moves.length-1].frame]
+                if(!currentFrame) return false
+                
+                let shineFrames = []
+                for(var i = 0; i < 80; i++ ){
+                    const _frame = frames[ moves[moves.length-1].frame - i ]
+                    _comboer = _frame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if( shineStates.indexOf(_comboer.post.actionStateId) > -1 ){
+                        shineFrames.push(_frame)
+                    } else {
+                        if( shineFrames.length > 0 ){
+                            break
+                        }
+                    }
+                }
+
+                const shineLength = shineFrames[0].frame - shineFrames[shineFrames.length-1].frame
+                results.push({
+                    ...combo,
+                    d: shineLength,
+                    startFrame: shineFrames[shineFrames.length-1].frame
+                })
+                
                 break
             case "absx":
                 try {
@@ -519,6 +580,12 @@ export default (prev, params, eventEmitter) => {
                     endFrame: combo.moves[combo.moves.length-1].frame + parseInt(x)
                 })
                 break
+            case "secondToLast":
+                results.push({
+                    ...combo,
+                    startFrame: combo.moves[combo.moves.length-2].frame + parseInt(x)
+                })
+                break
             case "preLastMove":
                 results.push({
                     ...combo,
@@ -526,7 +593,11 @@ export default (prev, params, eventEmitter) => {
                 })
                 break
             case "minY":
-                if( combo.y < 15 ) return false
+                if( combo.y < x ) return false
+                results.push(combo)
+                break
+            case "maxY":
+                if( combo.y > x ) return false
                 results.push(combo)
                 break
             case "uniqueHits":
@@ -756,6 +827,145 @@ export default (prev, params, eventEmitter) => {
                     if(m.moveId == 17 ) count++
                 })
                 if(count >= x ) results.push(combo)
+                break
+            case "shine_juggle":
+                let shines = []
+                let foundCombo
+                moves.forEach(move => {
+                    if(move.moveId === 14 ){
+                        shines.push(move)
+                        if(shines.length >= 5 ){
+                            foundCombo = shines
+                        }
+                    } else {
+                        shines = []
+                    }
+                })
+                if(foundCombo){
+                    const what = {
+                        ...combo,
+                        moves: foundCombo,
+                        startFrame: foundCombo[0].frame,
+                        endFrame: foundCombo[foundCombo.length-1].frame,
+                    }
+                    console.log(what)
+                    results.push(what)
+                }
+                break
+            case "no_kill":
+                if(combo.didKill) return false
+                results.push(combo);
+                break
+
+            
+            case "quick_one_two":
+                const minDamage = x
+                const minTime = y
+                const notAllowed = [8,9,10,11,12,18,19,20,21]
+                const aerials = [13,14,15,16]
+                for( var i = 0; i < moves.length-1; i++ ){
+                    const currMove = moves[i]
+                    const nextMove = moves[i+1]
+                    if(aerials.indexOf(currMove.moveId) == -1 ) return false
+                    if(nextMove.moveId != 8 ) return false
+                    //if(aerials.indexOf(nextMove.moveId) > -1 ) return false
+                    if(currMove.damage + nextMove.damage < x ) return false
+                    if(nextMove.frame - currMove.frame > y ) return false
+                    results.push({
+                        ...combo,
+                        moves: [currMove, nextMove],
+                        startFrame: currMove.frame,
+                        endFrame: nextMove.frame
+                    })
+                    return false 
+                }
+                break
+            case "turnaround_utilt":
+                const _aerials = [13,14,15,16]
+                for( var i = 0; i < moves.length-1; i++ ){
+                    const currMove = moves[i]
+                    const nextMove = moves[i+1]
+                    if(_aerials.indexOf(currMove.moveId) == -1 ) continue
+                    if(nextMove.moveId != 8 ) continue //utilt
+                    //if(aerials.indexOf(nextMove.moveId) > -1 ) continue
+                    if(currMove.damage + nextMove.damage < x ) continue
+                    if(nextMove.frame - currMove.frame > y ) continue
+
+                    try {
+                        frames = new SlippiGame( path ).getFrames()
+                    } catch(e){
+                        console.log(e)
+                        return console.log("Broken file:", file)
+                    }
+                    currentFrame = frames[currMove.frame]
+                    if(!currentFrame) return false
+                    _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    let facingDirection = _comboer.post.facingDirection
+
+                    let nextFrame = frames[nextMove.frame]
+                    if(!nextFrame) return false
+                    _comboer = nextFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+
+                    if( facingDirection === _comboer.post.facingDirection ) continue
+
+
+                    results.push({
+                        ...combo,
+                        moves: [currMove, nextMove],
+                        startFrame: currMove.frame,
+                        endFrame: nextMove.frame
+                    })
+                }
+                break
+            case "quick_one_two_three":
+                const nAllowed = [8,9,10,11,12,18,19,20,21]
+                for( var i = 0; i < moves.length-2; i++ ){
+                    const currMove = moves[i]
+                    const nextMove = moves[i+1]
+                    const nextNextMove = moves[i+2]
+                    if(nAllowed.indexOf(currMove.moveId) > -1 ) return false
+                    if(nAllowed.indexOf(nextMove.moveId) > -1 ) return false
+                    if(nAllowed.indexOf(nextNextMove.moveId) > -1 ) return false
+                    if(( currMove.damage + nextMove.damage + nextNextMove.damage ) < x ) return false
+                    if(nextNextMove.frame - currMove.frame > y ) return false
+                    results.push({
+                        ...combo,
+                        moves: [currMove, nextMove, nextNextMove],
+                        startFrame: currMove.frame,
+                        endFrame: nextNextMove.frame
+                    })
+                    return false 
+                }
+                break
+            
+            case "chaingrab":
+                const _throws = [53,54]
+                count = 0;
+                moves.forEach( move => {
+                    if( _throws.indexOf(move.moveId) > -1 ) count ++
+                })
+                if( count >= x ){
+                    results.push({...combo})
+                }
+                break
+            case "oos":
+
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                
+                let shieldStunState = 0xB5
+                for( var i = 0; i < x; i++ ){
+                    currentFrame = frames[moves[0].frame - i]
+                    const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if(_comboer.post.actionStateId == shieldStunState ){
+                        results.push({ d: i, ...combo})
+                        return
+                    }
+                }
                 break
             default:
                 throw "Error: No custom filter option selected"
