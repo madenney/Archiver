@@ -11,6 +11,12 @@ const actionStates = [
       actionStateID: damageStates
     },
     {
+      id: 24,
+      name: "Jump Ground",
+      shortName: "Jump Ground",
+      actionStateID: [24,25,26]
+    },
+    {
       id: 35,
       name: "Special Fall",
       shortName: "Special Fall",
@@ -134,7 +140,7 @@ const actionStates = [
       id: 252,
       name: "Ledge catch/hang",
       shortName: "Ledge catch/hang",
-      actionStateID: [252,252]
+      actionStateID: [252,253]
     },
     {
       id: 258,
@@ -162,9 +168,15 @@ const actionStates = [
     },
     {
       id: 354,
-      name: "Spacie Up B",
-      shortName: "Spacie Up B",
-      actionStateID: [354,356]
+      name: "Fox Up B startup",
+      shortName: "Fox Up B startup",
+      actionStateID: [354]
+    },
+    {
+      id: 356,
+      name: "Fox Up B moving",
+      shortName: "Fox Up B moving",
+      actionStateID: [356]
     },
     {
       id: 360,

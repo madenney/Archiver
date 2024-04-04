@@ -41,7 +41,7 @@ const generateDolphinConfigs = async (replays,config) => {
             mode: "normal",
             replay: replay.path,
             startFrame: replay.startFrame - 60 < -123 ? -123 : replay.startFrame - 60,
-            endFrame: Math.min(replay.endFrame, metadata.lastFrame-1),
+            endFrame: replay.endFrame, //Math.min(replay.endFrame, metadata.lastFrame-1),
             isRealTimeMode: false,
             commandId: `${crypto.randomBytes(12).toString("hex")}`
         }

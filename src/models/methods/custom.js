@@ -557,6 +557,13 @@ export default (prev, params, eventEmitter) => {
                 })
                 console.log("mang count: ", count)
                 break
+            case "mango":
+
+                const mangNames = ["mang", "mang0", "mango"]
+                if(mangNames.indexOf(comboer.displayName) > -1){
+                    results.push(combo)
+                }
+                break
             case "spacies":
                 const spacies = [2,20]
                 if(spacies.indexOf(combo.comboer.characterId) == -1 ) return false
@@ -566,6 +573,12 @@ export default (prev, params, eventEmitter) => {
                 const spacie = [2,20]
                 if(spacie.indexOf(combo.comboee.characterId) == -1 ) return false
                 results.push({...combo})
+                break
+            case "falco_vs_fox":
+                if( (combo.comboee.characterId == 2 && combo.comboer.characterId == 20) || 
+                (combo.comboer.characterId == 2 && combo.comboee.characterId == 20) ){
+                    results.push({...combo})
+                }
                 break
             case "onstageKO":
                 // subtract 20 because that's about a max character's width away
@@ -948,6 +961,30 @@ export default (prev, params, eventEmitter) => {
                     results.push({...combo})
                 }
                 break
+            case "frames_since_stun":
+                const shield_stun = 0xB5
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", file)
+                }
+                const move0Frame = moves[0].frame
+                for(let i = 0; i < 101; i++){
+                    currentFrame = frames[move0Frame - i]
+                    _comboer = currentFrame.players.find(p => p && p.pre.playerIndex == comboer.playerIndex)
+                    if( _comboer.post.actionStateId == shield_stun){
+                        console.log("COUNT: ", i)
+                        results.push({
+                            ...combo,
+                            x: i
+                        })
+                        break
+                    }
+                }
+
+                
+                break
             case "oos":
 
                 try {
@@ -967,6 +1004,586 @@ export default (prev, params, eventEmitter) => {
                     }
                 }
                 break
+
+
+            case "ledge":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                if(index % 25 == 0){
+                    console.log(index)
+                }
+                let ledgeHangState = 252
+                for( var i = 0; i < x; i++ ){
+                    currentFrame = frames[moves[0].frame - i]
+                    const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if(_comboer.post.actionStateId == ledgeHangState ){
+                        results.push({ d: i, ...combo})
+                        return
+                    }
+                }
+                break
+
+            case "airdodgebefore":
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                if(index % 25 == 0){
+                    console.log(index)
+                }
+                let airDodgeState = 236
+                for( var i = 0; i < combo.d; i++ ){
+                    currentFrame = frames[moves[0].frame - i]
+                    const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+                    if(_comboer.post.actionStateId == airDodgeState ){
+                        results.push({...combo})
+                        return
+                    }
+                }
+                break
+            
+
+            case "yah":
+                console.log(moves[moves.length-1])
+                if(moves[moves.length-1].moveId == 9){
+                    return false
+                }
+                if(moves[0].moveId == 9){
+                    return false
+                }
+                results.push({...combo})
+                break
+
+            case 'asdf':
+                console.log(combo)
+                results.push({
+                    ...combo,
+                    endFrame: combo.startFrame + 30
+                })
+                break
+
+            case 'trip_pummel':
+
+                let count = 0;
+                for(var i = 0; i < combo.moves.length; i++){
+                    if(combo.moves[i].moveId == 52 ){
+                        count++
+                    } else {
+                        count = 0
+                    }
+                    if(count > 2){
+                        return false
+                    }
+                }
+
+                results.push({ ...combo })
+                break
+
+            case 'dub_pummel':
+
+                let count2 = 0;
+                for(var i = 0; i < combo.moves.length; i++){
+                    if(combo.moves[i].moveId == 52 ){
+                        count2++
+                    } else {
+                        count2 = 0
+                    }
+                    if(count2 > 1){
+                        return false
+                    }
+                }
+
+                results.push({ ...combo })
+                break
+
+            case 'last_two':
+                results.push({ 
+                    ...combo,
+                    startFrame: combo.moves[combo.moves.length-2].frame
+                })
+                break
+
+            case 'no_usmash_end':
+                if(moves[moves.length-1].moveId == 11) return false
+                results.push({...combo})
+                break
+    
+            case 'hax':
+                const hax_tags = [
+                    "Hax$", 
+                    "Hax$ (Bo5)",
+                    "Hax F. $",
+                    "Hax$ (Bo3)"
+                ]
+                if(hax_tags.indexOf(comboer.displayName) == -1) return false
+                results.push({...combo})
+                break
+
+            case 'min_shines':
+                let shine_count = 0
+                combo.moves.forEach(move => {
+                    if(move.moveId == 21 ) {
+                        shine_count++
+                    }
+                })
+                if( shine_count / combo.moves.length > 0.7){
+                    results.push({...combo})
+                }
+                break
+
+
+            case 'find_hax':
+                //console.log(path)
+                if(index % 1000 == 0) console.log(index)
+                try {
+                    const settings = new SlippiGame( path ).getSettings()
+                    const hax_names = [
+                        "Hax$", 
+                        "Hax$ (Bo5)",
+                        "Hax F. $",
+                        "Hax$ (Bo3)"
+                    ]
+                    const hax = settings.players.find( player => {
+                        if(hax_names.indexOf(player.displayName) > -1) return true
+                    })
+
+                    if(!hax) return false
+
+                    const not_hax = settings.players.find( player => {
+                        if(hax_names.indexOf(player.displayName) == -1 ) return true
+                    })
+                    results.push({
+                        ...combo, 
+                        hax_index: hax.playerIndex, 
+                        not_hax_index: not_hax.playerIndex
+                    })
+                } catch(e){
+                    //console.log(e)
+                    //return console.log("Broken file:", path)
+                }
+                break
+            case 'shield_pressure':
+                //console.log(path)
+                const pressureStates = [360,361,362,363,364,365,366,367,368,0x2c,0x41,0x42,0x43,0x44,0x45]
+
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                    const pressureFrames = []
+                    let count = 0
+                    let shieldStunState = 0xB5
+                    Object.keys(frames).forEach(frameIndex => {
+                        const currentFrame = frames[frameIndex]
+                        //if(count++ > 10) return false
+                        //console.log("CurrentFrame: ", currentFrame)
+                        const hax = currentFrame.players[combo.hax_index]
+                        const not_hax = currentFrame.players[combo.not_hax_index]
+                        const haxActionState = hax.post.actionStateId
+                        const notHaxActionState = not_hax.post.actionStateId
+                        //console.log("Not: ", notHaxActionState)
+                        if( notHaxActionState == shieldStunState ){
+                            if(pressureStates.indexOf(haxActionState) > -1 ){
+                                pressureFrames.push(frameIndex)
+                            }
+                        }
+                    })
+
+                    if(pressureFrames.length == 0){
+                        // console.log("No shield pressure?")
+                        // console.log(path)
+                        return false
+                    }
+
+                    //console.log("pressure frames: ", pressureFrames)
+                    let tmp = [pressureFrames[0]]
+                    const pressureInstances = []
+
+                    pressureFrames.slice(1).forEach(frame => {
+                        // console.log(frame)
+                        // console.log(tmp)
+                        // console.log(parseInt(tmp[tmp.length - 1]) + 1)
+                        if(frame == parseInt(tmp[tmp.length - 1]) + 1){
+                            tmp.push(frame)
+                        } else {
+                            pressureInstances.push(tmp[0])
+                            tmp = [frame]
+                        }
+                    })
+                    pressureInstances.push(tmp[0])
+
+                    //console.log("pressure instances: ", pressureInstances)
+
+                    for(var i = 0; i < pressureInstances.length; i++){
+
+                        const startInstance = parseInt(pressureInstances[i])
+                        let diff = 30
+                        let score = 1
+
+                        let instance = startInstance
+                        let nextInstance = parseInt(pressureInstances[++i])
+                        while( nextInstance - diff < instance){
+                            score++
+                            instance = nextInstance
+                            nextInstance = parseInt(pressureInstances[++i])
+                        }
+
+                        if(score > 4){
+                            results.push({
+                                ...combo,
+                                startFrame: parseInt(startInstance) - 60,
+                                endFrame: parseInt(startInstance) + 60 
+                            })
+                        }
+                    }
+
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                break
+
+            case 'shield_pressure_2':
+                    //console.log(path)
+
+    
+                    try {
+                        const settings = new SlippiGame( path ).getSettings()
+                        const hax_names = [
+                            "Hax$", 
+                            "Hax$ (Bo5)",
+                            "Hax F. $",
+                            "Hax$ (Bo3)"
+                        ]
+                        const hax_index = settings.players.find( player => {
+                            if(hax_names.indexOf(player.displayName) > -1) return true
+                        }).playerIndex
+                        const not_hax_index = settings.players.find( player => {
+                            if(hax_names.indexOf(player.displayName) == -1 ) return true
+                        }).playerIndex
+                        
+                        const pressureStates = [360,361,362,363,364,365,366,367,368,0x2c,0x41,0x42,0x43,0x44,0x45]
+                        frames = new SlippiGame( path ).getFrames()
+                        const pressureFrames = []
+                        let count = 0
+                        let shieldStunState = 0xB5
+
+                        const comboStartFrame = parseInt(combo.moves[0].frame)
+                        const searchRange = -600
+
+                        for(var frameIndex = comboStartFrame + searchRange; frameIndex < comboStartFrame; frameIndex++){
+                        //Object.keys(frames).forEach(frameIndex => {
+                            const currentFrame = frames[frameIndex]
+                            if(!currentFrame){ continue }
+                            //if(count++ > 10) return false
+                            //console.log("CurrentFrame: ", currentFrame)
+                            const hax = currentFrame.players[hax_index]
+                            const not_hax = currentFrame.players[not_hax_index]
+                            const haxActionState = hax.post.actionStateId
+                            const notHaxActionState = not_hax.post.actionStateId
+                            //console.log("Not: ", notHaxActionState)
+                            if( notHaxActionState == shieldStunState ){
+                                if(pressureStates.indexOf(haxActionState) > -1 ){
+                                    pressureFrames.push(frameIndex)
+                                }
+                            }
+                        }
+    
+                        if(pressureFrames.length == 0){
+                            // console.log("No shield pressure?")
+                            // console.log(path)
+                            return false
+                        }
+    
+                        //console.log("pressure frames: ", pressureFrames)
+                        let tmp = [pressureFrames[0]]
+                        const pressureInstances = []
+    
+                        pressureFrames.slice(1).forEach(frame => {
+                            // console.log(frame)
+                            // console.log(tmp)
+                            // console.log(parseInt(tmp[tmp.length - 1]) + 1)
+                            if(frame == parseInt(tmp[tmp.length - 1]) + 1){
+                                tmp.push(frame)
+                            } else {
+                                pressureInstances.push(tmp[0])
+                                tmp = [frame]
+                            }
+                        })
+                        pressureInstances.push(tmp[0])
+    
+                        //console.log("pressure instances: ", pressureInstances)
+    
+                        for(var i = 0; i < pressureInstances.length; i++){
+    
+                            const startInstance = parseInt(pressureInstances[i])
+                            let diff = 90
+                            let score = 1
+    
+                            let instance = startInstance
+                            let nextInstance = parseInt(pressureInstances[++i])
+                            while( nextInstance - diff < instance){
+                                score++
+                                instance = nextInstance
+                                nextInstance = parseInt(pressureInstances[++i])
+                            }
+    
+                            if(score > 5){
+                                console.log(`${index} - ${results.length}`)
+                                results.push({
+                                    ...combo,
+                                    startFrame: parseInt(startInstance) - 60,
+                                })
+                            }
+                        }
+    
+                    } catch(e){
+                        console.log(e)
+                        return console.log("Broken file:", path)
+                    }
+                    break
+
+
+
+            case 'shield_breaks2':
+                //console.log(path)
+                const _shieldBreakStates = [205,206,207,208,209,210,211]
+
+                try {
+                    frames = new SlippiGame( path ).getFrames()
+                    const shieldBreakFrames = []
+                    let count = 0
+                    let shieldStunState = 0xB5
+                    Object.keys(frames).forEach(frameIndex => {
+                        const currentFrame = frames[frameIndex]
+                        //if(count++ > 10) return false
+                        //console.log("CurrentFrame: ", currentFrame)
+                        const hax = currentFrame.players[combo.hax_index]
+                        const not_hax = currentFrame.players[combo.not_hax_index]
+                        const haxActionState = hax.post.actionStateId
+                        const notHaxActionState = not_hax.post.actionStateId
+                        //console.log("Not: ", notHaxActionState)
+                        if(_shieldBreakStates.indexOf(notHaxActionState) > -1 ){
+                            shieldBreakFrames.push(frameIndex)
+                        }
+                    })
+
+                    if(shieldBreakFrames.length == 0){
+                        // console.log("No shield pressure?")
+                        // console.log(path)
+                        return false
+                    }
+
+                    //console.log("pressure frames: ", shieldBreakFrames)
+                    let tmp = [shieldBreakFrames[0]]
+                    const shieldBreakInstances = []
+
+                    shieldBreakFrames.slice(1).forEach(frame => {
+                        // console.log(frame)
+                        // console.log(tmp)
+                        // console.log(parseInt(tmp[tmp.length - 1]) + 1)
+                        if(frame == parseInt(tmp[tmp.length - 1]) + 1){
+                            tmp.push(frame)
+                        } else {
+                            shieldBreakInstances.push(tmp[0])
+                            tmp = [frame]
+                        }
+                    })
+                    shieldBreakInstances.push(tmp[0])
+
+                    shieldBreakInstances.forEach(frame => {
+                        console.log("found one")
+                        results.push({
+                            ...combo,
+                            startFrame: parseInt(frame) - 60,
+                            endFrame: parseInt(frame) + 60 
+                        })
+                    })
+
+                    break
+
+                } catch(e){
+                    console.log(e)
+                    return console.log("Broken file:", path)
+                }
+                break
+
+            case "satfalc":
+
+                const goodStages = [2,8,28,31]
+                if(goodStages.indexOf(stage) == -1 ) return false
+
+                const goodComboees = [0,2,20]
+
+                if(goodComboees.indexOf(comboee.characterId) == -1 ) return false
+
+                const goodLastMoves = [10,12,17]
+                if(goodLastMoves.indexOf(moves[moves.length-1].moveId) == -1) return false
+
+                const goodSecondToLast = [13,14,15,16]
+                if(goodSecondToLast.indexOf(moves[moves.length-2].moveId) == -1) return false
+
+                if(moves[moves.length-3].moveId != 21) return false
+                if(moves[moves.length-4].moveId != 21) return false
+
+                if(moves[moves.length-1].frame - moves[moves.length-2].frame > x ) return false
+
+                // let shineCount = 0
+                // let _found = false
+                // for( var i = 0; i < moves.length; i++){
+                //     if(moves[i].moveId == 21){
+                //         shineCount++
+                //         if(shineCount == 2){
+                //             _found = true
+                //             break
+                //         }
+                //     } else {
+                //         shineCount = 0
+                //     }
+                // }
+                // if(!_found) return false
+                
+
+                results.push({...combo})
+
+                break
+
+            case "teardrop":
+
+
+
+                frames = new SlippiGame( path ).getFrames()
+                const shineFrame = combo.moves[0].frame
+
+                //for( var i = 0; i < 30; i++){
+                //const currentFrame = frames[shineFrame - i]
+                const currentFrame = frames[shineFrame - 1]
+                const _comboee = currentFrame.players.find(p => p && p.post.playerIndex == comboee.playerIndex)
+                const _comboer = currentFrame.players.find(p => p && p.post.playerIndex == comboer.playerIndex)
+
+                const comboeeState = _comboee.post.actionStateId
+                //console.log("Comboee State: ", comboeeState)
+                // check for special fall
+                const specialFalls = [35,36,37]
+                if( specialFalls.indexOf(comboeeState) != -1 ) return false
+
+                switch( combo.comboee.characterId ){
+
+                    case 0: // falcon
+                        //console.log("Falcon: ")
+                        if(comboeeState != 354) return false
+                        break
+                    case 2: // fox
+                        //console.log("FOX: ")
+                        const targetStates = [356]
+                        if(targetStates.indexOf(comboeeState) == -1){
+                            return false
+                        }
+                        break
+                    case 3: // gw
+                        //console.log("gw: ")
+                        if(comboeeState != 374) return false
+                        break
+                    case 6: // link
+                        //console.log("link: ")
+                        if(comboeeState != 357) return false
+                        break
+                    case 7: // luigi
+                        //console.log("luigi: ")
+                        if(comboeeState != 356) return false
+                        break
+                    case 8: // mario
+                        //console.log("mario: ")
+                        if(comboeeState != 348) return false
+                        break
+                    case 9: // marth
+                        //console.log("marth: ")
+                        if(comboeeState != 368) return false
+                        break
+                    case 11: // ness
+                        //console.log("ness: ")
+                        const targetStates2 = [362,363,364,365,366]
+                        if(targetStates2.indexOf(comboeeState) == -1){
+                            return false
+                        }
+                        break
+                    case 12: // peach
+                        //console.log("peach: ")
+                        const targetState10 = [341,342,343,363]
+                        if(targetState10.indexOf(comboeeState) == -1){
+                            return false
+                        }
+                        break
+                    case 13: // pikachu
+                        //console.log("pikachu: ")
+                        const targetStates3 = [356,357,358]
+                        if(targetStates3.indexOf(comboeeState) == -1){
+                            return false
+                        }
+                        break
+                    case 14: // ics
+                        //console.log("ics: ")
+                        const targetStates4 = [352,353,354,355,356]
+                        if(targetStates4.indexOf(comboeeState) == -1){
+                            return false
+                        }
+                        break
+                    case 15: // jiggs
+                        //console.log("jiggs: ")
+                        //if(comboeeState != 354) return false
+                        break
+                    case 16: // samus
+                        //console.log("samus: ")
+                        //if(comboeeState != 354) return false
+                        break
+                    case 19: // sheik
+                        //console.log("sheik: ")
+                        //if(comboeeState != 354) return false
+                        break
+                    case 20: // falco
+                        //console.log("falco: ")
+                        if(comboeeState != 356) return false
+                        break
+                    case 21: // young link
+                        //console.log("young link: ")
+                        if(comboeeState != 357) return false
+                        break
+                    case 22: // dr mario
+                        //console.log("dr mario: ")
+                        if(comboeeState != 348) return false
+                        break
+                    case 23: // roy
+                        //console.log("roy: ")
+                        if(comboeeState != 368) return false
+                        break
+                    case 25: // ganon
+                        //console.log("ganon: ")
+                        if(comboeeState != 354) return false
+                        break
+
+                    default:
+                        //console.log("DEFAULT")
+
+                    
+                }
+
+                //}
+
+                results.push({...combo})
+                break
+
+            case "master":
+
+                if(combo.comboer.displayName == "Master Player" && combo.comboee.displayName == "Master Player"){
+                    results.push({...combo})
+                }
+                break
+
+        
             default:
                 throw "Error: No custom filter option selected"
         }

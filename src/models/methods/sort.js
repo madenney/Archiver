@@ -23,6 +23,17 @@ export default (prev, params, eventEmitter) => {
                 return a - b 
             }
         },
+        betweenMoves2: ( combo_A, combo_B ) => {
+            let a, b
+            a = combo_A.moves[combo_A.moves.length -1].frame - combo_A.moves[combo_A.moves.length -3 ].frame
+            b = combo_B.moves[combo_B.moves.length -1].frame - combo_B.moves[combo_B.moves.length -3 ].frame
+            
+            if( reverse ){
+                return b - a
+            } else {
+                return a - b 
+            }
+        },
         dps: ( combo_A, combo_B ) => {
             
             const { moves: moves_A } = combo_A

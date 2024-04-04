@@ -22,7 +22,6 @@ class File {
         this.isProcessed = true;
         
         const game = new SlippiGame( this.path )
-
         // check settings for indicators of invalid game
         const settings = game.getSettings()
         if(!settings){
@@ -57,28 +56,6 @@ class File {
             return
         }
 
-        // check metadata for indicators of invalid game
-        const metadata = game.getMetadata()
-        if(!metadata){
-            this.isValid = false;
-            this.info = "Bad metadata";
-            return
-        }
-        const length = metadata.lastFrame / 60 
-        if( isNaN( length ) ){ 
-            this.isValid = false;
-            this.info = "No length";
-            return
-        }
-        if( length < 20 ){ 
-            this.isValid = false;
-            this.info = "Game Length < 20 seconds";
-            return
-        }
-
-        this.isValid = true;
-        this.startedAt = metadata.startAt;
-        this.lastFrame = metadata.lastFrame;
         this.stage = settings.stageId;
         this.players = [{
             playerIndex: p1.playerIndex,
@@ -95,6 +72,39 @@ class File {
             nametag: p2.nametag,
             displayName: p2.displayName
         }];
+
+        // check metadata for indicators of invalid game
+        const metadata = game.getMetadata()
+
+        if(!metadata){
+            this.isValid = false;
+            this.info = "Bad metadata";
+            return
+        }
+        
+        // anonymized set
+        if(JSON.stringify(metadata) == '{}'){
+            this.isValid = true;
+            this.startedAt = "N/A"
+            this.lastFrame = null
+        } else {
+            const length = metadata.lastFrame / 60 
+            if( isNaN( length ) ){ 
+                this.isValid = false;
+                this.info = "No length";
+                return
+            }
+            if( length < 20 ){ 
+                this.isValid = false;
+                this.info = "Game Length < 20 seconds";
+                return
+            }
+    
+            this.isValid = true;
+            this.startedAt = metadata.startAt;
+            this.lastFrame = metadata.lastFrame;
+        }
+
     }
 
     generateJSON(){

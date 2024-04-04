@@ -8,7 +8,11 @@ export default (prev, params, eventEmitter) => {
         if( minDamage && !(moves.reduce((n,m) => n + m.damage ,0) >= minDamage)) return false;
         if( excludeICs && comboer.characterId == 14 ) return false
         if( comboerChar && comboerChar != comboer.characterId) return false
-        if( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
+        // if( comboerTag == 'mang'){
+        //     const mangs = ['mang','mang0']
+        //     if(mangs.indexOf(comboer.displayName.toLowerCase()) == -1) return false
+
+        // } else if ( comboerTag && comboerTag != comboer.displayName.toLowerCase()) return false
         if( comboeeChar && comboeeChar != comboee.characterId) return false
         if( comboeeTag && comboeeTag != comboee.displayName.toLowerCase()) return false
         if( comboStage && comboStage != stage ) return false

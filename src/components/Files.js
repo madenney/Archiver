@@ -2,7 +2,6 @@ import React from 'react'
 const { ipcRenderer } = require("electron");
 const { readableDate } = require("../lib").default
 
-
 class Files extends React.Component {
 
 	constructor(props){
@@ -43,6 +42,31 @@ class Files extends React.Component {
 		})
 	}
 
+	printJSON(){
+		console.log("PRINT JSON")
+		const fs = require('fs');
+		const { archive } = this.props
+		const filePath = archive.files[0].path
+		console.log("PATH: ", filePath)
+
+		// Read the file
+		fs.readFile(filePath, (err, buffer) => {
+			if (err) {
+				console.error('Error reading the UBJSON file:', err);
+				return;
+			}
+
+			// At this point, 'buffer' contains the contents of your UBJSON file
+			console.log('UBJSON file has been read as a buffer:');
+
+			// You can now use the buffer for your requirements
+			const ubjson = require('ubjson');	
+			ubjson.unpackBuffer(buffer, ( data ) => {
+				console.log("DATA: ", data)
+			})
+		});	
+	}
+
 	renderSection(){
 		const { archive } = this.props
 		
@@ -72,6 +96,7 @@ class Files extends React.Component {
 					<button className="normal-button" onClick={this.addFiles.bind(this)}>Add files</button>
 					<button className="normal-button" onClick={this.process.bind(this)}>Process</button>
 					<button className="normal-button" onClick={this.countNames.bind(this)}>Names</button>
+					<button className="normal-button" onClick={this.printJSON.bind(this)}>Print JSON [1]</button>
 					<div></div>
 				</div>
 				<div className={"row " + (archive.files.length ? "" : "hidden")} >

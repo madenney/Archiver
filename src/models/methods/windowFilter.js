@@ -17,7 +17,7 @@ export default (prev, params, eventEmitter) => {
             lastFrame = game.getMetadata().lastFrame
         } catch(e){
             console.log(e)
-            return console.log("Broken file:", file)
+            return console.log("Broken file:", path)
         }
         const _startFrom = parseInt(startFrom)
         const _startFromNthMove = parseInt(startFromNthMove)
@@ -25,7 +25,8 @@ export default (prev, params, eventEmitter) => {
         let _startFrame
     
         if( _startFrom ){
-            _startFrame = _startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
+            //_startFrame = _startFrom > -1 ? frames[startFrame + _startFrom].frame : frames[endFrame + _startFrom].frame
+            _startFrame = frames[startFrame + _startFrom].frame
         } 
         if( _startFromNthMove ){
             if(!moves) throw "Error: moves is not defined. This is likely not a parsed combo clip"
